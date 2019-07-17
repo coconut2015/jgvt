@@ -50,7 +50,10 @@ public class Controller
 	{
 		m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
 		m_gui.setBranch (m_gitRepo.getBranch ());
-		m_gui.setFile (Utils.getRelativePath (m_file, m_dir).toString ());
+		if (m_file == null)
+			m_gui.setFile ("");
+		else
+			m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
 
 		mxGraph graph = m_gui.getGraph ();
 		TreeFactory factory = new TreeFactory (graph, m_gitRepo);
