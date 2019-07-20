@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.NoHeadException;
@@ -30,6 +31,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
@@ -87,6 +89,16 @@ class GitRepo implements AutoCloseable
 		}
 	}
 
+	/**
+	 * Caller should close the RevWalk object.
+	 *
+	 * @return	RevWalk object.
+	 */
+	public RevWalk createRevWalk ()
+	{
+		return new RevWalk (m_repo);
+	}
+
 	public Iterable<RevCommit> getCommitLogs (File file) throws NoHeadException, GitAPIException, IOException
 	{
 		LogCommand log = m_git.log ();
@@ -118,7 +130,7 @@ class GitRepo implements AutoCloseable
 		Map<ObjectId, Ref> map = m_branchMap.get ();
 		if (map == null)
 		{
-			List<Ref> refs = m_git.branchList ().call ();
+			List<Ref> refs = m_git.branchList ().setListMode (ListMode.ALL).call ();
 			map = new HashMap<ObjectId, Ref> ();
 			for (Ref ref : refs)
 				map.put (ref.getObjectId (), ref);
@@ -133,4 +145,6 @@ class GitRepo implements AutoCloseable
 	{
 		m_repo.close ();
 	}
+
+
 }

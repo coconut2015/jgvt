@@ -17,8 +17,6 @@ package org.yuanheng.jgvt;
 
 import java.io.File;
 
-import org.yuanheng.jgvt.swing.SwingGUI;
-
 /**
  * @author	Heng Yuan
  */
@@ -81,7 +79,7 @@ public class Main
 		}
 
 		Controller controller = new Controller (gitRepo, dir, file);
-		SwingGUI gui = new SwingGUI (controller);
+		GUI gui = new GUI (controller);
 		controller.updateGUI ();
 		gui.setVisible (true);
 

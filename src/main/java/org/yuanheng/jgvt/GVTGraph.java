@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt.swing;
-
-import org.yuanheng.jgvt.CommitNode;
+package org.yuanheng.jgvt;
 
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.view.mxGraph;
@@ -25,8 +23,14 @@ import com.mxgraph.view.mxGraph;
  */
 class GVTGraph extends mxGraph
 {
+	public final static int DEFAULT_TOOLTIP_FLAG = GVTNode.TOOLTIP_AUTHOR | GVTNode.TOOLTIP_AUTHOR_TS | GVTNode.TOOLTIP_COMMITTER | GVTNode.TOOLTIP_COMMITTER_TS;
+
+	private int m_toolTipFlag;
+
 	public GVTGraph ()
 	{
+		m_toolTipFlag = DEFAULT_TOOLTIP_FLAG;
+
 		setCellsBendable (false);
 		setCellsCloneable (false);
 		setCellsDeletable (false);
@@ -69,10 +73,20 @@ class GVTGraph extends mxGraph
 		if (this.model.isEdge (cell))
 			return null;
 
-		CommitNode node = (CommitNode) this.model.getValue (cell);
+		GVTNode node = (GVTNode) this.model.getValue (cell);
 		if (node == null)
 			return null;
 
-		return node.getTooltip ();
+		return node.getTooltip (m_toolTipFlag);
+	}
+
+	public int getToolTipFlag ()
+	{
+		return m_toolTipFlag;
+	}
+
+	public void setToolTipFlag (int toolTipFlag)
+	{
+		m_toolTipFlag = toolTipFlag;
 	}
 }

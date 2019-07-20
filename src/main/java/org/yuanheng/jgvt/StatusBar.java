@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt.swing;
+package org.yuanheng.jgvt;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;

@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 /**
  * @author	Heng Yuan
  */
-public class Utils
+class Utils
 {
 	public static Path getRelativePath (File file, File root) throws IOException
 	{

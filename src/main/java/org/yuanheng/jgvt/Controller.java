@@ -17,9 +17,6 @@ package org.yuanheng.jgvt;
 
 import java.io.File;
 
-import org.yuanheng.jgvt.swing.SwingGUI;
-
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.view.mxGraph;
 
 /**
@@ -27,9 +24,9 @@ import com.mxgraph.view.mxGraph;
  *
  * @author	Heng Yuan
  */
-public class Controller
+class Controller
 {
-	private SwingGUI m_gui;
+	private GUI m_gui;
 	private GitRepo m_gitRepo;
 	private File m_dir;
 	private File m_file;
@@ -41,7 +38,7 @@ public class Controller
 		m_file = file;
 	}
 
-	public void setGUI (SwingGUI gui)
+	public void setGUI (GUI gui)
 	{
 		m_gui = gui;
 	}
@@ -58,7 +55,7 @@ public class Controller
 		mxGraph graph = m_gui.getGraph ();
 		TreeFactory factory = new TreeFactory (graph, m_gitRepo);
 		factory.updateGraphModel (m_gitRepo.getCommitLogs (m_file));
-		new mxHierarchicalLayout(graph).execute(graph.getDefaultParent());
+		m_gui.updateGraphLayout ();
  	}
 
 	public File getCurrentDirectory ()

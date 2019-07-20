@@ -30,15 +30,11 @@ import com.mxgraph.view.mxGraph;
 /**
  * @author Heng Yuan
  */
-public class TreeFactory
+class TreeFactory
 {
-	public final static String HASH_STYLE = "hash";
-	public final static String TAG_STYLE = "tag";
-	public final static String BRANCH_STYLE = "branch";
-
-	public final static String COMMIT_STYLE = "commit";
-	public final static String BRANCHEDGE_STYLE = "branchEdge";
-	public final static String MERGE_STYLE = "merge";
+	public final static String COMMIT_STYLE = "commitEdge";
+	public final static String BRANCH_STYLE = "branchEdge";
+	public final static String MERGE_STYLE = "mergeEdge";
 
 	private final mxGraph m_graph;
 	private final GitRepo m_gitRepo;
@@ -49,9 +45,9 @@ public class TreeFactory
 		m_gitRepo = gitRepo;
 	}
 
-	private CommitNode createNode (RevCommit commit) throws GitAPIException
+	private GVTNode createNode (RevCommit commit) throws GitAPIException
 	{
-		CommitNode node = new CommitNode (commit);
+		GVTNode node = new GVTNode (commit);
 		ObjectId commitId = commit.getId ();
 
 		node.setTag (m_gitRepo.getTagMap ().get (commitId));
@@ -73,9 +69,8 @@ public class TreeFactory
 		mxCell vertex = vertexMap.get (commit.getId ());
 		if (vertex == null)
 		{
-			CommitNode node = createNode (commit);
-			String style = (node.getBranch () != null ? BRANCH_STYLE : node.getTag () != null ? TAG_STYLE : HASH_STYLE);
-			vertex = (mxCell) m_graph.insertVertex (parent, null, node, 0, 0, 30, 20, style);
+			GVTNode node = createNode (commit);
+			vertex = (mxCell) m_graph.insertVertex (parent, null, node, 0, 0, 30, 30);
 			vertexMap.put (commit.getId (), vertex);
 		}
 		return vertex;
@@ -97,16 +92,20 @@ public class TreeFactory
 			for (int i = 0; i < numParents; ++i)
 			{
 				mxCell parentVertex = getVertex (parent, map, commit.getParent (i));
-				m_graph.insertEdge (parent, null, null, parentVertex, vertex, MERGE_STYLE);
+				m_graph.insertEdge (parent, null, null, parentVertex, vertex, COMMIT_STYLE);
 			}
 		}
 
 		model.endUpdate ();
+
+		model.beginUpdate ();
+
 		for (mxCell vertex : map.values ())
 		{
 			m_graph.updateCellSize (vertex);
 			resize(vertex);
 		}
+
 		model.endUpdate ();
 	}
 }
