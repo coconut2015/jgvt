@@ -23,7 +23,7 @@ import com.mxgraph.view.mxGraph;
  */
 class GVTGraph extends mxGraph
 {
-	public final static int DEFAULT_TOOLTIP_FLAG = GVTNode.TOOLTIP_AUTHOR | GVTNode.TOOLTIP_AUTHOR_TS | GVTNode.TOOLTIP_COMMITTER | GVTNode.TOOLTIP_COMMITTER_TS;
+	public final static int DEFAULT_TOOLTIP_FLAG = RelationNode.TOOLTIP_AUTHOR | RelationNode.TOOLTIP_AUTHOR_TS | RelationNode.TOOLTIP_COMMITTER | RelationNode.TOOLTIP_COMMITTER_TS;
 
 	private int m_toolTipFlag;
 
@@ -73,7 +73,7 @@ class GVTGraph extends mxGraph
 		if (this.model.isEdge (cell))
 			return null;
 
-		GVTNode node = (GVTNode) this.model.getValue (cell);
+		RelationNode node = (RelationNode) this.model.getValue (cell);
 		if (node == null)
 			return null;
 

@@ -17,6 +17,7 @@ package org.yuanheng.jgvt;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,5 +33,15 @@ class Utils
 		Path filePath = Paths.get (file.toURI ());
 		Path rootPath = Paths.get (root.toURI ());
 		return rootPath.relativize (filePath);
+	}
+
+	public static <T> T[] arrayAdd (Class<T> c, T[] oldArray, T elem)
+	{
+		@SuppressWarnings("unchecked")
+		T[] newArray = (T[])Array.newInstance (c, oldArray.length + 1);
+		for (int i = 0; i < oldArray.length; ++i)
+			newArray[i] = oldArray[i];
+		newArray[oldArray.length] = elem;
+		return newArray;
 	}
 }

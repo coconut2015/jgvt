@@ -46,6 +46,8 @@ public class GUI
 {
 	private final static String TITLE = "Java Git Version Tree";
 	private static int TOOLTIP_DELAY = 100;
+	private static int INTERRANKCELLSPACING = 20;
+	private static int INTRACELLSPACING = 300;
 
 	public static String STYLE_TAG_FONTCOLOR = "tagFontColor";
 	public static String STYLE_BRANCH_FONTSTYLE = "branchFontStyle";
@@ -63,9 +65,9 @@ public class GUI
 		GRAPH_STYLE = new mxStylesheet();
 
 		Map<String, Object> commitEdge = new HashMap<String, Object>();
-		commitEdge.put(mxConstants.STYLE_ROUNDED, true);
+		commitEdge.put(mxConstants.STYLE_ROUNDED, false);
 		commitEdge.put(mxConstants.STYLE_ORTHOGONAL, false);
-		commitEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
+		commitEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		commitEdge.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		commitEdge.put(mxConstants.STYLE_ENDARROW, mxConstants.NONE);
 		commitEdge.put(mxConstants.STYLE_STROKECOLOR, "#000000");
@@ -76,7 +78,7 @@ public class GUI
 		branchEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
 		branchEdge.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		branchEdge.put(mxConstants.STYLE_ENDARROW, mxConstants.NONE);
-		branchEdge.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		branchEdge.put(mxConstants.STYLE_STROKECOLOR, "#007f00");
 
 		Map<String, Object> mergeEdge = new HashMap<String, Object>();
 		mergeEdge.put(mxConstants.STYLE_ROUNDED, true);
@@ -87,9 +89,9 @@ public class GUI
 		mergeEdge.put(mxConstants.STYLE_STROKECOLOR, "#ff0000");
 
 		GRAPH_STYLE.setDefaultEdgeStyle(commitEdge);
-		GRAPH_STYLE.putCellStyle (TreeFactory.COMMIT_STYLE, commitEdge);
-		GRAPH_STYLE.putCellStyle (TreeFactory.BRANCH_STYLE, branchEdge);
-		GRAPH_STYLE.putCellStyle (TreeFactory.MERGE_STYLE, mergeEdge);
+		GRAPH_STYLE.putCellStyle (GVTGraphFactory.COMMIT_STYLE, commitEdge);
+		GRAPH_STYLE.putCellStyle (GVTGraphFactory.BRANCH_STYLE, branchEdge);
+		GRAPH_STYLE.putCellStyle (GVTGraphFactory.MERGE_STYLE, mergeEdge);
 
 		Map<String, Object> vertexStyle = new HashMap<String, Object>();
 		vertexStyle.put(mxConstants.STYLE_AUTOSIZE, 1);
@@ -195,8 +197,6 @@ public class GUI
 		m_graphComp.getViewport().setOpaque(true);
 		m_graphComp.getViewport().setBackground(Color.WHITE);
 		m_graphComp.setToolTips (true);
-
-		System.out.println ("transfer: " + m_graphComp.getTransferHandler ());
 	}
 
 	private void createGraphLayout ()
@@ -204,8 +204,8 @@ public class GUI
 		mxHierarchicalLayout layout = new mxHierarchicalLayout (m_graph);
 		m_graphLayout = layout;
 
-		layout.setInterRankCellSpacing (10);
-		layout.setIntraCellSpacing (300);
+		layout.setInterRankCellSpacing (INTERRANKCELLSPACING);
+		layout.setIntraCellSpacing (INTRACELLSPACING);
 	}
 
 	public void setVisible (boolean visible)

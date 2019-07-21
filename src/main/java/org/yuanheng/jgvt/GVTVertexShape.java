@@ -37,10 +37,10 @@ public class GVTVertexShape extends mxRectangleShape
 	{
 		Map<String, Object> style = state.getStyle();
 		mxCell cell = (mxCell) state.getCell ();
-		GVTNode node = null;
+		RelationNode node = null;
 		if (cell.isVertex ())
 		{
-			node = (GVTNode)cell.getValue ();
+			node = (RelationNode)cell.getValue ();
 			if (node.hasBranch ())
 			{
 				style.put (mxConstants.STYLE_FONTSTYLE, style.get (GUI.STYLE_BRANCH_FONTSTYLE));
@@ -56,7 +56,7 @@ public class GVTVertexShape extends mxRectangleShape
 
 		if (node == null)
 			return;
-		String tag = ((GVTNode)cell.getValue ()).getTagName ();
+		String tag = ((RelationNode)cell.getValue ()).getTagName ();
 		if (tag != null)
 		{
 			Graphics2D g = canvas.getGraphics ();

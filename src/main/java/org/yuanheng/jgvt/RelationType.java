@@ -15,20 +15,12 @@
  */
 package org.yuanheng.jgvt;
 
-import org.junit.Test;
-
 /**
- * Dummy test class to make launching the gui easier.
- *
  * @author	Heng Yuan
  */
-public class TestMain
+enum RelationType
 {
-	@Test
-	public void testMain () throws Exception
-	{
-		Main.main(new String[] {"../sqlite-jdbc/"});
-//		Main.main(new String[] {"../sqlite-jdbc/README.md"});
-//		Main.main(new String[] {"../bsonspec.org/implementations.html"});
-	}
+	CHILD,
+	BRANCH,
+	MERGE
 }

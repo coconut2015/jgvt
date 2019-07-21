@@ -35,6 +35,8 @@ import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 /**
+ * A wrapper around Git and GitRepo.
+ *
  * @author	Heng Yuan
  */
 class GitRepo implements AutoCloseable

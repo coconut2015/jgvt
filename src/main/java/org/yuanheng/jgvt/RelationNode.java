@@ -25,8 +25,10 @@ import org.eclipse.jgit.revwalk.RevCommit;
 /**
  * @author	Heng Yuan
  */
-class GVTNode implements Serializable
+class RelationNode implements Serializable
 {
+	private final static RelationNode[] s_emptyArray = new RelationNode[0];
+
 	private static final long serialVersionUID = 3470339333207629584L;
 
 	public final static int TOOLTIP_AUTHOR = 1;
@@ -42,11 +44,13 @@ class GVTNode implements Serializable
 	private final String m_hash;
 	private Ref m_tag;
 	private String m_tagName;
-	private Ref m_branch;
+	private Ref m_branchHead;
 	private String m_branchName;
 	private String m_toolTip;
 
-	public GVTNode (RevCommit commit)
+	private RelationNode[] m_parents = s_emptyArray;
+
+	public RelationNode (RevCommit commit)
 	{
 		m_commit = commit;
 
@@ -61,11 +65,11 @@ class GVTNode implements Serializable
 	@Override
 	public String toString ()
 	{
-		if (m_branch != null)
+		if (m_branchHead != null)
 		{
 			if (m_branchName == null)
 			{
-				String name = m_branch.getName ();
+				String name = m_branchHead.getName ();
 				if (name.startsWith (Constants.R_HEADS))
 					name = name.substring (Constants.R_HEADS.length ());
 				else if (name.startsWith (Constants.R_REMOTES))
@@ -102,17 +106,17 @@ class GVTNode implements Serializable
 
 	boolean hasBranch ()
 	{
-		return m_branch != null;
+		return m_branchHead != null;
 	}
 
 	public Ref getBranch ()
 	{
-		return m_branch;
+		return m_branchHead;
 	}
 
 	public void setBranch (Ref branch)
 	{
-		m_branch = branch;
+		m_branchHead = branch;
 	}
 
 	public String getTooltip (int flag)
@@ -171,5 +175,28 @@ class GVTNode implements Serializable
 			m_toolTip = builder.toString ();
 		}
 		return m_toolTip;
+	}
+
+	public void addParent (RelationNode parent)
+	{
+		m_parents = Utils.arrayAdd (RelationNode.class, m_parents, parent);
+	}
+
+	public RelationNode[] getParents ()
+	{
+		return m_parents;
+	}
+
+	public RelationType getRelation (RelationNode parent)
+	{
+		if (parent.m_branchHead == null)
+		{
+			return RelationType.CHILD;
+		}
+		if (m_parents.length > 1)
+		{
+			return RelationType.MERGE;
+		}
+		return RelationType.CHILD;
 	}
 }

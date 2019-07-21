@@ -19,7 +19,6 @@ import java.util.HashMap;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.revwalk.RevCommit;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -30,30 +29,17 @@ import com.mxgraph.view.mxGraph;
 /**
  * @author Heng Yuan
  */
-class TreeFactory
+class GVTGraphFactory
 {
 	public final static String COMMIT_STYLE = "commitEdge";
 	public final static String BRANCH_STYLE = "branchEdge";
 	public final static String MERGE_STYLE = "mergeEdge";
 
 	private final mxGraph m_graph;
-	private final GitRepo m_gitRepo;
 
-	public TreeFactory (mxGraph graph, GitRepo gitRepo)
+	public GVTGraphFactory (mxGraph graph)
 	{
 		m_graph = graph;
-		m_gitRepo = gitRepo;
-	}
-
-	private GVTNode createNode (RevCommit commit) throws GitAPIException
-	{
-		GVTNode node = new GVTNode (commit);
-		ObjectId commitId = commit.getId ();
-
-		node.setTag (m_gitRepo.getTagMap ().get (commitId));
-		node.setBranch (m_gitRepo.getBranchMap ().get (commitId));
-
-		return node;
 	}
 
 	private void resize (mxCell vertex)
@@ -64,19 +50,18 @@ class TreeFactory
 		m_graph.cellsResized (new Object[]{ vertex }, new mxRectangle[]{ g });
 	}
 
-	private mxCell getVertex (Object parent, HashMap<ObjectId, mxCell> vertexMap, RevCommit commit) throws GitAPIException
+	private mxCell getVertex (Object parent, HashMap<ObjectId, mxCell> vertexMap, RelationNode node) throws GitAPIException
 	{
-		mxCell vertex = vertexMap.get (commit.getId ());
+		mxCell vertex = vertexMap.get (node.getCommit ().getId ());
 		if (vertex == null)
 		{
-			GVTNode node = createNode (commit);
 			vertex = (mxCell) m_graph.insertVertex (parent, null, node, 0, 0, 30, 30);
-			vertexMap.put (commit.getId (), vertex);
+			vertexMap.put (node.getCommit ().getId (), vertex);
 		}
 		return vertex;
 	}
 
-	public void updateGraphModel (Iterable<RevCommit> commitLogs) throws GitAPIException
+	public void updateGraphModel (RelationTree relTree) throws GitAPIException
 	{
 		mxGraphModel model = (mxGraphModel) m_graph.getModel ();
 		model.beginUpdate ();
@@ -85,14 +70,26 @@ class TreeFactory
 		Object parent = m_graph.getDefaultParent ();
 		HashMap<ObjectId, mxCell> map = new HashMap<ObjectId, mxCell> ();
 
-		for (RevCommit commit : commitLogs)
+		for (RelationNode node : relTree.getNodes ())
 		{
-			mxCell vertex = getVertex (parent, map, commit);
-			int numParents = commit.getParentCount ();
-			for (int i = 0; i < numParents; ++i)
+			mxCell vertex = getVertex (parent, map, node);
+			for (RelationNode parentNode : node.getParents ())
 			{
-				mxCell parentVertex = getVertex (parent, map, commit.getParent (i));
-				m_graph.insertEdge (parent, null, null, parentVertex, vertex, COMMIT_STYLE);
+				mxCell parentVertex = getVertex (parent, map, parentNode);
+				String edgeStyle = COMMIT_STYLE;
+				switch (node.getRelation (parentNode))
+				{
+					case CHILD:
+						edgeStyle = COMMIT_STYLE;
+						break;
+					case MERGE:
+						edgeStyle = MERGE_STYLE;
+						break;
+					case BRANCH:
+						edgeStyle = BRANCH_STYLE;
+						break;
+				}
+				m_graph.insertEdge (parent, null, null, parentVertex, vertex, edgeStyle);
 			}
 		}
 

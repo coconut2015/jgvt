@@ -15,20 +15,25 @@
  */
 package org.yuanheng.jgvt;
 
-import org.junit.Test;
+import java.util.Collection;
+import java.util.Map;
+
+import org.eclipse.jgit.lib.ObjectId;
 
 /**
- * Dummy test class to make launching the gui easier.
- *
  * @author	Heng Yuan
  */
-public class TestMain
+class RelationTree
 {
-	@Test
-	public void testMain () throws Exception
+	private final Map<ObjectId, RelationNode> m_nodeMap;
+
+	public RelationTree (Map<ObjectId, RelationNode> nodeMap)
 	{
-		Main.main(new String[] {"../sqlite-jdbc/"});
-//		Main.main(new String[] {"../sqlite-jdbc/README.md"});
-//		Main.main(new String[] {"../bsonspec.org/implementations.html"});
+		m_nodeMap = nodeMap;
+	}
+
+	public Collection<RelationNode> getNodes ()
+	{
+		return m_nodeMap.values ();
 	}
 }

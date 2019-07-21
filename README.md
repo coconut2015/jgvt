@@ -1,7 +1,19 @@
 # Java Git Version Tree [![Apache License, Version 2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-`jgvt` is a [git](https://git-scm.com/) version tree GUI viewer.  It is written
-in Java using Swing.  The program is designed to be very lightweight.
+`jgvt` is a [git](https://git-scm.com/) version tree GUI viewer with more
+of a ClearCase version tree look-n-feel.
+
+It is written in Java using Swing.
+
+# Build
+
+Use the following command to build.  There are convenience development
+code that are disguised as tests.  So it is necessary to skip the
+tests when building the package.
+
+```bash
+	mvn clean package -Dmaven.test.skip=true
+```
 
 # License
 

@@ -16,6 +16,8 @@
 package org.yuanheng.jgvt;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author	Heng Yuan
@@ -77,6 +79,9 @@ public class Main
 		{
 			System.exit (1);;
 		}
+
+		// disable JGraphX drag-n-drop error logging
+		Logger.getGlobal ().setLevel (Level.OFF);;
 
 		Controller controller = new Controller (gitRepo, dir, file);
 		GUI gui = new GUI (controller);
