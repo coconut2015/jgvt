@@ -16,9 +16,12 @@
 package org.yuanheng.jgvt;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
  * @author	Heng Yuan
@@ -27,9 +30,34 @@ class RelationTree
 {
 	private final Map<ObjectId, RelationNode> m_nodeMap;
 
-	public RelationTree (Map<ObjectId, RelationNode> nodeMap)
+	public RelationTree ()
 	{
-		m_nodeMap = nodeMap;
+		m_nodeMap = new HashMap<ObjectId, RelationNode> ();
+	}
+
+	public RelationNode getCommitNode (ObjectId id)
+	{
+		return m_nodeMap.get (id);
+	}
+
+	public RelationNode getCommitNode (RevCommit commit)
+	{
+		return m_nodeMap.get (commit.getId ());
+	}
+
+	public RelationNode getCommitNode (RevCommit commit, GitRepo gitRepo) throws GitAPIException
+	{
+		ObjectId commitId = commit.getId ();
+		RelationNode commitNode = m_nodeMap.get (commitId);
+		if (commitNode == null)
+		{
+			commitNode = new RelationNode (commit);
+			m_nodeMap.put (commit.getId (), commitNode);
+
+			commitNode.setTag (gitRepo.getTagMap ().get (commitId));
+			commitNode.setBranch (gitRepo.getBranchMap ().get (commitId));
+		}
+		return commitNode;
 	}
 
 	public Collection<RelationNode> getNodes ()

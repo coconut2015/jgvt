@@ -15,11 +15,11 @@
  */
 package org.yuanheng.jgvt;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.errors.IncorrectObjectTypeException;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
@@ -34,45 +34,23 @@ class RelationTreeFactory
 		m_gitRepo = gitRepo;
 	}
 
-	private RelationNode createNode (RevCommit commit) throws GitAPIException
+	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, MissingObjectException, IncorrectObjectTypeException, IOException
 	{
-		RelationNode node = new RelationNode (commit);
-		ObjectId commitId = commit.getId ();
-
-		node.setTag (m_gitRepo.getTagMap ().get (commitId));
-		node.setBranch (m_gitRepo.getBranchMap ().get (commitId));
-
-		return node;
-	}
-
-	private RelationNode getNode (Map<ObjectId, RelationNode> nodeMap, RevCommit commit) throws GitAPIException
-	{
-		RelationNode node = nodeMap.get (commit.getId ());
-		if (node == null)
-		{
-			node = createNode (commit);
-			nodeMap.put (commit.getId (), node);
-		}
-		return node;
-	}
-
-	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException
-	{
-		HashMap<ObjectId, RelationNode> nodeMap = new HashMap<ObjectId, RelationNode> ();
+		RelationTree tree = new RelationTree ();
 
 		// First pass to construct the node graph to construct basic node
 		// relationship.
 		for (RevCommit commit : commitLogs)
 		{
-			RelationNode node = getNode (nodeMap, commit);
+			RelationNode node = tree.getCommitNode (commit, m_gitRepo);
 
 			for (RevCommit parentCommit : commit.getParents ())
 			{
-				RelationNode parentNode = getNode (nodeMap, parentCommit);
+				RelationNode parentNode = tree.getCommitNode (parentCommit, m_gitRepo);
 
 				node.addParent (parentNode);
 			}
 		}
-		return new RelationTree (nodeMap);
+		return tree;
 	}
 }

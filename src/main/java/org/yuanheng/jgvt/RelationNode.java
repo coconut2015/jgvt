@@ -50,7 +50,7 @@ class RelationNode implements Serializable
 
 	private RelationNode[] m_parents = s_emptyArray;
 
-	public RelationNode (RevCommit commit)
+	RelationNode (RevCommit commit)
 	{
 		m_commit = commit;
 
@@ -189,6 +189,7 @@ class RelationNode implements Serializable
 
 	public RelationType getRelation (RelationNode parent)
 	{
+		/*
 		if (parent.m_branchHead == null)
 		{
 			return RelationType.CHILD;
@@ -198,5 +199,11 @@ class RelationNode implements Serializable
 			return RelationType.MERGE;
 		}
 		return RelationType.CHILD;
+		*/
+		if (m_parents[0] == parent)
+		{
+			return RelationType.CHILD;
+		}
+		return RelationType.MERGE;
 	}
 }

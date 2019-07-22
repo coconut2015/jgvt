@@ -103,7 +103,7 @@ class GitRepo implements AutoCloseable
 
 	public Iterable<RevCommit> getCommitLogs (File file) throws NoHeadException, GitAPIException, IOException
 	{
-		LogCommand log = m_git.log ();
+		LogCommand log = m_git.log ().all ().setMaxCount (Integer.MAX_VALUE);
 		if (file != null)
 		{
 			log.addPath (Utils.getRelativePath (file, m_root).toString ());
