@@ -15,9 +15,7 @@
  */
 package org.yuanheng.jgvt;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
@@ -35,33 +33,65 @@ class RelationTree
 		m_nodeMap = new HashMap<ObjectId, RelationNode> ();
 	}
 
-	public RelationNode getCommitNode (ObjectId id)
+	public RelationNode getNode (ObjectId id)
 	{
 		return m_nodeMap.get (id);
 	}
 
-	public RelationNode getCommitNode (RevCommit commit)
+	public RelationNode getNode (RevCommit commit)
 	{
 		return m_nodeMap.get (commit.getId ());
 	}
 
-	public RelationNode getCommitNode (RevCommit commit, GitRepo gitRepo) throws GitAPIException
+	public RelationNode getNode (RevCommit commit, GitRepo gitRepo) throws GitAPIException
 	{
 		ObjectId commitId = commit.getId ();
-		RelationNode commitNode = m_nodeMap.get (commitId);
-		if (commitNode == null)
+		RelationNode node = m_nodeMap.get (commitId);
+		if (node == null)
 		{
-			commitNode = new RelationNode (commit);
-			m_nodeMap.put (commit.getId (), commitNode);
+			node = new RelationNode (commit);
+			m_nodeMap.put (commit.getId (), node);
 
-			commitNode.setTag (gitRepo.getTagMap ().get (commitId));
-			commitNode.setBranch (gitRepo.getBranchMap ().get (commitId));
+			node.setTag (gitRepo.getTagMap ().get (commitId));
+			node.setBranch (gitRepo.getBranchMap ().get (commitId));
 		}
-		return commitNode;
+		return node;
 	}
 
 	public Collection<RelationNode> getNodes ()
 	{
 		return m_nodeMap.values ();
+	}
+
+	public void resetLayout ()
+	{
+		for (RelationNode node : m_nodeMap.values ())
+		{
+			node.getLayoutInfo ().resetVisit ();
+		}
+	}
+
+	public List<RelationNode> getRoots ()
+	{
+		ArrayList<RelationNode> rootNodes = new ArrayList<RelationNode> ();
+
+		for (RelationNode node : m_nodeMap.values ())
+		{
+			if (node.getParents ().length == 0)
+				rootNodes.add (node);
+		}
+		return rootNodes;
+	}
+
+	public List<RelationNode> getLeaves ()
+	{
+		ArrayList<RelationNode> rootNodes = new ArrayList<RelationNode> ();
+
+		for (RelationNode node : m_nodeMap.values ())
+		{
+			if (node.getChildren ().length == 0)
+				rootNodes.add (node);
+		}
+		return rootNodes;
 	}
 }

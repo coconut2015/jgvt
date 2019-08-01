@@ -25,7 +25,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 /**
  * @author	Heng Yuan
  */
-class RelationNode implements Serializable
+class RelationNode implements Serializable, Comparable<RelationNode>
 {
 	private final static RelationNode[] s_emptyArray = new RelationNode[0];
 
@@ -49,6 +49,10 @@ class RelationNode implements Serializable
 	private String m_toolTip;
 
 	private RelationNode[] m_parents = s_emptyArray;
+	private RelationNode[] m_children = s_emptyArray;
+
+	private final LayoutInfo m_layoutInfo = new LayoutInfo ();
+	private RelationBranch m_relationBranch;
 
 	RelationNode (RevCommit commit)
 	{
@@ -180,11 +184,37 @@ class RelationNode implements Serializable
 	public void addParent (RelationNode parent)
 	{
 		m_parents = Utils.arrayAdd (RelationNode.class, m_parents, parent);
+		parent.addChild (this);
+	}
+
+	private void addChild (RelationNode child)
+	{
+		m_children = Utils.arrayAdd (RelationNode.class, m_children, child);
 	}
 
 	public RelationNode[] getParents ()
 	{
 		return m_parents;
+	}
+
+	public RelationNode[] getChildren ()
+	{
+		return m_children;
+	}
+
+	public void setNthChild (RelationNode child, int n)
+	{
+		if (m_children[n] == child)
+			return;
+		int i;
+		for (i = 0; i < m_children.length; ++i)
+		{
+			if (m_children[i] == child)
+				break;
+		}
+		RelationNode o = m_children[n];
+		m_children[n] = child;
+		m_children[i] = o;
 	}
 
 	public RelationType getRelation (RelationNode parent)
@@ -205,5 +235,32 @@ class RelationNode implements Serializable
 			return RelationType.CHILD;
 		}
 		return RelationType.MERGE;
+	}
+
+	public LayoutInfo getLayoutInfo ()
+	{
+		return m_layoutInfo;
+	}
+
+	public RelationBranch getRelationBranch ()
+	{
+		return m_relationBranch;
+	}
+
+	public void setRelationBranch (RelationBranch relationBranch)
+	{
+		m_relationBranch = relationBranch;
+	}
+
+	@Override
+	public int compareTo (RelationNode o)
+	{
+		return m_commit.compareTo (o.getCommit ());
+	}
+
+	@Override
+	public int hashCode ()
+	{
+		return m_commit.hashCode ();
 	}
 }

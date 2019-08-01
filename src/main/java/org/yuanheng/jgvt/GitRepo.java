@@ -142,6 +142,18 @@ class GitRepo implements AutoCloseable
 		return map;
 	}
 
+	public Map<String, ObjectId> getReverseBranchMap () throws GitAPIException
+	{
+		Map<ObjectId, Ref> branchMap = getBranchMap ();
+		Map<String, ObjectId> reverseMap = new HashMap<String, ObjectId> ();
+
+		for (Ref branch : branchMap.values ())
+		{
+			reverseMap.put (branch.getName (), branch.getObjectId ());
+		}
+		return reverseMap;
+	}
+
 	@Override
 	public void close () throws Exception
 	{

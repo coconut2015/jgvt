@@ -15,21 +15,11 @@
  */
 package org.yuanheng.jgvt;
 
-import org.junit.Test;
-
 /**
- * Dummy test class to make launching the gui easier.
- *
  * @author	Heng Yuan
  */
-public class TestMain
+public class DotFileOptions
 {
-	@Test
-	public void testMain () throws Exception
-	{
-		Main.main(new String[] {"../sqlite-jdbc/"});
-//		Main.main(new String[] {"../sqlite-jdbc/README.md"});
-//		Main.main(new String[] {"../bsonspec.org/"});
-//		Main.main(new String[] {"../bsonspec.org/implementations.html"});
-	}
+	public int abbrevLength = 6;
+	public boolean groupNodes = true;
 }

@@ -53,7 +53,7 @@ class Controller
 			m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
 
 		mxGraph graph = m_gui.getGraph ();
-		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo);
+		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo, RelationTreeFactory.getDefaultImportantBranchNames ());
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		RelationTree relTree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
 		factory.updateGraphModel (relTree);
