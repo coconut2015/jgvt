@@ -22,11 +22,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.*;
 
+import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
@@ -109,6 +111,7 @@ public class GUI
 		GRAPH_STYLE.setDefaultVertexStyle (vertexStyle);
 	}
 
+	private final Controller m_controller;
 	private final JFrame m_frame;
 	private JMenuBar m_menuBar;
 	private JToolBar m_toolBar;
@@ -116,6 +119,8 @@ public class GUI
 	private GVTGraph m_graph;
 	private mxGraphComponent m_graphComp;
 	private mxGraphLayout m_graphLayout;
+	private JFileChooser m_fileChooser;
+	private DotFileChooser m_dotFileChooser;
 
 	private ActionListener m_exitListener = new ActionListener ()
 	{
@@ -126,11 +131,34 @@ public class GUI
 		}
 	};
 
+	private ActionListener m_exportDotListener = new ActionListener ()
+	{
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			JFileChooser chooser = getExportDotFileChooser ();
+			if (chooser.showSaveDialog (m_frame) == JFileChooser.APPROVE_OPTION)
+			{
+				File file = chooser.getSelectedFile ();
+				m_dotFileChooser.updateOptions ();
+				try
+				{
+					m_controller.exportDot (file);
+				}
+				catch (Exception ex)
+				{
+					ex.printStackTrace ();
+				}
+			}
+		}
+	};
+
 	public GUI (Controller controller)
 	{
+		m_controller = controller;
 		try
 		{
-			UIManager.setLookAndFeel (UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel(new Plastic3DLookAndFeel());
 		}
 		catch (Exception ex)
 		{
@@ -168,6 +196,9 @@ public class GUI
 		JMenuItem item;
 
 		menu = new JMenu ("File");
+		item = new JMenuItem ("Export Dot Graph");
+		item.addActionListener (m_exportDotListener);
+		menu.add (item);
 		menu.addSeparator ();
 		item = new JMenuItem ("Exit");
 		item.setMnemonic ('x');
@@ -290,5 +321,25 @@ public class GUI
 	public void updateGraphLayout ()
 	{
 		m_graphLayout.execute(m_graph.getDefaultParent());
+	}
+
+	private JFileChooser getFileChooser ()
+	{
+		if (m_fileChooser == null)
+		{
+			m_fileChooser = new JFileChooser (m_controller.getPrefs ().getDefaultDirectory ());
+		}
+		return m_fileChooser;
+	}
+
+	private JFileChooser getExportDotFileChooser ()
+	{
+		if (m_dotFileChooser == null)
+		{
+			m_dotFileChooser = new DotFileChooser (m_controller.getDotFileOptions ());
+		}
+		JFileChooser chooser = getFileChooser ();
+		m_dotFileChooser.updateJFileChooser (chooser);
+		return chooser;
 	}
 }

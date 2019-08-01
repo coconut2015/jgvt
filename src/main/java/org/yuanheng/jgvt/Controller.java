@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.mxgraph.view.mxGraph;
 
@@ -30,12 +31,17 @@ class Controller
 	private GitRepo m_gitRepo;
 	private File m_dir;
 	private File m_file;
+	private RelationTree m_tree;
+	private final Pref m_prefs;
+
+	private DotFileOptions m_dotFileOptions;
 
 	public Controller (GitRepo gitRepo, File dir, File file)
 	{
 		m_gitRepo = gitRepo;
 		m_dir = dir;
 		m_file = file;
+		m_prefs = new Pref ();
 	}
 
 	public void setGUI (GUI gui)
@@ -55,8 +61,8 @@ class Controller
 		mxGraph graph = m_gui.getGraph ();
 		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo, RelationTreeFactory.getDefaultImportantBranchNames ());
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
-		RelationTree relTree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
-		factory.updateGraphModel (relTree);
+		m_tree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
+		factory.updateGraphModel (m_tree);
 		m_gui.updateGraphLayout ();
  	}
 
@@ -68,5 +74,24 @@ class Controller
 	public void setCurrentDirectory (File dir)
 	{
 		m_dir = dir;
+	}
+
+	public void exportDot (File file) throws IOException
+	{
+		new DotConverter ().save (file, "jgvt", getDotFileOptions (), m_tree);
+	}
+
+	public Pref getPrefs ()
+	{
+		return m_prefs;
+	}
+
+	public DotFileOptions getDotFileOptions ()
+	{
+		if (m_dotFileOptions == null)
+		{
+			m_dotFileOptions = new DotFileOptions ();
+		}
+		return m_dotFileOptions;
 	}
 }
