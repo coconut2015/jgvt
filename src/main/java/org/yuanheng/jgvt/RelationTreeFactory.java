@@ -15,7 +15,6 @@
  */
 package org.yuanheng.jgvt;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -206,10 +205,8 @@ class RelationTreeFactory
 
 	private void layoutBranches (RelationTree tree, List<RelationNode> importantBranches) throws GitAPIException, IOException
 	{
-		new DotConverter ().save (new File ("test.dot"), "MyGraph", new DotFileOptions (), tree);
 		if (importantBranches.size () > 0)
 		{
-			RelationNode startNode = importantBranches.get (0);
 		}
 		else
 		{
