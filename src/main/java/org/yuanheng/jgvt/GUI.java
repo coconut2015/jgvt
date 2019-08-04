@@ -31,7 +31,6 @@ import javax.swing.*;
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.layout.mxGraphLayout;
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
@@ -232,11 +231,12 @@ public class GUI
 
 	private void createGraphLayout ()
 	{
-		mxHierarchicalLayout layout = new mxHierarchicalLayout (m_graph);
-		m_graphLayout = layout;
+//		mxHierarchicalLayout layout = new mxHierarchicalLayout (m_graph);
+//		layout.setInterRankCellSpacing (INTERRANKCELLSPACING);
+//		layout.setIntraCellSpacing (INTRACELLSPACING);
+//		m_graphLayout = layout
 
-		layout.setInterRankCellSpacing (INTERRANKCELLSPACING);
-		layout.setIntraCellSpacing (INTRACELLSPACING);
+		m_graphLayout = new GVTGraphLayout (m_graph);
 	}
 
 	public void setVisible (boolean visible)
