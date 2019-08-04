@@ -39,28 +39,23 @@ public class GVTVertexShape extends mxRectangleShape
 		Map<String, Object> style = state.getStyle();
 		mxCell cell = (mxCell) state.getCell ();
 
+		if (cell.isVertex () && tree != null)
+		{
+			style.put (mxConstants.STYLE_FONTSTYLE, style.get (GUI.STYLE_REGULAR_FONTSTYLE));
+			style.put (mxConstants.STYLE_FILLCOLOR, style.get (GUI.STYLE_REGULAR_FILLCOLOR));
+		}
+		super.paintShape (canvas, state);
+
 		RelationNode node = null;
 		if (cell.isVertex () && tree != null)
 		{
 			GVTVertex vertex = (GVTVertex)cell.getValue ();
 			node = tree.getNode (vertex.getId ());
-			if (node.hasBranch ())
-			{
-				style.put (mxConstants.STYLE_FONTSTYLE, style.get (GUI.STYLE_BRANCH_FONTSTYLE));
-				style.put (mxConstants.STYLE_FILLCOLOR, style.get (GUI.STYLE_BRANCH_FILLCOLOR));
-			}
-			else
-			{
-				style.put (mxConstants.STYLE_FONTSTYLE, style.get (GUI.STYLE_REGULAR_FONTSTYLE));
-				style.put (mxConstants.STYLE_FILLCOLOR, style.get (GUI.STYLE_REGULAR_FILLCOLOR));
-			}
 		}
-		super.paintShape (canvas, state);
-
 		if (node == null)
 			return;
-		String tag = node.getTagName ();
-		if (tag != null)
+		String annot = node.getAnnotation ();
+		if (annot != null)
 		{
 			Graphics2D g = canvas.getGraphics ();
 
@@ -70,7 +65,7 @@ public class GVTVertexShape extends mxRectangleShape
 			g.setFont (mxUtils.getFont (state.getStyle ()));
 			g.setColor (Color.decode ((String) state.getStyle ().get (GUI.STYLE_TAG_FONTCOLOR)));
 
-			drawStringLeft (g, rect, tag);
+			drawStringLeft (g, rect, annot);
 		}
 	}
 

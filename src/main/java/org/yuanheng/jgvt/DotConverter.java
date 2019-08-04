@@ -93,15 +93,15 @@ class DotConverter
 
 		for (RelationNode node : nodes)
 		{
-			pw.println ("  " + getName (node) + " [ label = \"" + node.getCommit ().abbreviate (options.abbrevLength).name () + "\" ]");
+			String annot = node.getAnnotation ();
 
-			if (node.getBranch () != null)
+			if (annot == null)
 			{
-				pw.println ("  " + getName (node) + " [ label = \"" + node.getBranch ().getName () + "\" ]");
+				pw.println ("  " + getName (node) + " [ label = \"" + node.getCommit ().abbreviate (options.abbrevLength).name () + "\" ]");
 			}
-			else if (node.getTag () != null)
+			else
 			{
-				pw.println ("  " + getName (node) + " [ label = \"" + node.getTag ().getName () + "\" ]");
+				pw.println ("  " + getName (node) + " [ label = \"" + annot + "\" ]");
 			}
 		}
 		pw.println ("}");

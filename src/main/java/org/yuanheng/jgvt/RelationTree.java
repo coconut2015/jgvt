@@ -52,8 +52,8 @@ class RelationTree
 			node = new RelationNode (commit);
 			m_nodeMap.put (commit.getId (), node);
 
-			node.setTag (gitRepo.getTagMap ().get (commitId));
-			node.setBranch (gitRepo.getBranchMap ().get (commitId));
+			node.addTag (gitRepo.getTagMap ().get (commitId));
+			node.addBranch (gitRepo.getBranchMap ().get (commitId));
 		}
 		return node;
 	}

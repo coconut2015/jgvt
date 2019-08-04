@@ -29,6 +29,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 class RelationNode implements Serializable, Comparable<RelationNode>
 {
 	private final static RelationNode[] s_emptyArray = new RelationNode[0];
+	private final static Ref[] s_emptyRefArray = new Ref[0];
 
 	private static final long serialVersionUID = 3470339333207629584L;
 
@@ -43,10 +44,9 @@ class RelationNode implements Serializable, Comparable<RelationNode>
 
 	private final RevCommit m_commit;
 	private final String m_hash;
-	private Ref m_tag;
-	private String m_tagName;
-	private Ref m_branchHead;
-	private String m_branchName;
+	private Ref[] m_tags = s_emptyRefArray;
+	private Ref[] m_branches = s_emptyRefArray;
+	private String m_annotation;
 	private String m_toolTip;
 
 	private RelationNode[] m_parents = s_emptyArray;
@@ -72,58 +72,79 @@ class RelationNode implements Serializable, Comparable<RelationNode>
 	@Override
 	public String toString ()
 	{
-		if (m_branchHead != null)
-		{
-			if (m_branchName == null)
-			{
-				String name = m_branchHead.getName ();
-				if (name.startsWith (Constants.R_HEADS))
-					name = name.substring (Constants.R_HEADS.length ());
-				else if (name.startsWith (Constants.R_REMOTES))
-				{
-					name = name.substring (Constants.R_REMOTES.length ());
-				}
-				m_branchName = name;
-			}
-			return m_branchName;
-		}
 		return m_hash;
 	}
 
-	public Ref getTag ()
+	public void addTag (Ref tag)
 	{
-		return m_tag;
+		if (tag == null)
+			return;
+		m_tags = Utils.arrayAdd (Ref.class, m_tags, tag);
 	}
 
-	public String getTagName ()
+	public void addBranch (Ref branch)
 	{
-		if (m_tag == null)
-			return null;
-		if (m_tagName == null)
+		if (branch == null)
+			return;
+		m_branches = Utils.arrayAdd (Ref.class, m_branches, branch);
+	}
+
+	public String getAnnotation ()
+	{
+		if (m_annotation == null)
 		{
-			m_tagName = m_tag.getName ().substring (Constants.R_TAGS.length ());
+			if (m_tags.length == 0 && m_branches.length == 0)
+				return null;
+			StringBuilder builder = new StringBuilder ();
+			boolean first;
+			if (m_tags.length > 0)
+			{
+				builder.append ('(');
+				first = true;
+				for (Ref tag : m_tags)
+				{
+					if (first)
+					{
+						first = false;
+					}
+					else
+					{
+						builder.append (',');
+					}
+					builder.append (tag.getName ().substring (Constants.R_TAGS.length ()));
+				}
+				builder.append (')');
+			}
+			if (m_branches.length > 0)
+			{
+				builder.append ('[');
+				first = true;
+				for (Ref ref : m_branches)
+				{
+					if (first)
+					{
+						first = false;
+					}
+					else
+					{
+						builder.append (',');
+					}
+					String name = ref.getName ();
+					if (name.startsWith (Constants.R_HEADS))
+					{
+						name = name.substring (Constants.R_HEADS.length ());
+					}
+					else if (name.startsWith (Constants.R_REMOTES))
+					{
+						name = name.substring (name.lastIndexOf ('/') + 1) + "*";
+					}
+					builder.append (name);
+				}
+				builder.append (']');
+			}
+			m_annotation = builder.toString ();
 		}
-		return m_tagName;
-	}
-
-	public void setTag (Ref tag)
-	{
-		m_tag = tag;
-	}
-
-	boolean hasBranch ()
-	{
-		return m_branchHead != null;
-	}
-
-	public Ref getBranch ()
-	{
-		return m_branchHead;
-	}
-
-	public void setBranch (Ref branch)
-	{
-		m_branchHead = branch;
+		return m_annotation;
 	}
 
 	public String getTooltip (int flag)
