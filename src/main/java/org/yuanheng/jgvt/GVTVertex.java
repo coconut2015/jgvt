@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author	Heng Yuan
  */
-class GVTVertex implements Serializable, Comparable<GVTVertex>
+class GVTVertex implements Serializable
 {
 	private static final long serialVersionUID = 7784184285397252689L;
 
@@ -61,17 +61,5 @@ class GVTVertex implements Serializable, Comparable<GVTVertex>
 	public String getToolTip ()
 	{
 		return m_toolTip;
-	}
-
-	@Override
-	public int hashCode ()
-	{
-		return m_id;
-	}
-
-	@Override
-	public int compareTo (GVTVertex o)
-	{
-		return m_id - o.m_id;
 	}
 }

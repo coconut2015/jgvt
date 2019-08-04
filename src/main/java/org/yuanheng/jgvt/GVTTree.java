@@ -15,34 +15,33 @@
  */
 package org.yuanheng.jgvt;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
+ * Since there is a possibility that GVTVertex could be re-created.  We want
+ * to make sure GVTVertex instance itself is not used as a key anywhere.
+ * Instead, we use the id of GVTVertex as the key.
+ *
  * @author	Heng Yuan
  */
 class GVTTree
 {
-	private final HashMap<GVTVertex, RelationNode> m_nodeMap;
-	private final ArrayList<GVTVertex> m_vertices;
-	private final HashMap<RelationNode, GVTVertex> m_reverseMap;
+	private final HashMap<Integer, RelationNode> m_nodeMap;
+	private final HashMap<RelationNode, Integer> m_reverseMap;
 
 	public GVTTree ()
 	{
-		m_nodeMap = new HashMap<GVTVertex, RelationNode> ();
-		m_reverseMap = new HashMap<RelationNode, GVTVertex> ();
-		m_vertices = new ArrayList<GVTVertex> ();
+		m_nodeMap = new HashMap<Integer, RelationNode> ();
+		m_reverseMap = new HashMap<RelationNode, Integer> ();
 	}
 
 	public GVTVertex createVertex (RelationNode node, int toolTipFlag)
 	{
-		int id = m_vertices.size ();
+		int id = m_nodeMap.size ();
 		GVTVertex v = new GVTVertex (id);
 
-		m_nodeMap.put (v, node);
-		m_reverseMap.put (node, v);
-		m_vertices.add (v);
+		m_nodeMap.put (id, node);
+		m_reverseMap.put (node, id);
 
 		v.setName (node.toString ());
 		v.setToolTip (node.getTooltip (toolTipFlag));
@@ -52,26 +51,21 @@ class GVTTree
 
 	public RelationNode getNode (GVTVertex v)
 	{
-		return m_nodeMap.get (v);
+		return m_nodeMap.get (v.getId ());
 	}
 
-	public GVTVertex getVertex (int id)
+	public RelationNode getNode (int id)
 	{
-		return m_vertices.get (id);
+		return m_nodeMap.get (id);
 	}
 
-	public GVTVertex getVertex (RelationNode node)
+	public int getVertex (RelationNode node)
 	{
 		return m_reverseMap.get (node);
 	}
 
-	public List<GVTVertex> getVertices ()
-	{
-		return m_vertices;
-	}
-
 	public int size ()
 	{
-		return m_vertices.size ();
+		return m_nodeMap.size ();
 	}
 }
