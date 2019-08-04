@@ -17,25 +17,27 @@ package org.yuanheng.jgvt;
 
 import java.io.Serializable;
 
-import org.eclipse.jgit.lib.ObjectId;
-
 /**
+ * Drag-n-drop requires a lot of serialization.  We basically try to be as
+ * efficiently as possible to reduce the chance of getting exceptions of
+ * various causes.
+ *
  * @author	Heng Yuan
  */
-class GVTVertex implements Serializable
+class GVTVertex implements Serializable, Comparable<GVTVertex>
 {
 	private static final long serialVersionUID = 7784184285397252689L;
 
-	private final ObjectId m_id;
+	private final int m_id;
 	private String m_name;
 	private String m_toolTip;
 
-	public GVTVertex (ObjectId id)
+	public GVTVertex (int id)
 	{
 		m_id = id;
 	}
 
-	public ObjectId getId ()
+	public int getId ()
 	{
 		return m_id;
 	}
@@ -59,5 +61,17 @@ class GVTVertex implements Serializable
 	public String getToolTip ()
 	{
 		return m_toolTip;
+	}
+
+	@Override
+	public int hashCode ()
+	{
+		return m_id;
+	}
+
+	@Override
+	public int compareTo (GVTVertex o)
+	{
+		return m_id - o.m_id;
 	}
 }

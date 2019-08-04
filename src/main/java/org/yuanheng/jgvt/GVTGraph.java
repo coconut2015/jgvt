@@ -26,7 +26,7 @@ class GVTGraph extends mxGraph
 	public final static int DEFAULT_TOOLTIP_FLAG = RelationNode.TOOLTIP_AUTHOR | RelationNode.TOOLTIP_AUTHOR_TS | RelationNode.TOOLTIP_COMMITTER | RelationNode.TOOLTIP_COMMITTER_TS;
 
 	private int m_toolTipFlag;
-	private RelationTree m_tree;
+	private GVTTree m_tree;
 
 	public GVTGraph ()
 	{
@@ -50,12 +50,12 @@ class GVTGraph extends mxGraph
 		setModel (new mxGraphModel ());
 	}
 
-	public RelationTree getTree ()
+	public GVTTree getTree ()
 	{
 		return m_tree;
 	}
 
-	public void setTree (RelationTree tree)
+	public void setTree (GVTTree tree)
 	{
 		m_tree = tree;
 	}

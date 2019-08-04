@@ -47,7 +47,7 @@ class GVTGraphLayout extends mxGraphLayout
 	{
 		super.execute (parent);
 
-		RelationTree tree = ((GVTGraph)graph).getTree ();
+		GVTTree tree = ((GVTGraph)graph).getTree ();
 		if (tree == null)
 			return;
 
@@ -61,7 +61,7 @@ class GVTGraphLayout extends mxGraphLayout
 			if (model.isVertex (cell))
 			{
 				GVTVertex v = (GVTVertex)model.getValue (cell);
-				RelationNode node = tree.getNode (v.getId ());
+				RelationNode node = tree.getNode (v);
 				LayoutInfo layoutInfo = node.getLayoutInfo ();
 				double x = layoutInfo.getX () * BRANCH_SPACING + START_X;
 				double y = layoutInfo.getY () * CHILD_SPACING + START_Y;

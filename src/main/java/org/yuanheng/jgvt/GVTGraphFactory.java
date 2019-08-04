@@ -18,12 +18,10 @@ package org.yuanheng.jgvt;
 import java.util.HashMap;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.util.mxRectangle;
-import com.mxgraph.view.mxGraph;
 
 /**
  * @author Heng Yuan
@@ -34,9 +32,9 @@ class GVTGraphFactory
 	public final static String BRANCH_STYLE = "branchEdge";
 	public final static String MERGE_STYLE = "mergeEdge";
 
-	private final mxGraph m_graph;
+	private final GVTGraph m_graph;
 
-	public GVTGraphFactory (mxGraph graph)
+	public GVTGraphFactory (GVTGraph graph)
 	{
 		m_graph = graph;
 	}
@@ -49,36 +47,38 @@ class GVTGraphFactory
 		m_graph.cellsResized (new Object[]{ vertex }, new mxRectangle[]{ g });
 	}
 
-	private Object getVertex (Object parent, HashMap<ObjectId, Object> vertexMap, RelationNode node, int toolTipFlag) throws GitAPIException
-	{
-		ObjectId id = node.getCommit ().getId ();
-		Object vertex = vertexMap.get (id);
-		if (vertex == null)
-		{
-			GVTVertex v = new GVTVertex (id);
-			v.setName (node.toString ());
-			v.setToolTip (node.getTooltip (toolTipFlag));
-			vertex = m_graph.insertVertex (parent, null, v, 0, 0, 30, 30);
-			vertexMap.put (id, vertex);
-		}
-		return vertex;
-	}
-
 	public void updateGraphModel (RelationTree relTree, int toolTipFlag) throws GitAPIException
 	{
+		GVTTree tree = new GVTTree ();
+		m_graph.setTree (tree);
+
 		mxGraphModel model = (mxGraphModel) m_graph.getModel ();
 		model.beginUpdate ();
 		model.clear ();
 
 		Object parent = m_graph.getDefaultParent ();
-		HashMap<ObjectId, Object> vertexMap = new HashMap<ObjectId, Object> ();
+		HashMap<GVTVertex, Object> vMap = new HashMap<GVTVertex, Object> ();
 
+		// 1st create all the vertices
 		for (RelationNode node : relTree.getNodes ())
 		{
-			Object vertex = getVertex (parent, vertexMap, node, toolTipFlag);
+			GVTVertex v = tree.createVertex (node, toolTipFlag);
+
+			Object vertex = m_graph.insertVertex (parent, null, v, 0, 0, 30, 30);
+			vMap.put (v, vertex);
+		}
+
+		// 2nd add edges
+		for (GVTVertex v : tree.getVertices ())
+		{
+			RelationNode node = tree.getNode (v);
+			Object vertex = vMap.get (v);
+
 			for (RelationNode parentNode : node.getParents ())
 			{
-				Object parentVertex = getVertex (parent, vertexMap, parentNode, toolTipFlag);
+				GVTVertex parentV = tree.getVertex (parentNode);
+				Object parentVertex = vMap.get (parentV);
+
 				String edgeStyle = COMMIT_STYLE;
 				switch (node.getRelation (parentNode))
 				{
@@ -100,7 +100,7 @@ class GVTGraphFactory
 
 		model.beginUpdate ();
 
-		for (Object vertex : vertexMap.values ())
+		for (Object vertex : vMap.values ())
 		{
 			m_graph.updateCellSize (vertex);
 			resize(model, vertex);

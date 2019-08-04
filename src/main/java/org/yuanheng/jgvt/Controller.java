@@ -58,9 +58,9 @@ class Controller
 
 		GVTGraph graph = m_gui.getGraph ();
 		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo, RelationTreeFactory.getDefaultImportantBranchNames ());
-		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		m_tree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
-		graph.setTree (m_tree);
+
+		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
 		m_gui.updateGraphLayout ();
  	}

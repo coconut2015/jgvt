@@ -35,7 +35,7 @@ public class GVTVertexShape extends mxRectangleShape
 {
 	public void paintShape(mxGraphics2DCanvas canvas, mxCellState state)
 	{
-		RelationTree tree = ((GVTGraph)state.getView ().getGraph ()).getTree ();
+		GVTTree tree = ((GVTGraph)state.getView ().getGraph ()).getTree ();
 		Map<String, Object> style = state.getStyle();
 		mxCell cell = (mxCell) state.getCell ();
 
@@ -49,8 +49,8 @@ public class GVTVertexShape extends mxRectangleShape
 		RelationNode node = null;
 		if (cell.isVertex () && tree != null)
 		{
-			GVTVertex vertex = (GVTVertex)cell.getValue ();
-			node = tree.getNode (vertex.getId ());
+			GVTVertex v = (GVTVertex)cell.getValue ();
+			node = tree.getNode (v);
 		}
 		if (node == null)
 			return;
