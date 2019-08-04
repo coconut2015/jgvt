@@ -135,6 +135,7 @@ class RelationTreeFactory
 					child.setRelation (node, RelationType.MERGE);
 					continue;
 				}
+				childLayoutInfo.visit ();
 				if (child.getParents ()[0] == node)
 				{
 					child.setRelation (node, RelationType.BRANCH);
