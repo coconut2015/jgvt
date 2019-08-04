@@ -23,8 +23,8 @@ import com.mxgraph.model.mxIGraphModel;
  */
 class GVTGraphLayout extends mxGraphLayout
 {
-	public static double START_X = 10.0;
-	public static double START_Y = 10.0;
+	public static double START_X = 100.0;
+	public static double START_Y = 50.0;
 	/**
 	 * The distance to the immediate child in the same branch.
 	 */
@@ -32,7 +32,7 @@ class GVTGraphLayout extends mxGraphLayout
 	/**
 	 * The distance between two adjacent branches.
 	 */
-	public static double BRANCH_SPACING = 80.0;
+	public static double BRANCH_SPACING = 140.0;
 
 	/**
 	 * @param graph

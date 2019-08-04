@@ -144,11 +144,13 @@ class RelationTreeFactory
 					child.setRelation (node, RelationType.MERGE);
 				}
 				LayoutState childState = new LayoutState (childBranch);
-				int checkX = x + index;
-				while (matrix.isTaken (checkX, y))
+				int checkX = x + 1;
+				int y2 = y + childState.size () - 1;
+				while (matrix.isTaken (checkX, y, y2))
 					++checkX;
 				childState.setX (checkX);
 				childState.setY (y);
+				matrix.take (checkX, y, y2);
 				states.add (childState);
 			}
 		}

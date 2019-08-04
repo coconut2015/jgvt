@@ -81,7 +81,7 @@ public class GUI
 		Map<String, Object> mergeEdge = new HashMap<String, Object>();
 		mergeEdge.put(mxConstants.STYLE_ROUNDED, true);
 		mergeEdge.put(mxConstants.STYLE_ORTHOGONAL, false);
-		mergeEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
+		mergeEdge.put(mxConstants.STYLE_EDGE, mxConstants.ELBOW_VERTICAL);
 		mergeEdge.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		mergeEdge.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
 		mergeEdge.put(mxConstants.STYLE_STROKECOLOR, "#ff0000");
