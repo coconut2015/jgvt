@@ -215,9 +215,23 @@ class RelationNode implements Serializable, Comparable<RelationNode>
 			if (m_children[i] == child)
 				break;
 		}
-		RelationNode o = m_children[n];
-		m_children[n] = child;
-		m_children[i] = o;
+
+		if (n < i)
+		{
+			for (int j = i; j > n; --j)
+			{
+				m_children[j] = m_children[j - 1];
+			}
+			m_children[n] = child;
+		}
+		else if (n > i)
+		{
+			for (int j = i; j < n; ++j)
+			{
+				m_children[j] = m_children[j + 1];
+			}
+			m_children[n] = child;
+		}
 	}
 
 	public void setRelation (RelationNode parent, RelationType type)

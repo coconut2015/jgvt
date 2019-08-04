@@ -81,6 +81,16 @@ class RelationTree
 				node.addParent (parentNode);
 			}
 		}
+
+		// sort the children
+		for (RelationNode node : getNodes ())
+		{
+			RelationNode[] children = node.getChildren ();
+			if (children.length > 1)
+			{
+				Arrays.sort (children, s_sortByDate);
+			}
+		}
 	}
 
 	public RelationNode getNode (ObjectId id)
