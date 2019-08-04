@@ -65,15 +65,15 @@ public class GUI
 		Map<String, Object> commitEdge = new HashMap<String, Object>();
 		commitEdge.put(mxConstants.STYLE_ROUNDED, false);
 		commitEdge.put(mxConstants.STYLE_ORTHOGONAL, false);
-		commitEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		commitEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_TOPTOBOTTOM);
 		commitEdge.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		commitEdge.put(mxConstants.STYLE_ENDARROW, mxConstants.NONE);
 		commitEdge.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 
 		Map<String, Object> branchEdge = new HashMap<String, Object>();
-		branchEdge.put(mxConstants.STYLE_ROUNDED, true);
+		branchEdge.put(mxConstants.STYLE_ROUNDED, false);
 		branchEdge.put(mxConstants.STYLE_ORTHOGONAL, false);
-		branchEdge.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ELBOW);
+		branchEdge.put(mxConstants.STYLE_EDGE, mxConstants.ELBOW_VERTICAL);
 		branchEdge.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		branchEdge.put(mxConstants.STYLE_ENDARROW, mxConstants.NONE);
 		branchEdge.put(mxConstants.STYLE_STROKECOLOR, "#007f00");
