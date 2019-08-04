@@ -18,8 +18,6 @@ package org.yuanheng.jgvt;
 import java.io.File;
 import java.io.IOException;
 
-import com.mxgraph.view.mxGraph;
-
 /**
  * This class handle all commands.
  *
@@ -58,11 +56,12 @@ class Controller
 		else
 			m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
 
-		mxGraph graph = m_gui.getGraph ();
+		GVTGraph graph = m_gui.getGraph ();
 		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo, RelationTreeFactory.getDefaultImportantBranchNames ());
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		m_tree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
-		factory.updateGraphModel (m_tree);
+		graph.setTree (m_tree);
+		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
 		m_gui.updateGraphLayout ();
  	}
 

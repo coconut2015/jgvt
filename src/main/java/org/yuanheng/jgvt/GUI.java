@@ -33,7 +33,6 @@ import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
-import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxPerimeter;
 import com.mxgraph.view.mxStylesheet;
 
@@ -47,8 +46,6 @@ public class GUI
 {
 	private final static String TITLE = "Java Git Version Tree";
 	private static int TOOLTIP_DELAY = 100;
-	private static int INTERRANKCELLSPACING = 20;
-	private static int INTRACELLSPACING = 300;
 
 	public static String STYLE_TAG_FONTCOLOR = "tagFontColor";
 	public static String STYLE_BRANCH_FONTSTYLE = "branchFontStyle";
@@ -313,7 +310,7 @@ public class GUI
 		m_statusBar.setFile (file);
 	}
 
-	public mxGraph getGraph ()
+	public GVTGraph getGraph ()
 	{
 		return m_graph;
 	}

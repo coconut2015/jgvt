@@ -17,7 +17,6 @@ package org.yuanheng.jgvt;
 
 import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.model.mxIGraphModel;
-import com.mxgraph.view.mxGraph;
 
 /**
  * @author	Heng Yuan
@@ -38,7 +37,7 @@ class GVTGraphLayout extends mxGraphLayout
 	/**
 	 * @param graph
 	 */
-	public GVTGraphLayout (mxGraph graph)
+	public GVTGraphLayout (GVTGraph graph)
 	{
 		super (graph);
 	}
@@ -47,6 +46,10 @@ class GVTGraphLayout extends mxGraphLayout
 	public void execute (Object parent)
 	{
 		super.execute (parent);
+
+		RelationTree tree = ((GVTGraph)graph).getTree ();
+		if (tree == null)
+			return;
 
 		mxIGraphModel model = graph.getModel ();
 		model.beginUpdate();
@@ -57,7 +60,8 @@ class GVTGraphLayout extends mxGraphLayout
 			Object cell = model.getChildAt(parent, i);
 			if (model.isVertex (cell))
 			{
-				RelationNode node = (RelationNode)model.getValue (cell);
+				GVTVertex v = (GVTVertex)model.getValue (cell);
+				RelationNode node = tree.getNode (v.getId ());
 				LayoutInfo layoutInfo = node.getLayoutInfo ();
 				double x = layoutInfo.getX () * BRANCH_SPACING + START_X;
 				double y = layoutInfo.getY () * CHILD_SPACING + START_Y;

@@ -26,6 +26,7 @@ class GVTGraph extends mxGraph
 	public final static int DEFAULT_TOOLTIP_FLAG = RelationNode.TOOLTIP_AUTHOR | RelationNode.TOOLTIP_AUTHOR_TS | RelationNode.TOOLTIP_COMMITTER | RelationNode.TOOLTIP_COMMITTER_TS;
 
 	private int m_toolTipFlag;
+	private RelationTree m_tree;
 
 	public GVTGraph ()
 	{
@@ -49,6 +50,16 @@ class GVTGraph extends mxGraph
 		setModel (new mxGraphModel ());
 	}
 
+	public RelationTree getTree ()
+	{
+		return m_tree;
+	}
+
+	public void setTree (RelationTree tree)
+	{
+		m_tree = tree;
+	}
+
 	/**
 	 * Overriding the method to disable edge selection.
 	 *
@@ -70,14 +81,17 @@ class GVTGraph extends mxGraph
 	@Override
 	public String getToolTipForCell (Object cell)
 	{
-		if (this.model.isEdge (cell))
+		if (m_tree == null ||
+			this.model.isEdge (cell))
+		{
+			return null;
+		}
+
+		GVTVertex v = (GVTVertex) this.model.getValue (cell);
+		if (v == null)
 			return null;
 
-		RelationNode node = (RelationNode) this.model.getValue (cell);
-		if (node == null)
-			return null;
-
-		return node.getTooltip (m_toolTipFlag);
+		return v.getToolTip ();
 	}
 
 	public int getToolTipFlag ()
