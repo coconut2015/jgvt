@@ -29,7 +29,7 @@ class RelationBranch implements Comparable<RelationBranch>
 
 	private final int m_id;
 	private final Set<RelationNode> m_nodes = new HashSet<RelationNode> ();
-	private LayoutInfo m_layoutInfo = new LayoutInfo ();
+	private final LayoutInfo m_layoutInfo = new LayoutInfo ();
 	private ArrayList<RelationNode> m_orderedList;
 
 	public RelationBranch (RelationNode node)
@@ -37,9 +37,9 @@ class RelationBranch implements Comparable<RelationBranch>
 		m_id = s_id++;
 		m_nodes.add (node);
 		LayoutInfo lastLayoutInfo = node.getLayoutInfo ();
-		m_layoutInfo.setWeight (lastLayoutInfo.getWeight ());
-		m_layoutInfo.setX (lastLayoutInfo.getX ());
-		m_layoutInfo.setY (lastLayoutInfo.getY ());
+		getLayoutInfo().setWeight (lastLayoutInfo.getWeight ());
+		getLayoutInfo().setX (lastLayoutInfo.getX ());
+		getLayoutInfo().setY (lastLayoutInfo.getY ());
 		node.setRelationBranch (this);
 	}
 
@@ -132,5 +132,10 @@ class RelationBranch implements Comparable<RelationBranch>
 	public int compareTo (RelationBranch o)
 	{
 		return m_id - o.m_id;
+	}
+
+	public LayoutInfo getLayoutInfo ()
+	{
+		return m_layoutInfo;
 	}
 }

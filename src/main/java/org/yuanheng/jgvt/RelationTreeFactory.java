@@ -16,7 +16,10 @@
 package org.yuanheng.jgvt;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -37,15 +40,6 @@ class RelationTreeFactory
 		branches.add (Pattern.compile ("(.*/)?gh-pages"));
 		return branches;
 	}
-
-	private final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
-	{
-		@Override
-		public int compare (RelationNode o1, RelationNode o2)
-		{
-			return o1.getCommit ().getCommitTime () - o2.getCommit ().getCommitTime ();
-		}
-	};
 
 	private final GitRepo m_gitRepo;
 	private final List<Pattern> m_importantBranchNames;
@@ -76,166 +70,104 @@ class RelationTreeFactory
 		return branches;
 	}
 
-	private void walkTree (RelationNode startNode)
-	{
-		ArrayList<RelationNode> stack = new ArrayList<RelationNode> ();
-
-		// initiate the tree with the main branch on the left.
-		RelationNode node = startNode;
-		RelationBranch mainBranch = new RelationBranch (startNode);
-		for (;;)
-		{
-			stack.add (node);
-			RelationNode[] parents = node.getParents ();
-			if (parents.length > 0)
-			{
-				if (parents[0].getRelationBranch () != null)
-				{
-					break;
-				}
-
-				// set this child as the parent's first
-				parents[0].setNthChild (node, 0);
-				node = parents[0];
-				mainBranch.add (node);
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		// now walk the tree
-		while (stack.size () > 0)
-		{
-			node = stack.remove (stack.size () - 1);
-			LayoutInfo layoutInfo = node.getLayoutInfo ();  
-			RelationBranch branch = node.getRelationBranch ();
-			if (layoutInfo.isVisited ())
-				continue;
-
-			if (branch == null)
-			{
-				branch = new RelationBranch (node);
-			}
-			layoutInfo.visit ();
-
-			// scan parent first
-			int index = 0;
-			for (RelationNode parent : node.getParents ())
-			{
-				++index;
-				RelationBranch parentBranch = parent.getRelationBranch ();
-				if (parentBranch != null)
-				{
-					continue;
-				}
-
-				if (index == 0)
-				{
-					branch.add (parent);
-				}
-				else
-				{
-					// parent is the END of a branch which merges
-					// to the node.
-					new RelationBranch (parent);
-				}
-				stack.add (parent);
-			}
-		}
-	}
-
-	private void scanBranches (RelationTree tree, List<RelationNode> importantBranches) throws GitAPIException
-	{
-		// See if we can trace from the main branch and collect branches.
-		if (importantBranches.size () > 0)
-		{
-			RelationNode startNode = importantBranches.get (0);
-			walkTree (startNode);
-		}
-
-		// Now find remaining nodes with multiple parents.
-		ArrayList<RelationNode> multiParentNodes = new ArrayList<RelationNode> ();
-		for (RelationNode node : tree.getNodes ())
-		{
-			if (node.getLayoutInfo ().isVisited ())
-				continue;
-			if (node.getParents ().length > 1)
-			{
-				multiParentNodes.add (node);
-			}
-		}
-		Collections.sort (multiParentNodes, s_sortByDate);
-		for (RelationNode node : multiParentNodes)
-		{
-			if (node.getLayoutInfo ().isVisited ())
-				continue;
-			walkTree (node);
-		}
-
-		// find any remaining branches starting from leaves.
-		List <RelationNode> leaves = tree.getLeaves ();
-		Collections.sort (leaves, s_sortByDate);
-		for (RelationNode node : leaves)
-		{
-			if (node.getLayoutInfo ().isVisited ())
-				continue;
-			walkTree (node);
-		}
-
-		// perform branch merging
-		for (RelationNode node : tree.getNodes ())
-		{
-			if (node.getParents ().length > 0)
-			{
-				RelationNode parent = node.getParents ()[0];
-				RelationBranch branch = node.getRelationBranch ();
-				if (parent.getRelationBranch () != branch &&
-					parent.getChildren ().length == 1)
-				{
-					// this node is the only child of the parent node,
-					// and the parent is in a different branch.
-					// merge the two branches.
-					branch.merge (parent.getRelationBranch ());
-				}
-			}
-		}
-	}
-
 	private void layoutBranches (RelationTree tree, List<RelationNode> importantBranches) throws GitAPIException, IOException
 	{
-		if (importantBranches.size () > 0)
-		{
-		}
-		else
+		LayoutMatrix matrix = new LayoutMatrix ();
+		LinkedList<LayoutState> states = new LinkedList<LayoutState> ();
+		RelationNode startNode = null;
+		if (importantBranches.size () == 0)
 		{
 			throw new RuntimeException ("Not yet implemented.");
 		}
-	}
+		else
+		{
+			startNode = importantBranches.get (0);
+			RelationBranch mainBranch = startNode.getRelationBranch ();
+			LayoutInfo layoutInfo = mainBranch.getLayoutInfo ();
+			layoutInfo.setX (0);
+			layoutInfo.setY (0);
 
+			LayoutState state = new LayoutState (mainBranch);
+			state.setX (0);
+			state.setY (0);
+			states.add (state);
+			mainBranch.getLayoutInfo ().visit ();
+			matrix.take (0, 0, state.size () - 1);
+		}
+
+		while (states.size () > 0)
+		{
+			LayoutState state = states.getLast ();
+
+			if (!state.hasNext ())
+			{
+				states.removeLast ();
+				continue;
+			}
+
+			RelationNode node = state.next ();
+			RelationBranch branch = node.getRelationBranch ();
+			LayoutInfo layoutInfo = node.getLayoutInfo ();
+
+			int x = state.getX ();
+			int y = state.getY ();
+
+			layoutInfo.setX (x);
+			layoutInfo.setY (y);
+			++y;
+			state.setY (y);
+
+			int index = 0;
+			for (RelationNode child : node.getChildren ())
+			{
+				if (index == 0 && branch.has (child))
+				{
+					++index;
+					continue;
+				}
+				++index;
+				RelationBranch childBranch = child.getRelationBranch ();
+				LayoutInfo childLayoutInfo = childBranch.getLayoutInfo ();
+				if (childLayoutInfo.isVisited ())
+				{
+					// we do not need to do anything other than having
+					// a merge-out arrow from parent to child.
+					child.setRelation (node, RelationType.MERGE);
+					continue;
+				}
+				if (child.getParents ()[0] == node)
+				{
+					child.setRelation (node, RelationType.BRANCH);
+				}
+				else
+				{
+					child.setRelation (node, RelationType.MERGE);
+				}
+				LayoutState childState = new LayoutState (childBranch);
+				int checkX = x + index;
+				while (matrix.isTaken (checkX, y))
+					++checkX;
+				childState.setX (checkX);
+				childState.setY (y);
+				states.add (childState);
+			}
+		}
+	}
 	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, MissingObjectException, IncorrectObjectTypeException, IOException
 	{
 		RelationTree tree = new RelationTree ();
 
 		// First pass to construct the node graph to construct basic node
 		// relationship.
-		for (RevCommit commit : commitLogs)
-		{
-			RelationNode node = tree.getNode (commit, m_gitRepo);
+		tree.addNodes (commitLogs, m_gitRepo);
 
-			for (RevCommit parentCommit : commit.getParents ())
-			{
-				RelationNode parentNode = tree.getNode (parentCommit, m_gitRepo);
-
-				node.addParent (parentNode);
-			}
-		}
-
+		// Second pass to reconstruct branches
 		Map<String, ObjectId> reverseBranchMap = m_gitRepo.getReverseBranchMap ();
 		List<RelationNode> importantBranches = getBranches (tree, m_importantBranchNames, reverseBranchMap);
 
-		scanBranches (tree, importantBranches);
+		tree.inferBranches (importantBranches);
+
+		// Third pass to layout the branches
 		layoutBranches (tree, importantBranches);
 
 		return tree;

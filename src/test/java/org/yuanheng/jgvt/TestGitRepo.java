@@ -24,8 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Dummy test class to make lauching the gui easier.
- *
  * @author Heng Yuan
  */
 public class TestGitRepo

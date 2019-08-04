@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -53,12 +54,14 @@ class RelationNode implements Serializable, Comparable<RelationNode>
 
 	private final LayoutInfo m_layoutInfo = new LayoutInfo ();
 	private RelationBranch m_relationBranch;
+	private final HashMap<RelationNode, RelationType> m_relationMap;
 
 	RelationNode (RevCommit commit)
 	{
 		m_commit = commit;
 
 		m_hash = commit.abbreviate (HASH_LENGTH).name ();
+		m_relationMap = new HashMap<RelationNode, RelationType> ();
 	}
 
 	public RevCommit getCommit ()
@@ -217,8 +220,18 @@ class RelationNode implements Serializable, Comparable<RelationNode>
 		m_children[i] = o;
 	}
 
+	public void setRelation (RelationNode parent, RelationType type)
+	{
+		m_relationMap.put (parent, type);
+	}
+
 	public RelationType getRelation (RelationNode parent)
 	{
+		RelationType type = m_relationMap.get (parent);
+		if (type != null)
+		{
+			return type;
+		}
 		/*
 		if (parent.m_branchHead == null)
 		{
