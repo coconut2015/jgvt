@@ -23,7 +23,7 @@ import com.mxgraph.view.mxGraph;
  */
 class GVTGraph extends mxGraph
 {
-	public final static int DEFAULT_TOOLTIP_FLAG = CommitUtils.TOOLTIP_AUTHOR | CommitUtils.TOOLTIP_AUTHOR_TS | CommitUtils.TOOLTIP_COMMITTER | CommitUtils.TOOLTIP_COMMITTER_TS;
+	public final static int DEFAULT_TOOLTIP_FLAG = CommitUtils.TOOLTIP_AUTHOR | CommitUtils.TOOLTIP_AUTHOR_TS | CommitUtils.TOOLTIP_COMMITTER | CommitUtils.TOOLTIP_COMMITTER_TS | CommitUtils.TOOLTIP_MESSAGE;
 
 	private int m_toolTipFlag;
 	private GVTTree m_tree;

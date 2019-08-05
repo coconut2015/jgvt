@@ -136,6 +136,7 @@ class PropertyPane extends JPanel
 	private void createHtmlPane ()
 	{
 		m_msgPane = new JTextPane ();
+		m_msgPane.setContentType ("text/html");
 		m_msgPane.setEditable (false);
 	}
 
@@ -159,7 +160,7 @@ class PropertyPane extends JPanel
 		TableModelEvent e = new TableModelEvent (m_propTable.getModel (), 0, NAME_ENTRIES.length, 1);
 		m_propTable.tableChanged (e);
 
-		m_msgPane.setText (commit.getFullMessage ());
+		m_msgPane.setText (CommitUtils.getComment (commit));
 		m_msgPane.setCaretPosition (0);
 	}
 }

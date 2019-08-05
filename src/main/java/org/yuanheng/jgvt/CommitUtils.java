@@ -31,6 +31,8 @@ class CommitUtils
 	public final static int TOOLTIP_COMMITTER = 8;
 	public final static int TOOLTIP_COMMITTER_EMAIL = 16;
 	public final static int TOOLTIP_COMMITTER_TS = 32;
+	public final static int TOOLTIP_MESSAGE = 64;
+	public final static int TOOLTIP_ALL = 0xFFFFFFFF;
 
 	public static String getToolTipString (RevCommit commit, int flag)
 	{
@@ -40,48 +42,57 @@ class CommitUtils
 		PersonIdent authorIdent = commit.getAuthorIdent();
 		if ((flag & TOOLTIP_AUTHOR) != 0)
 		{
-			builder.append ("Author: " + authorIdent.getName ());
+			if (!first)
+				builder.append ("<br/>");
 			first = false;
+			builder.append ("Author: " + authorIdent.getName ());
 		}
 		if ((flag & TOOLTIP_AUTHOR_EMAIL) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");
-			builder.append ("Email: " + authorIdent.getEmailAddress ());
 			first = false;
+			builder.append ("Email: " + authorIdent.getEmailAddress ());
 		}
 		if ((flag & TOOLTIP_AUTHOR_TS) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");
-			builder.append ("Time: " + authorIdent.getWhen());
 			first = false;
+			builder.append ("Time: " + authorIdent.getWhen());
 		}
 
 		PersonIdent committerIdent = commit.getCommitterIdent ();
-
 		if ((flag & TOOLTIP_AUTHOR) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");
-			builder.append ("Author: " + committerIdent.getName ());
 			first = false;
+			builder.append ("Author: " + committerIdent.getName ());
 		}
 		if ((flag & TOOLTIP_AUTHOR_EMAIL) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");
-			builder.append ("Email: " + committerIdent.getEmailAddress ());
 			first = false;
+			builder.append ("Email: " + committerIdent.getEmailAddress ());
 		}
 		if ((flag & TOOLTIP_AUTHOR_TS) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");
-			builder.append ("Time: " + committerIdent.getWhen());
 			first = false;
+			builder.append ("Time: " + committerIdent.getWhen());
 		}
 
+		if ((flag & TOOLTIP_MESSAGE) != 0)
+		{
+			if (!first)
+				builder.append ("<br/>");
+			first = false;
+			builder.append (commit.getFullMessage ());
+		}
+		builder.append ("</html>");
 		return builder.toString ();
 	}
 
@@ -135,5 +146,10 @@ class CommitUtils
 			builder.append (']');
 		}
 		return builder.toString ();
+	}
+
+	public static String getComment (RevCommit commit)
+	{
+		return getToolTipString (commit, TOOLTIP_ALL);
 	}
 }
