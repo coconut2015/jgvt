@@ -124,8 +124,14 @@ public class GUI
 	private JFileChooser m_fileChooser;
 	private DotFileChooser m_dotFileChooser;
 
-	private ActionListener m_exitListener = new ActionListener ()
+	private Action m_exitAction = new AbstractAction ("Exit")
 	{
+		private static final long serialVersionUID = 5063205298749002856L;
+
+		{
+			this.putValue (Action.MNEMONIC_KEY, (int)'x');
+		}
+
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
@@ -133,8 +139,10 @@ public class GUI
 		}
 	};
 
-	private ActionListener m_exportDotListener = new ActionListener ()
+	private Action m_exportDotAction = new AbstractAction ("Export Dot Graph")
 	{
+		private static final long serialVersionUID = -2457064892479677548L;
+
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
@@ -152,6 +160,37 @@ public class GUI
 					ex.printStackTrace ();
 				}
 			}
+		}
+	};
+
+	private Action m_searchAction = new AbstractAction ("Search")
+	{
+		private static final long serialVersionUID = 5495164556562597316L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'s');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+		}
+	};
+
+	private Action m_aboutAction = new AbstractAction ("About")
+	{
+		private static final long serialVersionUID = 7089364664624793507L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'a');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			AboutDialog dialog = new AboutDialog (m_frame);
+			dialog.setLocationRelativeTo (m_frame);
+			dialog.setVisible (true);
 		}
 	};
 
@@ -186,6 +225,7 @@ public class GUI
 		m_frame.setTitle (TITLE);
 		m_frame.setSize (1024, 768);
 
+		setupActions ();
 		createMenuBar ();
 		m_frame.getRootPane ().setJMenuBar (m_menuBar);
 
@@ -223,24 +263,30 @@ public class GUI
 		controller.setGUI (this);
 	}
 
+	private void setupActions ()
+	{
+		Icons icons = new Icons ();
+
+		m_searchAction.putValue (Action.SMALL_ICON, icons.SEARCH);
+		m_aboutAction.putValue (Action.SMALL_ICON, icons.ABOUT);
+	}
+
 	private void createMenuBar ()
 	{
 		m_menuBar = new JMenuBar ();
 
 		JMenu menu;
-		JMenuItem item;
 
 		menu = new JMenu ("File");
-		item = new JMenuItem ("Export Dot Graph");
-		item.addActionListener (m_exportDotListener);
-		menu.add (item);
-		menu.addSeparator ();
-		item = new JMenuItem ("Exit");
-		item.setMnemonic ('x');
-		item.addActionListener (m_exitListener);
-		menu.add (item);
 		menu.setMnemonic ('F');
+		menu.add (new JMenuItem (m_exportDotAction));
+		menu.addSeparator ();
+		menu.add (new JMenuItem (m_exitAction));
+		m_menuBar.add (menu);
 
+		menu = new JMenu ("Help");
+		menu.setMnemonic ('H');
+		menu.add (new JMenuItem (m_aboutAction));
 		m_menuBar.add (menu);
 	}
 
@@ -248,6 +294,8 @@ public class GUI
 	{
 		m_toolBar = new JToolBar ();
 		m_toolBar.setFloatable (false);
+		m_toolBar.add (new ToolBarButton (m_searchAction));
+		m_toolBar.add (new ToolBarButton (m_aboutAction));
 	}
 
 	private void createGraphComp ()
