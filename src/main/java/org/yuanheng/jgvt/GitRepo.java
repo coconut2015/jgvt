@@ -18,6 +18,7 @@ package org.yuanheng.jgvt;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +27,16 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.util.io.NullOutputStream;
 
 /**
  * A wrapper around Git and GitRepo.
@@ -101,7 +105,7 @@ class GitRepo implements AutoCloseable
 		return new RevWalk (m_repo);
 	}
 
-	public Iterable<RevCommit> getCommitLogs (File file) throws NoHeadException, GitAPIException, IOException
+	public Iterable<RevCommit> getCommitLogs (File file) throws GitAPIException, IOException
 	{
 		LogCommand log = m_git.log ().all ().setMaxCount (Integer.MAX_VALUE);
 		if (file != null)
@@ -154,11 +158,31 @@ class GitRepo implements AutoCloseable
 		return reverseMap;
 	}
 
+	public List<DiffEntry> getChanges (RevCommit commit)
+	{
+		ArrayList<DiffEntry> changes = new ArrayList<DiffEntry> ();
+	    DiffFormatter diffFmt = new DiffFormatter(NullOutputStream.INSTANCE);
+	    diffFmt.setRepository(m_repo);
+        RevTree before = commit.getParentCount() > 0 ? commit.getParent(0).getTree() : null;
+        RevTree current = commit.getTree();
+
+        try
+        {
+	        for (DiffEntry diff: diffFmt.scan (before, current))
+	        {
+	            changes.add (diff);
+	        }
+        }
+        catch (Exception ex)
+        {
+        }
+        diffFmt.close ();
+		return changes;
+	}
+
 	@Override
 	public void close () throws Exception
 	{
 		m_repo.close ();
 	}
-
-
 }

@@ -18,10 +18,7 @@ package org.yuanheng.jgvt;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,12 +114,13 @@ public class GUI
 	private final JFrame m_frame;
 	private JMenuBar m_menuBar;
 	private JToolBar m_toolBar;
-	private JToolBar m_propBar;
 	private final StatusBar m_statusBar;
 	private GVTGraph m_graph;
 	private mxGraphComponent m_graphComp;
 	private mxGraphLayout m_graphLayout;
 	private PropertyPane m_propertyPane;
+	private JSplitPane m_splitPane;
+	private boolean m_splitPaneSetup;
 	private JFileChooser m_fileChooser;
 	private DotFileChooser m_dotFileChooser;
 
@@ -202,13 +200,23 @@ public class GUI
 		createGraphComp ();
 		createPropertyPane ();
 
-		JPanel buttomPane = new JPanel ();
-		buttomPane.setLayout (new BorderLayout ());
-		buttomPane.add (m_propBar, BorderLayout.NORTH);
-		buttomPane.add (m_statusBar, BorderLayout.SOUTH);
-		contentPane.add (buttomPane, BorderLayout.SOUTH);
+		contentPane.add (m_statusBar, BorderLayout.SOUTH);
 
-		contentPane.add (m_graphComp, BorderLayout.CENTER);
+		m_splitPane = new JSplitPane (JSplitPane.VERTICAL_SPLIT, m_graphComp, m_propertyPane);
+		m_splitPane.setResizeWeight (1);
+		contentPane.add (m_splitPane, BorderLayout.CENTER);
+		contentPane.addComponentListener (new ComponentAdapter ()
+		{
+			@Override
+			public void componentResized (ComponentEvent e)
+			{
+				if (!m_splitPaneSetup)
+				{
+					m_splitPaneSetup = true;
+					m_splitPane.setDividerLocation (0.7);
+				}
+			}
+		});
 
 		ToolTipManager.sharedInstance ().setInitialDelay (TOOLTIP_DELAY);
 
@@ -266,9 +274,7 @@ public class GUI
 
 	private void createPropertyPane ()
 	{
-		m_propBar = new JToolBar ();
-		m_propertyPane = new PropertyPane ();
-		m_propBar.add (m_propertyPane);
+		m_propertyPane = new PropertyPane (m_controller);
 	}
 
 	public void setVisible (boolean visible)

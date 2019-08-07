@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.errors.IncorrectObjectTypeException;
-import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -156,7 +154,8 @@ class RelationTreeFactory
 			}
 		}
 	}
-	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, MissingObjectException, IncorrectObjectTypeException, IOException
+
+	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
 	{
 		RelationTree tree = new RelationTree ();
 

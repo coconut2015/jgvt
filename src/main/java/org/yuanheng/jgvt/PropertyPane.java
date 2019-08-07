@@ -16,15 +16,14 @@
 package org.yuanheng.jgvt;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.text.DateFormat;
+import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextPane;
 
-import org.eclipse.jgit.lib.PersonIdent;
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
@@ -34,103 +33,26 @@ class PropertyPane extends JPanel
 {
 	private static final long serialVersionUID = -3411516962635048642L;
 
-	public static int TABLE_COLUMN_PADDING = 10;
-	public static String[] TABLE_HEADERS = { "Name", "Value" };
-	public static String[] NAME_ENTRIES = { "Author Name", "Author Email", "Author Time", "Commiter Name", "Commiter Email", "Commit Time" };
-
-	private JTable m_propTable;
+	private final Controller m_controller;
+	private ChangeTree m_changeTree;
 	private JTextPane m_msgPane;
-	private Object[][] m_propValues;
 	private RevCommit m_commit;
-	private boolean m_setTableWidth = true;
 
-	public PropertyPane ()
+	public PropertyPane (Controller controller)
 	{
+		m_controller = controller;
 		setLayout (new BorderLayout ());
-		createCommitPane ();
+		createChangeTree ();
 		createHtmlPane ();
-		JPanel northPane = new JPanel ();
-		northPane.setLayout (new BorderLayout ());
-		northPane.add (m_propTable, BorderLayout.CENTER);
-		northPane.add (m_propTable.getTableHeader (), BorderLayout.NORTH);
-		JScrollPane scrollPane = new JScrollPane (m_msgPane);
-		JSplitPane splitPane = new JSplitPane (JSplitPane.HORIZONTAL_SPLIT, northPane, scrollPane);
+		JScrollPane scrollPane1 = new JScrollPane (m_changeTree);
+		JScrollPane scrollPane2 = new JScrollPane (m_msgPane);
+		JSplitPane splitPane = new JSplitPane (JSplitPane.HORIZONTAL_SPLIT, scrollPane1, scrollPane2);
 		add (splitPane, BorderLayout.CENTER);
 	}
 
-	/**
-	 * Makes sure the first column is not resizeable.
-	 * @param	g
-	 * 			the graphics component
-	 */
-	private void setTableColumnWidth (Graphics g)
+	private void createChangeTree ()
 	{
-		int col1Width = SwingUtils.getWidth (g, m_propTable.getFont (), NAME_ENTRIES);
-		col1Width += TABLE_COLUMN_PADDING;
-		m_propTable.getColumnModel ().getColumn (0).setMinWidth (col1Width);
-		m_propTable.getColumnModel ().getColumn (0).setMaxWidth (col1Width);
-
-		int col2Width = SwingUtils.getWidth (g, m_propTable.getFont (), 20);
-		m_propTable.getColumnModel ().getColumn (1).setPreferredWidth (col2Width);
-	}
-
-	@Override
-	public Dimension getPreferredSize ()
-	{
-		/*
-		 * Hopefully, getPreferredSize() is a good place to calculate
-		 * the table column sizes.
-		 */
-		if (m_setTableWidth)
-		{
-			Graphics g = this.getGraphics ();
-			if (g != null)
-			{
-				m_setTableWidth = false;
-				setTableColumnWidth (g);
-			}
-		}
-		return super.getPreferredSize ();
-	}
-
-	private void createCommitPane ()
-	{
-		m_propValues = new Object[NAME_ENTRIES.length][2];
-		for (int row = 0; row < m_propValues.length; ++row)
-		{
-			m_propValues[row][0] = NAME_ENTRIES[row];
-			m_propValues[row][1] = null;
-		}
-		AbstractTableModel tableModel = new AbstractTableModel ()
-		{
-			private static final long serialVersionUID = 3439506815456260747L;
-
-			@Override
-		    public boolean isCellEditable(int row, int column)
-		    {
-		        return false;
-		    }
-
-			@Override
-			public int getRowCount ()
-			{
-				return NAME_ENTRIES.length;
-			}
-
-			@Override
-			public int getColumnCount ()
-			{
-				return 2;
-			}
-
-			@Override
-			public Object getValueAt (int rowIndex, int columnIndex)
-			{
-				return m_propValues[rowIndex][columnIndex];
-			}
-		};
-		m_propTable = new JTable (tableModel);
-		m_propTable.getTableHeader ().setReorderingAllowed (false);
+		m_changeTree = new ChangeTree ();
 	}
 
 	private void createHtmlPane ()
@@ -146,21 +68,10 @@ class PropertyPane extends JPanel
 			return;
 		m_commit = commit;
 
-		DateFormat format = DateFormat.getDateTimeInstance ();
-		PersonIdent ident;
-		ident = commit.getAuthorIdent ();
-		m_propValues[0][1] = ident.getName ();
-		m_propValues[1][1] = ident.getEmailAddress ();
-		m_propValues[2][1] = format.format (ident.getWhen ());
-		ident = commit.getCommitterIdent ();
-		m_propValues[3][1] = ident.getName ();
-		m_propValues[4][1] = ident.getEmailAddress ();
-		m_propValues[5][1] = format.format (ident.getWhen ());
-
-		TableModelEvent e = new TableModelEvent (m_propTable.getModel (), 0, NAME_ENTRIES.length, 1);
-		m_propTable.tableChanged (e);
-
 		m_msgPane.setText (CommitUtils.getComment (commit));
 		m_msgPane.setCaretPosition (0);
+
+		List<DiffEntry> changes = m_controller.getGitRepo ().getChanges (commit);
+		m_changeTree.setList (changes);
 	}
 }

@@ -93,4 +93,9 @@ class Controller
 		}
 		return m_dotFileOptions;
 	}
+
+	public GitRepo getGitRepo ()
+	{
+		return m_gitRepo;
+	}
 }

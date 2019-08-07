@@ -25,13 +25,11 @@ import org.eclipse.jgit.revwalk.RevCommit;
  */
 class CommitUtils
 {
-	public final static int TOOLTIP_AUTHOR = 1;
-	public final static int TOOLTIP_AUTHOR_EMAIL = 2;
-	public final static int TOOLTIP_AUTHOR_TS = 4;
-	public final static int TOOLTIP_COMMITTER = 8;
-	public final static int TOOLTIP_COMMITTER_EMAIL = 16;
-	public final static int TOOLTIP_COMMITTER_TS = 32;
-	public final static int TOOLTIP_MESSAGE = 64;
+	public final static int TOOLTIP_AUTHOR = 0x01;
+	public final static int TOOLTIP_AUTHOR_TS = 0x02;
+	public final static int TOOLTIP_COMMITTER = 0x04;
+	public final static int TOOLTIP_COMMITTER_TS = 0x08;
+	public final static int TOOLTIP_MESSAGE = 0x10;
 	public final static int TOOLTIP_ALL = 0xFFFFFFFF;
 
 	public static String getToolTipString (RevCommit commit, int flag)
@@ -45,14 +43,7 @@ class CommitUtils
 			if (!first)
 				builder.append ("<br/>");
 			first = false;
-			builder.append ("Author: " + authorIdent.getName ());
-		}
-		if ((flag & TOOLTIP_AUTHOR_EMAIL) != 0)
-		{
-			if (!first)
-				builder.append ("<br/>");
-			first = false;
-			builder.append ("Email: " + authorIdent.getEmailAddress ());
+			builder.append ("Author: " + authorIdent.getName () + " &lt;<a href=\"mailto:" + authorIdent.getEmailAddress () + "\">" + authorIdent.getEmailAddress () + "</a>&gt;");
 		}
 		if ((flag & TOOLTIP_AUTHOR_TS) != 0)
 		{
@@ -63,21 +54,14 @@ class CommitUtils
 		}
 
 		PersonIdent committerIdent = commit.getCommitterIdent ();
-		if ((flag & TOOLTIP_AUTHOR) != 0)
+		if ((flag & TOOLTIP_COMMITTER) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");
 			first = false;
-			builder.append ("Author: " + committerIdent.getName ());
+			builder.append ("Committer: " + authorIdent.getName () + " &lt;<a href=\"mailto:" + committerIdent.getEmailAddress () + "\">" + committerIdent.getEmailAddress () + "</a>&gt;");
 		}
-		if ((flag & TOOLTIP_AUTHOR_EMAIL) != 0)
-		{
-			if (!first)
-				builder.append ("<br/>");
-			first = false;
-			builder.append ("Email: " + committerIdent.getEmailAddress ());
-		}
-		if ((flag & TOOLTIP_AUTHOR_TS) != 0)
+		if ((flag & TOOLTIP_COMMITTER_TS) != 0)
 		{
 			if (!first)
 				builder.append ("<br/>");

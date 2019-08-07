@@ -15,9 +15,11 @@
  */
 package org.yuanheng.jgvt;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -43,5 +45,26 @@ class Utils
 			newArray[i] = oldArray[i];
 		newArray[oldArray.length] = elem;
 		return newArray;
+	}
+
+	/**
+	 * Open a URL in the desktop browser.
+	 *
+	 * @param	url
+	 * 			the URL to be opened.
+	 */
+	public static void browse (URI uri)
+	{
+		if (Desktop.isDesktopSupported () &&
+			Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+		{
+			try
+			{
+				Desktop.getDesktop().browse(uri);
+			}
+			catch (Exception ex)
+			{
+			}
+		}
 	}
 }
