@@ -48,6 +48,7 @@ class GitRepo implements AutoCloseable
 	private final Repository m_repo;
 	private final Git m_git;
 	private final File m_root;
+	private boolean m_fetched;
 	private WeakReference<Map<ObjectId, Ref>> m_tagMap = new WeakReference<Map<ObjectId, Ref>> (null);
 	private WeakReference<Map<ObjectId, Ref>> m_branchMap = new WeakReference<Map<ObjectId, Ref>> (null);
 
@@ -83,6 +84,21 @@ class GitRepo implements AutoCloseable
 		return m_git;
 	}
 
+	public void fetch ()
+	{
+		if (!m_fetched)
+		{
+			try
+			{
+				m_git.fetch ().call ();
+				m_fetched = true;
+			}
+			catch (GitAPIException ex)
+			{
+			}
+		}
+	}
+
 	public String getBranch ()
 	{
 		try
@@ -107,6 +123,7 @@ class GitRepo implements AutoCloseable
 
 	public Iterable<RevCommit> getCommitLogs (File file) throws GitAPIException, IOException
 	{
+		fetch ();
 		LogCommand log = m_git.log ().all ().setMaxCount (Integer.MAX_VALUE);
 		if (file != null)
 		{
