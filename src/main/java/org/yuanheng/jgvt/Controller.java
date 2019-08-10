@@ -62,7 +62,6 @@ class Controller
 
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
-		m_gui.updateGraphLayout ();
  	}
 
 	public File getCurrentDirectory ()

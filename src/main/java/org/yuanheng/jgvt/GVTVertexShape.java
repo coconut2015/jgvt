@@ -41,8 +41,8 @@ public class GVTVertexShape extends mxRectangleShape
 
 		if (cell.isVertex () && tree != null)
 		{
-			style.put (mxConstants.STYLE_FONTSTYLE, style.get (GUI.STYLE_REGULAR_FONTSTYLE));
-			style.put (mxConstants.STYLE_FILLCOLOR, style.get (GUI.STYLE_REGULAR_FILLCOLOR));
+			style.put (mxConstants.STYLE_FONTSTYLE, style.get (GVTGraphFactory.STYLE_REGULAR_FONTSTYLE));
+			style.put (mxConstants.STYLE_FILLCOLOR, style.get (GVTGraphFactory.STYLE_REGULAR_FILLCOLOR));
 		}
 		super.paintShape (canvas, state);
 
@@ -63,7 +63,7 @@ public class GVTVertexShape extends mxRectangleShape
 			rect.x += rect.getWidth ();
 
 			g.setFont (mxUtils.getFont (state.getStyle ()));
-			g.setColor (Color.decode ((String) state.getStyle ().get (GUI.STYLE_TAG_FONTCOLOR)));
+			g.setColor (Color.decode ((String) state.getStyle ().get (GVTGraphFactory.STYLE_TAG_FONTCOLOR)));
 
 			drawStringLeft (g, rect, annot);
 		}
