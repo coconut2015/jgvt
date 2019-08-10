@@ -43,6 +43,11 @@ class RelationBranch implements Comparable<RelationBranch>
 		node.setRelationBranch (this);
 	}
 
+	public int size ()
+	{
+		return m_nodes.size ();
+	}
+
 	public boolean has (RelationNode node)
 	{
 		return m_nodes.contains (node);
@@ -112,13 +117,21 @@ class RelationBranch implements Comparable<RelationBranch>
 				{
 					break;
 				}
-				node = node.getChildren ()[0];
-				if (!has (node))
+				boolean found = false;
+				for (RelationNode c : node.getChildren ())
 				{
-					break;
+					if (has (c))
+					{
+						node = c;
+						found = true;
+					}
 				}
+				if (!found)
+					break;
 			}
 		}
+		if (m_orderedList.size () != m_nodes.size ())
+			throw new RuntimeException ("Build orderd list failure: size = " + size () + ", order = " + m_orderedList.size ());
 		return m_orderedList;
 	}
 

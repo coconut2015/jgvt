@@ -211,6 +211,97 @@ class RelationTree
 	}
 
 	/**
+	 * A simple merge of two branches if the parent branch only has 1 child,
+	 * which happens to be the child branch.
+	 */
+	private void branchMergeCaseSingleChild ()
+	{
+		for (RelationNode node : getNodes ())
+		{
+			if (node.getParents ().length > 0)
+			{
+				RelationNode parent = node.getParents ()[0];
+				RelationBranch branch = node.getRelationBranch ();
+				if (parent.getRelationBranch () != branch &&
+					parent.getChildren ().length == 1)
+				{
+					// this node is the only child of the parent node,
+					// and the parent is in a different branch.
+					// merge the two branches.
+					branch.merge (parent.getRelationBranch ());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Find all the branches in the tree.
+	 *
+	 * @return	all the unique branches in the tree.
+	 */
+	private Set<RelationBranch> getBranchSet ()
+	{
+		// scan and put all the branches in a list
+		HashSet<RelationBranch> branchSet = new HashSet<RelationBranch> ();
+		for (RelationNode node : getNodes ())
+		{
+			branchSet.add (node.getRelationBranch ());
+		}
+		return branchSet;
+	}
+
+	/**
+	 * For this case, we have two child branches for a branch A.  However, child
+	 * branch B eventually merges to child branch C.  In this case, we
+	 * merge A and C.
+	 */
+	private void branchMergeCaseTwoChildren ()
+	{
+		for (RelationNode node : getNodes ())
+		{
+			if (node.getChildren ().length == 2)
+			{
+				RelationBranch branch = node.getRelationBranch ();
+				RelationBranch leftBranch = node.getChildren ()[0].getRelationBranch ();
+				RelationBranch rightBranch = node.getChildren ()[1].getRelationBranch ();
+
+				if (branch == leftBranch ||
+					branch == rightBranch ||
+					leftBranch == rightBranch)
+					continue;
+
+				RelationNode leftNode = node.getChildren ()[0];
+				List<RelationNode> leftList = leftBranch.getOrderedList ();
+				if (leftList.get (0) != leftNode)
+					continue;
+
+				RelationNode rightNode = node.getChildren ()[1];
+				List<RelationNode> rightList = rightBranch.getOrderedList ();
+				if (rightList.get (0) != rightNode)
+					continue;
+
+				// now check if leftBranch merges to rightBranch or
+				// vice versa
+				RelationNode leftLast = leftList.get (leftList.size () - 1);
+				if (leftLast.getChildren ().length == 1 &&
+					leftLast.getChildren ()[0].getRelationBranch () == rightBranch)
+				{
+					branch.merge (rightBranch);
+					continue;
+				}
+
+				RelationNode rightLast = rightList.get (rightList.size () - 1);
+				if (rightLast.getChildren ().length == 1 &&
+					rightLast.getChildren ()[0].getRelationBranch () == leftBranch)
+				{
+					branch.merge (leftBranch);
+					continue;
+				}
+			}
+		}
+	}
+
+	/**
 	 * Infer branches from the tree nodes, and a list of important branches.
 	 *
 	 * @param	importantBranches
@@ -256,30 +347,14 @@ class RelationTree
 			discoverBranches (node);
 		}
 
-		// perform branch merging
-		for (RelationNode node : getNodes ())
-		{
-			if (node.getParents ().length > 0)
-			{
-				RelationNode parent = node.getParents ()[0];
-				RelationBranch branch = node.getRelationBranch ();
-				if (parent.getRelationBranch () != branch &&
-					parent.getChildren ().length == 1)
-				{
-					// this node is the only child of the parent node,
-					// and the parent is in a different branch.
-					// merge the two branches.
-					branch.merge (parent.getRelationBranch ());
-				}
-			}
-		}
+		// perform simple branch merging
+		branchMergeCaseSingleChild ();
+
+		// perform slightly more complicated merging
+		branchMergeCaseTwoChildren ();
 
 		// scan and put all the branches in a list
-		HashSet<RelationBranch> branchSet = new HashSet<RelationBranch> ();
-		for (RelationNode node : getNodes ())
-		{
-			branchSet.add (node.getRelationBranch ());
-		}
+		Set<RelationBranch> branchSet = getBranchSet ();
 		m_branches = new ArrayList<RelationBranch> ();
 		m_branches.addAll (branchSet);
 
