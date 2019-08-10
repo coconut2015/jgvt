@@ -238,6 +238,16 @@ public class GUI
 		m_graph.getSelectionModel ().addListener (mxEvent.UNDO, m_selectNodeListener);
 
 		m_graphComp = new mxGraphComponent (m_graph);
+		m_graphComp.addComponentListener (new ComponentAdapter ()
+		{
+			@Override
+			public void componentResized (ComponentEvent e)
+			{
+				int viewHeight = m_graphComp.getViewport ().getViewRect ().height;
+				int increment = (int)Math.max (10, viewHeight * 0.1);
+				m_graphComp.getVerticalScrollBar ().setUnitIncrement (increment);
+			}
+		});
 		m_graphComp.setConnectable (false);
 		m_graphComp.setAutoScroll (true);
 		m_graphComp.getViewport ().setOpaque (true);
