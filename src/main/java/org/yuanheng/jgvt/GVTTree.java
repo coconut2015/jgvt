@@ -28,11 +28,13 @@ class GVTTree
 {
 	private final HashMap<Integer, RelationNode> m_nodeMap;
 	private final HashMap<RelationNode, Integer> m_reverseMap;
+	private final HashMap<Integer, Object> m_vertexMap;
 
 	public GVTTree ()
 	{
 		m_nodeMap = new HashMap<Integer, RelationNode> ();
 		m_reverseMap = new HashMap<RelationNode, Integer> ();
+		m_vertexMap = new HashMap<Integer, Object> ();
 	}
 
 	public GVTVertex createVertex (RelationNode node, int toolTipFlag)
@@ -59,9 +61,24 @@ class GVTTree
 		return m_nodeMap.get (id);
 	}
 
-	public int getVertex (RelationNode node)
+	public Integer getVertexId (RelationNode node)
 	{
 		return m_reverseMap.get (node);
+	}
+
+	public void link (int id, Object vertex)
+	{
+		m_vertexMap.put (id, vertex);
+	}
+
+	public Object getVertex (Integer id)
+	{
+		return m_vertexMap.get (id);
+	}
+
+	public Object getVertex (RelationNode node)
+	{
+		return getVertex (getVertexId (node));
 	}
 
 	public int size ()

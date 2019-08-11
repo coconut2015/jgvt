@@ -16,8 +16,7 @@
 package org.yuanheng.jgvt;
 
 import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.nio.file.Path;
@@ -28,6 +27,19 @@ import java.nio.file.Paths;
  */
 class Utils
 {
+	public static String getString (InputStream is) throws IOException
+	{
+		Reader reader = new InputStreamReader (is);
+		char[] buf = new char[4096];
+		int len;
+		StringBuilder builder = new StringBuilder ();
+		while ((len = reader.read (buf)) >= 0)
+		{
+			builder.append (buf, 0, len);
+		}
+		return builder.toString ();
+	}
+
 	public static Path getRelativePath (File file, File root) throws IOException
 	{
 		file = file.getCanonicalFile ();

@@ -18,6 +18,8 @@ package org.yuanheng.jgvt;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.jgit.lib.ObjectId;
+
 /**
  * This class handle all commands.
  *
@@ -63,6 +65,19 @@ class Controller
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
  	}
+
+	public void select (RelationNode node, boolean center)
+	{
+		m_gui.select (node, center);
+	}
+
+	public void select (String commit, boolean center)
+	{
+		ObjectId id = ObjectId.fromString (commit);
+		RelationNode node = m_tree.getNode (id);
+		if (node != null)
+			select (node, center);
+	}
 
 	public File getCurrentDirectory ()
 	{

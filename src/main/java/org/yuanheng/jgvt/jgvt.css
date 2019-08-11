@@ -1,0 +1,26 @@
+<style type="text/css"><!--
+body
+{
+	font-family: helvetica, arial, sans-serif;
+	background-color: white;
+	font-size: 12pt;
+	color : #333333;
+}
+table
+{
+	border-collapse: collapse; 
+	padding: 0px;
+}
+.subject
+{
+	border: 1px solid #cdcdcd;
+	background: #e6e6e6;
+	padding: 1pt;
+}
+.value
+{
+	border: 1px solid #cdcdcd;
+	padding: 1pt;
+	width: 100%;
+}
+--></style>

@@ -16,15 +16,17 @@
 package org.yuanheng.jgvt;
 
 import java.awt.BorderLayout;
+import java.net.URL;
 import java.util.List;
 
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
  * @author	Heng Yuan
@@ -35,8 +37,27 @@ class PropertyPane extends JPanel
 
 	private final Controller m_controller;
 	private ChangeTree m_changeTree;
-	private JTextPane m_msgPane;
-	private RevCommit m_commit;
+	private JEditorPane m_msgPane;
+	private RelationNode m_node;
+
+	private final HyperlinkListener m_urlHandler = new HyperlinkListener ()
+	{
+		@Override
+		public void hyperlinkUpdate (HyperlinkEvent e)
+		{
+			try
+			{
+				if (e.getEventType () == HyperlinkEvent.EventType.ACTIVATED)
+				{
+					handleURL (e.getURL ());
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace ();
+			}
+		}
+	};
 
 	public PropertyPane (Controller controller)
 	{
@@ -57,21 +78,33 @@ class PropertyPane extends JPanel
 
 	private void createHtmlPane ()
 	{
-		m_msgPane = new JTextPane ();
+		m_msgPane = new JEditorPane ();
 		m_msgPane.setContentType ("text/html");
 		m_msgPane.setEditable (false);
+		m_msgPane.addHyperlinkListener (m_urlHandler);
 	}
 
-	public void readCommit (RevCommit commit)
+	public void handleURL (URL url)
 	{
-		if (m_commit == commit)
-			return;
-		m_commit = commit;
+		String protocol = url.getProtocol ();
+		if ("http".equals (protocol) &&
+			"commit".equals (url.getHost ()))
+		{
+			String commitId = url.getPath ().substring (1);
+			m_controller.select (commitId, true);
+		}
+	}
 
-		m_msgPane.setText (CommitUtils.getComment (commit));
+	public void select (RelationNode node)
+	{
+		if (m_node == node)
+			return;
+		m_node = node;
+
+		m_msgPane.setText (CommitUtils.getComment (node));
 		m_msgPane.setCaretPosition (0);
 
-		List<DiffEntry> changes = m_controller.getGitRepo ().getChanges (commit);
+		List<DiffEntry> changes = m_controller.getGitRepo ().getChanges (node.getCommit ());
 		m_changeTree.setList (changes);
 	}
 }

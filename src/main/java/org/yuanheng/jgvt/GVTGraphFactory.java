@@ -139,7 +139,6 @@ class GVTGraphFactory
 		model.clear ();
 
 		Object parent = m_graph.getDefaultParent ();
-		HashMap<Integer, Object> vMap = new HashMap<Integer, Object> ();
 
 		// 1st create all the vertices
 		for (RelationNode node : relTree.getNodes ())
@@ -150,7 +149,7 @@ class GVTGraphFactory
 			double y = layoutInfo.getY () * CHILD_SPACING + START_Y;
 
 			Object vertex = m_graph.insertVertex (parent, null, v, x, y, vertexBound.getWidth (), vertexBound.getHeight ());
-			vMap.put (v.getId (), vertex);
+			tree.link (v.getId (), vertex);
 		}
 
 		// 2nd add edges
@@ -158,12 +157,12 @@ class GVTGraphFactory
 		for (int id = 0; id < numVertices; ++id)
 		{
 			RelationNode node = tree.getNode (id);
-			Object vertex = vMap.get (id);
+			Object vertex = tree.getVertex (id);
 
 			for (RelationNode parentNode : node.getParents ())
 			{
-				int parentId = tree.getVertex (parentNode);
-				Object parentVertex = vMap.get (parentId);
+				int parentId = tree.getVertexId (parentNode);
+				Object parentVertex = tree.getVertex (parentId);
 
 				String edgeStyle = COMMIT_STYLE;
 				switch (node.getRelation (parentNode))

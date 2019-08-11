@@ -15,6 +15,8 @@
  */
 package org.yuanheng.jgvt;
 
+import java.io.IOException;
+
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
@@ -31,6 +33,19 @@ class CommitUtils
 	public final static int TOOLTIP_COMMITTER_TS = 0x08;
 	public final static int TOOLTIP_MESSAGE = 0x10;
 	public final static int TOOLTIP_ALL = 0xFFFFFFFF;
+	private static String CSS;
+
+	static
+	{
+		try
+		{
+			CSS = Utils.getString (CommitUtils.class.getResourceAsStream ("jgvt.css"));
+		}
+		catch (IOException ex)
+		{
+			CSS = "";
+		}
+	}
 
 	public static String getToolTipString (RevCommit commit, int flag)
 	{
@@ -132,8 +147,127 @@ class CommitUtils
 		return builder.toString ();
 	}
 
-	public static String getComment (RevCommit commit)
+	private static String getHeader (String str)
 	{
-		return getToolTipString (commit, TOOLTIP_ALL);
+		return "<td class=\"subject\">" + str + "</td>";
+	}
+
+	private static String getValue (String str)
+	{
+		return "<td class=\"value\">" + str + "</td>";
+	}
+
+	private static String getCommitLink (RevCommit commit)
+	{
+		String name = commit.getId ().getName ();
+		return "<a href=\"http://commit/" + name + "\">" + name + "</a>";
+	}
+
+	public static String getComment (RelationNode node)
+	{
+		boolean first;
+		StringBuilder subBuilder;
+		RevCommit commit = node.getCommit ();
+		StringBuilder builder = new StringBuilder ().append ("<html>");
+		builder.append ("<head>").append (CSS);
+		builder.append ("<body><table>");
+
+		builder.append ("<tr>");
+		builder.append (getHeader ("SHA-1"));
+		builder.append (getValue (commit.getId ().getName ()));
+		builder.append ("</tr>");
+
+		PersonIdent authorIdent = commit.getAuthorIdent();
+		builder.append ("<tr>");
+		builder.append (getHeader ("Author"));
+		builder.append (getValue (authorIdent.getName () + " &lt;<a href=\"mailto:" + authorIdent.getEmailAddress () + "\">" + authorIdent.getEmailAddress () + "</a>&gt;"));
+		builder.append ("</tr>");
+		builder.append ("<tr>");
+		builder.append (getHeader ("Time"));
+		builder.append (getValue (authorIdent.getWhen().toString ()));
+		builder.append ("</tr>");
+
+		PersonIdent committerIdent = commit.getCommitterIdent ();
+		builder.append ("<tr>");
+		builder.append (getHeader ("Committer"));
+		builder.append (getValue (committerIdent.getName () + " &lt;<a href=\"mailto:" + committerIdent.getEmailAddress () + "\">" + committerIdent.getEmailAddress () + "</a>&gt;"));
+		builder.append ("</tr>");
+		builder.append ("<tr>");
+		builder.append (getHeader ("Time"));
+		builder.append (getValue (committerIdent.getWhen().toString ()));
+		builder.append ("</tr>");
+
+		builder.append ("<tr>");
+		builder.append (getHeader ("Parents"));
+		first = true;
+		subBuilder = new StringBuilder ();
+		for (RelationNode n : node.getParents ())
+		{
+			if (first)
+				first = false;
+			else
+				subBuilder.append ("<br/>");
+			subBuilder.append (getCommitLink (n.getCommit ()));
+		}
+		builder.append (getValue (subBuilder.toString ()));
+		builder.append ("</tr>");
+
+		builder.append ("<tr>");
+		builder.append (getHeader ("Children"));
+		first = true;
+		subBuilder = new StringBuilder ();
+		for (RelationNode n : node.getChildren ())
+		{
+			if (first)
+				first = false;
+			else
+				subBuilder.append ("<br/>");
+			subBuilder.append (getCommitLink (n.getCommit ()));
+		}
+		builder.append (getValue (subBuilder.toString ()));
+		builder.append ("</tr>");
+
+		if (node.getTags ().length > 0)
+		{
+			builder.append ("<tr>");
+			builder.append (getHeader ("Tags"));
+			first = true;
+			subBuilder = new StringBuilder ();
+			for (Ref tag : node.getTags ())
+			{
+				if (first)
+					first = false;
+				else
+					subBuilder.append ("<br/>");
+				subBuilder.append (tag.getName ());
+			}
+			builder.append (getValue (subBuilder.toString ()));
+			builder.append ("</tr>");
+		}
+
+		if (node.getBranches ().length > 0)
+		{
+			builder.append ("<tr>");
+			builder.append (getHeader ("Branches"));
+			first = true;
+			subBuilder = new StringBuilder ();
+			for (Ref branch : node.getBranches ())
+			{
+				if (first)
+					first = false;
+				else
+					subBuilder.append ("<br/>");
+				subBuilder.append (branch.getName ());
+			}
+			builder.append (getValue (subBuilder.toString ()));
+			builder.append ("</tr>");
+		}
+
+		builder.append ("<tr>");
+		builder.append (getHeader ("Message"));
+		builder.append (getValue (commit.getFullMessage ()));
+		builder.append ("</tr>");
+		builder.append ("</table><body></html>");
+		return builder.toString ();
 	}
 }

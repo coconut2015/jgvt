@@ -184,6 +184,16 @@ class RelationNode implements Serializable, Comparable<RelationNode>
 		m_relationBranch = relationBranch;
 	}
 
+	public Ref[] getBranches ()
+	{
+		return m_branches;
+	}
+
+	public Ref[] getTags ()
+	{
+		return m_tags;
+	}
+
 	@Override
 	public int compareTo (RelationNode o)
 	{

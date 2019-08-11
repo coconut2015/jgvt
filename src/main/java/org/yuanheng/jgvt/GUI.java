@@ -16,18 +16,14 @@
 package org.yuanheng.jgvt;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
 
 import javax.swing.*;
 
-import org.eclipse.jgit.revwalk.RevCommit;
-
 import com.jgoodies.looks.plastic.Plastic3DLookAndFeel;
 import com.mxgraph.model.mxCell;
-import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource.mxIEventListener;
@@ -49,7 +45,7 @@ public class GUI
 	private JToolBar m_toolBar;
 	private final StatusBar m_statusBar;
 	private GVTGraph m_graph;
-	private mxGraphComponent m_graphComp;
+	private GVTGraphComponent m_graphComp;
 	private PropertyPane m_propertyPane;
 	private JSplitPane m_splitPane;
 	private boolean m_splitPaneSetup;
@@ -137,7 +133,7 @@ public class GUI
 			{
 				GVTVertex v = (GVTVertex) cell.getValue ();
 				RelationNode node = m_graph.getTree ().getNode (v);
-				setSelectedCommit(node.getCommit ());
+				m_controller.select (node, false);
 			}
 		}
 	};
@@ -237,22 +233,7 @@ public class GUI
 		// a bit odd to use UNDO, but that's how JGraphX's selection works.
 		m_graph.getSelectionModel ().addListener (mxEvent.UNDO, m_selectNodeListener);
 
-		m_graphComp = new mxGraphComponent (m_graph);
-		m_graphComp.addComponentListener (new ComponentAdapter ()
-		{
-			@Override
-			public void componentResized (ComponentEvent e)
-			{
-				int viewHeight = m_graphComp.getViewport ().getViewRect ().height;
-				int increment = (int)Math.max (10, viewHeight * 0.1);
-				m_graphComp.getVerticalScrollBar ().setUnitIncrement (increment);
-			}
-		});
-		m_graphComp.setConnectable (false);
-		m_graphComp.setAutoScroll (true);
-		m_graphComp.getViewport ().setOpaque (true);
-		m_graphComp.getViewport ().setBackground (Color.WHITE);
-		m_graphComp.setToolTips (true);
+		m_graphComp = new GVTGraphComponent (m_graph);
 	}
 
 	private void createPropertyPane ()
@@ -339,9 +320,13 @@ public class GUI
 		return m_graph;
 	}
 
-	public void setSelectedCommit (RevCommit commit)
+	public void select (RelationNode node, boolean center)
 	{
-		m_propertyPane.readCommit (commit);
+		if (center)
+		{
+			m_graphComp.center (node);
+		}
+		m_propertyPane.select (node);
 	}
 
 	private JFileChooser getFileChooser ()
