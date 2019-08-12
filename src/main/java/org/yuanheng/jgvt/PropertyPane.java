@@ -16,6 +16,9 @@
 package org.yuanheng.jgvt;
 
 import java.awt.BorderLayout;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.net.URL;
 import java.util.List;
 
@@ -59,6 +62,15 @@ class PropertyPane extends JPanel
 		}
 	};
 
+	private final ComponentListener m_resizeListener = new ComponentAdapter ()
+	{
+	    public void componentResized(ComponentEvent e)
+	    {
+    		((JSplitPane)e.getSource ()).setDividerLocation (0.5);
+    		((JSplitPane)e.getSource ()).removeComponentListener (this);
+	    }
+	};
+
 	public PropertyPane (Controller controller)
 	{
 		m_controller = controller;
@@ -68,6 +80,9 @@ class PropertyPane extends JPanel
 		JScrollPane scrollPane1 = new JScrollPane (m_changeTree);
 		JScrollPane scrollPane2 = new JScrollPane (m_msgPane);
 		JSplitPane splitPane = new JSplitPane (JSplitPane.HORIZONTAL_SPLIT, scrollPane1, scrollPane2);
+		splitPane.addComponentListener (m_resizeListener);
+		splitPane.setDividerLocation (0.5);
+		splitPane.setResizeWeight (0.5);
 		add (splitPane, BorderLayout.CENTER);
 	}
 
