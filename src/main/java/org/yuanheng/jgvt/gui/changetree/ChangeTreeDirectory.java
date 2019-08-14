@@ -13,42 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt;
-
-import java.util.prefs.Preferences;
+package org.yuanheng.jgvt.gui.changetree;
 
 /**
  * @author	Heng Yuan
  */
-public class Pref
+class ChangeTreeDirectory extends ChangeTreeNode
 {
-	private final static String DEFAULT_DIRECTORY = "defaultDirectory";
+	private String m_path;
 
-	private final Preferences m_pref;
-
-	public Pref ()
+	ChangeTreeDirectory (ChangeTreeNode parent, String path)
 	{
-		m_pref = Preferences.userNodeForPackage (Main.class);
+		super (parent);
+		m_path = path;
 	}
 
-	public String getDefaultDirectory ()
+	public String getPath ()
 	{
-		return m_pref.get (DEFAULT_DIRECTORY, ".");
+		return m_path;
 	}
 
-	public void setDefaultDirectory (String dir)
+	public String toString ()
 	{
-		m_pref.put (DEFAULT_DIRECTORY, dir);
-	}
-
-	public void sync ()
-	{
-		try
-		{
-			m_pref.sync ();
-		}
-		catch (Exception ex)
-		{
-		}
+		return m_path;
 	}
 }

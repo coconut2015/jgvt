@@ -19,13 +19,21 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.lib.ObjectId;
+import org.yuanheng.jgvt.export.DotConverter;
+import org.yuanheng.jgvt.export.DotFileOptions;
+import org.yuanheng.jgvt.gui.GUI;
+import org.yuanheng.jgvt.gui.graph.GVTGraph;
+import org.yuanheng.jgvt.gui.graph.GVTGraphFactory;
+import org.yuanheng.jgvt.relation.RelationNode;
+import org.yuanheng.jgvt.relation.RelationTree;
+import org.yuanheng.jgvt.relation.RelationTreeFactory;
 
 /**
  * This class handle all commands.
  *
  * @author	Heng Yuan
  */
-class Controller
+public class Controller
 {
 	private GUI m_gui;
 	private GitRepo m_gitRepo;

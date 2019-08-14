@@ -13,42 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt;
-
-import java.util.prefs.Preferences;
+package org.yuanheng.jgvt.export;
 
 /**
  * @author	Heng Yuan
  */
-public class Pref
+public class DotFileOptions
 {
-	private final static String DEFAULT_DIRECTORY = "defaultDirectory";
-
-	private final Preferences m_pref;
-
-	public Pref ()
-	{
-		m_pref = Preferences.userNodeForPackage (Main.class);
-	}
-
-	public String getDefaultDirectory ()
-	{
-		return m_pref.get (DEFAULT_DIRECTORY, ".");
-	}
-
-	public void setDefaultDirectory (String dir)
-	{
-		m_pref.put (DEFAULT_DIRECTORY, dir);
-	}
-
-	public void sync ()
-	{
-		try
-		{
-			m_pref.sync ();
-		}
-		catch (Exception ex)
-		{
-		}
-	}
+	public int abbrevLength = 6;
+	public boolean groupNodes = true;
 }

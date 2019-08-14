@@ -25,7 +25,7 @@ import java.nio.file.Paths;
 /**
  * @author	Heng Yuan
  */
-class Utils
+public class Utils
 {
 	public static String getString (InputStream is) throws IOException
 	{

@@ -21,11 +21,12 @@ import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.yuanheng.jgvt.relation.RelationNode;
 
 /**
  * @author	Heng Yuan
  */
-class CommitUtils
+public class CommitUtils
 {
 	public final static int TOOLTIP_AUTHOR = 0x01;
 	public final static int TOOLTIP_AUTHOR_TS = 0x02;

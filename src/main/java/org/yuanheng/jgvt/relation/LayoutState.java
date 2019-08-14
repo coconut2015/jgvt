@@ -13,42 +13,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt;
+package org.yuanheng.jgvt.relation;
 
-import java.util.prefs.Preferences;
+import java.util.List;
 
 /**
  * @author	Heng Yuan
  */
-public class Pref
+class LayoutState
 {
-	private final static String DEFAULT_DIRECTORY = "defaultDirectory";
+	private final List<RelationNode> m_nodes;
+	private int m_current;
+	private int m_x;
+	private int m_y;
 
-	private final Preferences m_pref;
-
-	public Pref ()
+	public LayoutState (RelationBranch branch)
 	{
-		m_pref = Preferences.userNodeForPackage (Main.class);
+		m_nodes = branch.getOrderedList ();
+		m_current = -1;
 	}
 
-	public String getDefaultDirectory ()
+	public int size ()
 	{
-		return m_pref.get (DEFAULT_DIRECTORY, ".");
+		return m_nodes.size ();
 	}
 
-	public void setDefaultDirectory (String dir)
+	public boolean hasNext ()
 	{
-		m_pref.put (DEFAULT_DIRECTORY, dir);
+		return (m_current + 1) < m_nodes.size ();
 	}
 
-	public void sync ()
+	public RelationNode next ()
 	{
-		try
-		{
-			m_pref.sync ();
-		}
-		catch (Exception ex)
-		{
-		}
+		return m_nodes.get (++m_current);
+	}
+
+	public int getX ()
+	{
+		return m_x;
+	}
+
+	public void setX (int x)
+	{
+		m_x = x;
+	}
+
+	public int getY ()
+	{
+		return m_y;
+	}
+
+	public void setY (int y)
+	{
+		m_y = y;
 	}
 }

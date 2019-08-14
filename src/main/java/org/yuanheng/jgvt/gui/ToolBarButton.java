@@ -13,42 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt;
+package org.yuanheng.jgvt.gui;
 
-import java.util.prefs.Preferences;
+import javax.swing.Action;
+import javax.swing.JButton;
 
 /**
  * @author	Heng Yuan
  */
-public class Pref
+class ToolBarButton extends JButton
 {
-	private final static String DEFAULT_DIRECTORY = "defaultDirectory";
+	private static final long serialVersionUID = -7820160526501323835L;
 
-	private final Preferences m_pref;
-
-	public Pref ()
+	public ToolBarButton (Action action)
 	{
-		m_pref = Preferences.userNodeForPackage (Main.class);
-	}
-
-	public String getDefaultDirectory ()
-	{
-		return m_pref.get (DEFAULT_DIRECTORY, ".");
-	}
-
-	public void setDefaultDirectory (String dir)
-	{
-		m_pref.put (DEFAULT_DIRECTORY, dir);
-	}
-
-	public void sync ()
-	{
-		try
-		{
-			m_pref.sync ();
-		}
-		catch (Exception ex)
-		{
-		}
+		super (action);
+		setHideActionText (true);
 	}
 }

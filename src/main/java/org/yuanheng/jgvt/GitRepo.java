@@ -43,7 +43,7 @@ import org.eclipse.jgit.util.io.NullOutputStream;
  *
  * @author	Heng Yuan
  */
-class GitRepo implements AutoCloseable
+public class GitRepo implements AutoCloseable
 {
 	private final Repository m_repo;
 	private final Git m_git;
