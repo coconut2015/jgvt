@@ -15,6 +15,7 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -25,14 +26,33 @@ import javax.swing.tree.TreeNode;
 /**
  * @author	Heng Yuan
  */
-class ChangeTreeNode implements TreeNode
+abstract class ChangeTreeNode implements TreeNode
 {
 	private TreeNode m_parent;
 	private ArrayList<ChangeTreeNode> m_children;
+	private WeakReference<String> m_html;
 
 	public ChangeTreeNode (ChangeTreeNode parent)
 	{
 		m_parent = parent;
+	}
+
+	public Integer getAdded ()
+	{
+		return null;
+	}
+
+	public Integer getDeleted ()
+	{
+		return null;
+	}
+
+	public void clear ()
+	{
+		if (m_children != null)
+		{
+			m_children.clear ();
+		}
 	}
 
 	public void add (ChangeTreeNode node)
@@ -97,5 +117,29 @@ class ChangeTreeNode implements TreeNode
 	public Enumeration children ()
 	{
 		return Collections.enumeration (m_children);
+	}
+
+	protected void clearHtml ()
+	{
+		m_html = null;
+	}
+
+	abstract String computeHtml ();
+
+	public String getHtml ()
+	{
+		String html = null;
+		if (m_html != null)
+		{
+			html = m_html.get ();
+		}
+		if (html == null)
+		{
+			html = computeHtml ();
+			if (html == null)
+				return null;
+			m_html = new WeakReference<String> (html);
+		}
+		return html;
 	}
 }

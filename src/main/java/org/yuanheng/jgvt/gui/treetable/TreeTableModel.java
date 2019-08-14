@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2019 Heng Yuan
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * The following is the original header.
+ *
+ * TreeTableModel.java
+ * 
+ * Copyright 1998 Sun Microsystems, Inc.  All Rights Reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *   - Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *
+ *   - Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *
+ *   - Neither the name of Sun Microsystems nor the names of its
+ *     contributors may be used to endorse or promote products derived
+ *     from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+package org.yuanheng.jgvt.gui.treetable;
+
+import javax.swing.tree.TreeModel;
+
+/**
+ * TreeTableModel is the model used by a JTreeTable. It extends TreeModel
+ * to add methods for getting information about the set of columns each 
+ * node in the TreeTableModel may have. Each column, like a column in 
+ * a TableModel, has a name and a type associated with it. Each node in 
+ * the TreeTableModel can return a value for each of the columns and 
+ * set that value if isCellEditable() returns true. 
+ *
+ * @author Philip Milne 
+ * @author Scott Violet
+ */
+public interface TreeTableModel extends TreeModel
+{
+    /**
+     * Returns the number of available columns.
+     */
+    public int getColumnCount();
+
+    /**
+     * Returns the name for column number <code>column</code>.
+     */
+    public String getColumnName(int column);
+
+    /**
+     * Returns the type for column number <code>column</code>.
+     */
+    public Class<?> getColumnClass(int column);
+
+    /**
+     * Returns the value to be displayed for node <code>node</code>, 
+     * at column number <code>column</code>.
+     */
+    public Object getValueAt(Object node, int column);
+
+    /**
+     * Indicates whether the the value for node <code>node</code>, 
+     * at column number <code>column</code> is editable.
+     */
+    public boolean isCellEditable(Object node, int column);
+
+    /**
+     * Sets the value for node <code>node</code>, 
+     * at column number <code>column</code>.
+     */
+    public void setValueAt(Object aValue, Object node, int column);
+}

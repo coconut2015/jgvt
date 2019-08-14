@@ -13,35 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.yuanheng.jgvt.gui.changetree;
+package org.yuanheng.jgvt;
+
+import org.eclipse.jgit.diff.DiffEntry;
 
 /**
  * @author	Heng Yuan
  */
-class ChangeTreeDirectory extends ChangeTreeNode
+public class ChangeInfo
 {
-	private String m_path;
+	private DiffEntry m_entry;
+	private int m_add;
+	private int m_delete;
 
-	ChangeTreeDirectory (ChangeTreeNode parent, String path)
+	public ChangeInfo (DiffEntry entry)
 	{
-		super (parent);
-		m_path = path;
+		m_entry = entry;
 	}
 
-	public String getPath ()
+	public DiffEntry getDiffEntry ()
 	{
-		return m_path;
+		return m_entry;
 	}
 
-	@Override
-	public String toString ()
+	public int getAdd ()
 	{
-		return m_path;
+		return m_add;
 	}
 
-	@Override
-	String computeHtml ()
+	public void setAdded (int add)
 	{
-		return null;
+		m_add = add;
+	}
+
+	public int getDelete ()
+	{
+		return m_delete;
+	}
+
+	public void setDeleted (int delete)
+	{
+		m_delete = delete;
 	}
 }

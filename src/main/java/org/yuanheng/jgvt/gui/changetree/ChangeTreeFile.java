@@ -15,22 +15,22 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
-import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
+import org.yuanheng.jgvt.ChangeInfo;
 
 /**
  * @author	Heng Yuan
  */
 class ChangeTreeFile extends ChangeTreeNode
 {
-	private final DiffEntry m_entry;
+	private final ChangeInfo m_info;
 	private String m_dir;
 	private String m_name;
 
-	public ChangeTreeFile (ChangeTreeNode parent, DiffEntry entry)
+	public ChangeTreeFile (ChangeTreeNode parent, ChangeInfo info)
 	{
 		super (parent);
-		m_entry = entry;
+		m_info = info;
 
 		String path = getPath ();
 		int index = path.lastIndexOf ('/');
@@ -46,6 +46,16 @@ class ChangeTreeFile extends ChangeTreeNode
 		}
 	}
 
+	public Integer getAdded ()
+	{
+		return m_info.getAdd ();
+	}
+
+	public Integer getDeleted ()
+	{
+		return m_info.getDelete ();
+	}
+
 	public String getDirectory ()
 	{
 		return m_dir;
@@ -58,18 +68,18 @@ class ChangeTreeFile extends ChangeTreeNode
 
 	public String getPath ()
 	{
-		switch (m_entry.getChangeType ())
+		switch (m_info.getDiffEntry ().getChangeType ())
 		{
 			case DELETE:
-				return m_entry.getOldPath ();
+				return m_info.getDiffEntry ().getOldPath ();
 			default:
-				return m_entry.getNewPath ();
+				return m_info.getDiffEntry ().getNewPath ();
 		}
 	}
 
 	public ChangeType getChangeType ()
 	{
-		return m_entry.getChangeType ();
+		return m_info.getDiffEntry ().getChangeType ();
 	}
 
 	@Override
@@ -82,5 +92,11 @@ class ChangeTreeFile extends ChangeTreeNode
 	public String toString ()
 	{
 		return m_name;
+	}
+
+	@Override
+	String computeHtml ()
+	{
+		return getChangeType () + " " + toString ();
 	}
 }

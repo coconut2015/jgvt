@@ -15,52 +15,45 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
-import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
+import javax.swing.ListSelectionModel;
 
-import org.eclipse.jgit.diff.DiffEntry;
+import org.yuanheng.jgvt.ChangeInfo;
+import org.yuanheng.jgvt.gui.treetable.JTreeTable;
+import org.yuanheng.jgvt.gui.treetable.TreeTableModel;
 import org.yuanheng.jgvt.relation.RelationNode;
 
 /**
  * @author	Heng Yuan
  */
-public class ChangeTree extends JTree
+public class ChangeTree extends JTreeTable
 {
-	public static int PREFERED_WIDTH = 200;
-	public static int PREFERED_HEIGHT = 200;
-
 	private static final long serialVersionUID = -4267180235096815912L;
 
 	public ChangeTree ()
 	{
-		ChangeTreeNode root = new ChangeTreeNode (null);
-		DefaultTreeModel model = new DefaultTreeModel (root);
-		setModel (model);
-		setPreferredSize (new Dimension (PREFERED_WIDTH, PREFERED_HEIGHT));
+		super (new ChangeTreeTableModel ());
+		this.setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
 	}
 
-	public void setList (RelationNode node, List<DiffEntry> list)
+	public TreeTableModel getTreeTableModel ()
 	{
-		DefaultTreeModel model = createModel (node, list);
-		setModel (model);
-		expand ((TreeNode)model.getRoot (), new Object[0]);
+		return (TreeTableModel) getTree ().getModel ();
 	}
 
-	private DefaultTreeModel createModel (RelationNode node, List<DiffEntry> list)
+	public void setList (RelationNode node, List<ChangeInfo> list)
 	{
-		ChangeTreeNode root = new ChangeTreeRoot (node);
+		ChangeTreeRoot root = (ChangeTreeRoot) getTreeTableModel ().getRoot ();
+		root.setNode (node);
+		root.clear ();
 
 		HashMap<String, ChangeTreeDirectory> dirMap = new HashMap<String, ChangeTreeDirectory> ();
 
-		for (DiffEntry entry : list)
+		for (ChangeInfo info : list)
 		{
-			ChangeTreeFile file = new ChangeTreeFile (root, entry);
+			ChangeTreeFile file = new ChangeTreeFile (root, info);
 			String dir = file.getDirectory ();
 			if (dir.length () > 0)
 			{
@@ -79,29 +72,20 @@ public class ChangeTree extends JTree
 			}
 		}
 
-		return new DefaultTreeModel (root);
+		((ChangeTreeTableModel)getTreeTableModel ()).fireTreeStructureChanged (root);
+
+		for (int i = 0; i < tree.getRowCount(); ++i)
+		{
+		    tree.expandRow(i);
+		}
 	}
 
-	public void expand (TreeNode node, Object[] path)
+	public String getSelectedNodeHtml ()
 	{
-		int childCount = node.getChildCount ();
-		if (childCount > 0)
-		{
-			Object[] newPath = new Object[path.length + 1];
-			for (int i = 0; i < path.length; ++i)
-				newPath[i] = path[i];
-			newPath[path.length] = node;
-			path = newPath;
-			for (int i = 0; i < childCount; ++i)
-			{
-				TreeNode childNode = node.getChildAt (i);
-				if (!childNode.isLeaf ())
-				{
-					expand (childNode, path);
-				}
-			}
-
-			expandPath (new TreePath (path));
-		}
+		int row = getSelectedRow ();
+		if (row < 0)
+			return null;
+		ChangeTreeNode cn = (ChangeTreeNode)getValueAt (row, 0);
+		return cn.getHtml ();
 	}
 }

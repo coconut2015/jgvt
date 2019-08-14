@@ -21,6 +21,7 @@ import java.awt.event.*;
 import java.io.File;
 
 import javax.swing.*;
+import javax.swing.plaf.BorderUIResource;
 
 import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.export.DotFileChooser;
@@ -152,6 +153,10 @@ public class GUI
 		try
 		{
 			UIManager.setLookAndFeel (new Plastic3DLookAndFeel ());
+			UIDefaults defaults = UIManager.getDefaults ();
+			BorderUIResource emptyBorder = new BorderUIResource(BorderFactory.createEmptyBorder());
+			defaults.put("SplitPaneDivider.border", emptyBorder);
+			defaults.put("SplitPane.border", emptyBorder);
 		}
 		catch (Exception ex)
 		{

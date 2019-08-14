@@ -26,6 +26,7 @@ Additionally, it uses some libraries with permissive licenses.
 * [JGoodies](http://www.jgoodies.com/freeware/libraries/) - [BSD License](http://www.jgoodies.com/downloads/libraries/)
 * [JGraphX](https://github.com/jgraph/jgraphx) - [BSD License](https://github.com/jgraph/jgraphx/blob/master/license.txt)
 * [jIconFont](http://jiconfont.github.io/) - MIT License
+* [JTreeTable](https://web.archive.org/web/20120626111926/http://java.sun.com/products/jfc/tsc/articles/treetable1/index.html) - BSD License.
 * [SLF4J](https://www.slf4j.org/) - [MIT License](https://www.slf4j.org/license.html)
 
 # Other Similar Tools

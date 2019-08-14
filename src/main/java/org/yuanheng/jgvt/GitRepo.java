@@ -29,6 +29,7 @@ import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
+import org.eclipse.jgit.diff.Edit;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -175,9 +176,9 @@ public class GitRepo implements AutoCloseable
 		return reverseMap;
 	}
 
-	public List<DiffEntry> getChanges (RevCommit commit)
+	public List<ChangeInfo> getChanges (RevCommit commit)
 	{
-		ArrayList<DiffEntry> changes = new ArrayList<DiffEntry> ();
+		ArrayList<ChangeInfo> changes = new ArrayList<ChangeInfo> ();
 	    DiffFormatter diffFmt = new DiffFormatter(NullOutputStream.INSTANCE);
 	    diffFmt.setRepository(m_repo);
         RevTree before = commit.getParentCount() > 0 ? commit.getParent(0).getTree() : null;
@@ -187,7 +188,17 @@ public class GitRepo implements AutoCloseable
         {
 	        for (DiffEntry diff: diffFmt.scan (before, current))
 	        {
-	            changes.add (diff);
+	        	ChangeInfo info = new ChangeInfo (diff);
+	        	int added = 0;
+	        	int deleted = 0;
+	        	for (Edit edit : diffFmt.toFileHeader(diff).toEditList())
+	        	{
+	        		deleted += edit.getEndA() - edit.getBeginA();
+	        		added += edit.getEndB() - edit.getBeginB();
+	            }
+	        	info.setAdded (added);
+	        	info.setDeleted (deleted);
+	            changes.add (info);
 	        }
         }
         catch (Exception ex)

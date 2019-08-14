@@ -28,9 +28,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-import org.eclipse.jgit.diff.DiffEntry;
-import org.yuanheng.jgvt.CommitUtils;
+import org.yuanheng.jgvt.ChangeInfo;
 import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.gui.changetree.ChangeTree;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -66,6 +67,22 @@ class PropertyPane extends JPanel
 		}
 	};
 
+	private final ListSelectionListener m_selectListener = new ListSelectionListener ()
+	{
+		@Override
+		public void valueChanged (ListSelectionEvent e)
+		{
+			if (e.getValueIsAdjusting ())
+				return;
+			String html = m_changeTree.getSelectedNodeHtml ();
+			if (html != null)
+			{
+				m_msgPane.setText (html);
+				m_msgPane.setCaretPosition (0);
+			}
+		}
+	};
+
 	private final ComponentListener m_resizeListener = new ComponentAdapter ()
 	{
 	    public void componentResized(ComponentEvent e)
@@ -88,6 +105,7 @@ class PropertyPane extends JPanel
 		splitPane.setDividerLocation (0.5);
 		splitPane.setResizeWeight (0.5);
 		add (splitPane, BorderLayout.CENTER);
+		m_changeTree.getSelectionModel ().addListSelectionListener (m_selectListener);
 	}
 
 	private void createChangeTree ()
@@ -120,10 +138,8 @@ class PropertyPane extends JPanel
 			return;
 		m_node = node;
 
-		m_msgPane.setText (CommitUtils.getComment (node));
-		m_msgPane.setCaretPosition (0);
-
-		List<DiffEntry> changes = m_controller.getGitRepo ().getChanges (node.getCommit ());
+		List<ChangeInfo> changes = m_controller.getGitRepo ().getChanges (node.getCommit ());
 		m_changeTree.setList (node, changes);
+		m_changeTree.getSelectionModel ().setSelectionInterval (0, 0);
 	}
 }

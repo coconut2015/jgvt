@@ -15,6 +15,7 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
+import org.yuanheng.jgvt.CommitUtils;
 import org.yuanheng.jgvt.relation.RelationNode;
 
 /**
@@ -22,16 +23,39 @@ import org.yuanheng.jgvt.relation.RelationNode;
  */
 class ChangeTreeRoot extends ChangeTreeNode
 {
-	private final RelationNode m_node;
+	private RelationNode m_node;
 
-	public ChangeTreeRoot (RelationNode node)
+	public ChangeTreeRoot ()
 	{
 		super (null);
-		m_node = node;
 	}
 
 	public String toString ()
 	{
-		return m_node.getCommit ().getId ().getName ();
+		if (m_node == null)
+			return "";
+		return getNode().getCommit ().getId ().getName ();
+	}
+
+	public RelationNode getNode ()
+	{
+		return m_node;
+	}
+
+	public void setNode (RelationNode node)
+	{
+		m_node = node;
+		clearHtml ();
+	}
+
+	@Override
+	String computeHtml ()
+	{
+		RelationNode node = m_node;
+		if (node != null)
+		{
+			return CommitUtils.getComment (node);
+		}
+		return "";
 	}
 }
