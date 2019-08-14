@@ -28,9 +28,9 @@ import javax.swing.tree.TreeNode;
 class ChangeTreeNode implements TreeNode
 {
 	private TreeNode m_parent;
-	private ArrayList<TreeNode> m_children;
+	private ArrayList<ChangeTreeNode> m_children;
 
-	public ChangeTreeNode (TreeNode parent)
+	public ChangeTreeNode (ChangeTreeNode parent)
 	{
 		m_parent = parent;
 	}
@@ -38,7 +38,7 @@ class ChangeTreeNode implements TreeNode
 	public void add (ChangeTreeNode node)
 	{
 		if (m_children == null)
-			m_children = new ArrayList<TreeNode> ();
+			m_children = new ArrayList<ChangeTreeNode> ();
 		m_children.add (node);
 	}
 
@@ -87,7 +87,7 @@ class ChangeTreeNode implements TreeNode
 		return m_children == null || m_children.size () == 0;
 	}
 
-	public List<TreeNode> getChildren ()
+	public List<ChangeTreeNode> getChildren ()
 	{
 		return m_children;
 	}

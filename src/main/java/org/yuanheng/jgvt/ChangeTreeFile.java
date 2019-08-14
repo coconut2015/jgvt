@@ -15,8 +15,6 @@
  */
 package org.yuanheng.jgvt;
 
-import javax.swing.tree.TreeNode;
-
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 
@@ -29,7 +27,7 @@ class ChangeTreeFile extends ChangeTreeNode
 	private String m_dir;
 	private String m_name;
 
-	public ChangeTreeFile (TreeNode parent, DiffEntry entry)
+	public ChangeTreeFile (ChangeTreeNode parent, DiffEntry entry)
 	{
 		super (parent);
 		m_entry = entry;

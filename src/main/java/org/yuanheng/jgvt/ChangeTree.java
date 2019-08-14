@@ -41,22 +41,19 @@ public class ChangeTree extends JTree
 		ChangeTreeNode root = new ChangeTreeNode (null);
 		DefaultTreeModel model = new DefaultTreeModel (root);
 		setModel (model);
-		setRootVisible (false);
 		setPreferredSize (new Dimension (PREFERED_WIDTH, PREFERED_HEIGHT));
 	}
 
-	public void setList (List<DiffEntry> list)
+	public void setList (RelationNode node, List<DiffEntry> list)
 	{
-		DefaultTreeModel model = createModel (list);
+		DefaultTreeModel model = createModel (node, list);
 		setModel (model);
 		expand ((TreeNode)model.getRoot (), new Object[0]);
 	}
 
-	private DefaultTreeModel createModel (List<DiffEntry> list)
+	private DefaultTreeModel createModel (RelationNode node, List<DiffEntry> list)
 	{
-		ChangeTreeNode root = new ChangeTreeNode (null);
-		ChangeTreeNode comment = new ChangeTreeComment (root);
-		root.add (comment);
+		ChangeTreeNode root = new ChangeTreeRoot (node);
 
 		HashMap<String, ChangeTreeDirectory> dirMap = new HashMap<String, ChangeTreeDirectory> ();
 
@@ -94,17 +91,16 @@ public class ChangeTree extends JTree
 				newPath[i] = path[i];
 			newPath[path.length] = node;
 			path = newPath;
-		}
-
-		for (int i = 0; i < childCount; ++i)
-		{
-			TreeNode childNode = node.getChildAt (i);
-			if (!childNode.isLeaf ())
+			for (int i = 0; i < childCount; ++i)
 			{
-				expand (childNode, path);
+				TreeNode childNode = node.getChildAt (i);
+				if (!childNode.isLeaf ())
+				{
+					expand (childNode, path);
+				}
 			}
-		}
 
-		expandPath (new TreePath (path));
+			expandPath (new TreePath (path));
+		}
 	}
 }

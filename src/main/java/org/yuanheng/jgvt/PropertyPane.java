@@ -120,6 +120,6 @@ class PropertyPane extends JPanel
 		m_msgPane.setCaretPosition (0);
 
 		List<DiffEntry> changes = m_controller.getGitRepo ().getChanges (node.getCommit ());
-		m_changeTree.setList (changes);
+		m_changeTree.setList (node, changes);
 	}
 }

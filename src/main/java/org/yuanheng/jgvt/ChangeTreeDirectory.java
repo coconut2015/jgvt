@@ -15,8 +15,6 @@
  */
 package org.yuanheng.jgvt;
 
-import javax.swing.tree.TreeNode;
-
 /**
  * @author	Heng Yuan
  */
@@ -24,7 +22,7 @@ class ChangeTreeDirectory extends ChangeTreeNode
 {
 	private String m_path;
 
-	ChangeTreeDirectory (TreeNode parent, String path)
+	ChangeTreeDirectory (ChangeTreeNode parent, String path)
 	{
 		super (parent);
 		m_path = path;

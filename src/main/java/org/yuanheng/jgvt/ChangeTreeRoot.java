@@ -15,20 +15,21 @@
  */
 package org.yuanheng.jgvt;
 
-import javax.swing.tree.TreeNode;
-
 /**
  * @author	Heng Yuan
  */
-class ChangeTreeComment extends ChangeTreeNode
+class ChangeTreeRoot extends ChangeTreeNode
 {
-	public ChangeTreeComment (TreeNode parent)
+	private final RelationNode m_node;
+
+	public ChangeTreeRoot (RelationNode node)
 	{
-		super (parent);
+		super (null);
+		m_node = node;
 	}
 
 	public String toString ()
 	{
-		return "Comment";
+		return m_node.getCommit ().getId ().getName ();
 	}
 }
