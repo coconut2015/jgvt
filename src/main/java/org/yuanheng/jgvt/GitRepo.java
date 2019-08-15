@@ -30,6 +30,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.Edit;
+import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
@@ -68,6 +69,18 @@ public class GitRepo implements AutoCloseable
 						.build();
 		m_git = Git.wrap (m_repo);
 		m_root = builder.getGitDir ().getParentFile ().getCanonicalFile ();
+	}
+
+	public ObjectId getHead ()
+	{
+		try
+		{
+			return m_repo.resolve (Constants.HEAD);
+		}
+		catch (IOException ex)
+		{
+		}
+		return null;
 	}
 
 	public File getRoot ()

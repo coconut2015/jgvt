@@ -87,7 +87,8 @@ public class Main
 
 		Controller controller = new Controller (gitRepo, dir, file);
 		GUI gui = new GUI (controller);
-		controller.updateGUI ();
+		controller.generateTree ();
+		controller.centerTree ();
 		gui.setVisible (true);
 
 		gui.waitForClose ();

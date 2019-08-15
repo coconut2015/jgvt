@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
 
 import org.yuanheng.jgvt.relation.RelationNode;
 
@@ -66,5 +67,9 @@ public class GVTGraphComponent extends mxGraphComponent
 		GVTGraph graph = (GVTGraph)this.graph;
 		Object cell = graph.getTree ().getVertex (node);
 		scrollCellToVisible (cell, true);
+
+		// fake selection event
+		MouseEvent e = new MouseEvent (this, MouseEvent.MOUSE_CLICKED, 0, MouseEvent.BUTTON1_MASK, 0, 0, 1, false);
+		selectCellForEvent (cell, e);
 	}
 }

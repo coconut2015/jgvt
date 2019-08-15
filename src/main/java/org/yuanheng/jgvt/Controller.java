@@ -18,6 +18,8 @@ package org.yuanheng.jgvt;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.SwingUtilities;
+
 import org.eclipse.jgit.lib.ObjectId;
 import org.yuanheng.jgvt.export.DotConverter;
 import org.yuanheng.jgvt.export.DotFileOptions;
@@ -57,7 +59,7 @@ public class Controller
 		m_gui = gui;
 	}
 
-	public void updateGUI () throws Exception
+	public void generateTree () throws Exception
 	{
 		m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
 		m_gui.setBranch (m_gitRepo.getBranch ());
@@ -72,6 +74,22 @@ public class Controller
 
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
+ 	}
+
+	public void centerTree () throws Exception
+	{
+		ObjectId head = m_gitRepo.getHead ();
+		if (head != null)
+		{
+			final RelationNode node = m_tree.getNode (head);
+			SwingUtilities.invokeLater (new Runnable ()
+			{
+				public void run ()
+				{
+					select (node, true);
+				}
+			});
+		}
  	}
 
 	public void select (RelationNode node, boolean center)
