@@ -25,6 +25,7 @@ import org.yuanheng.jgvt.relation.RelationNode;
 
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.shape.mxRectangleShape;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxUtils;
@@ -37,21 +38,30 @@ public class GVTVertexShape extends mxRectangleShape
 {
 	public void paintShape(mxGraphics2DCanvas canvas, mxCellState state)
 	{
-		GVTTree tree = ((GVTGraph)state.getView ().getGraph ()).getTree ();
+		GVTGraph graph = (GVTGraph)state.getView ().getGraph ();
+		GVTTree tree = graph.getTree ();
 		Map<String, Object> style = state.getStyle();
-		mxCell cell = (mxCell) state.getCell ();
+		mxIGraphModel model = state.getView ().getGraph ().getModel ();
+		Object cell = state.getCell ();
+		boolean isVertex = model.isVertex (cell);
 
-		if (cell.isVertex () && tree != null)
+		if (isVertex && tree != null)
 		{
-			style.put (mxConstants.STYLE_FONTSTYLE, style.get (GVTGraphFactory.STYLE_REGULAR_FONTSTYLE));
-			style.put (mxConstants.STYLE_FILLCOLOR, style.get (GVTGraphFactory.STYLE_REGULAR_FILLCOLOR));
+			if (graph.isCellSelected (cell))
+			{
+				style.put (mxConstants.STYLE_FILLCOLOR, style.get (GVTGraphFactory.STYLE_SELECTED_FILLCOLOR));
+			}
+			else
+			{
+				style.put (mxConstants.STYLE_FILLCOLOR, style.get (GVTGraphFactory.STYLE_REGULAR_FILLCOLOR));
+			}
 		}
 		super.paintShape (canvas, state);
 
 		RelationNode node = null;
-		if (cell.isVertex () && tree != null)
+		if (isVertex && tree != null)
 		{
-			GVTVertex v = (GVTVertex)cell.getValue ();
+			GVTVertex v = (GVTVertex)model.getValue (cell);
 			node = tree.getNode (v);
 		}
 		if (node == null)

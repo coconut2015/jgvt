@@ -53,10 +53,8 @@ public class GVTGraphFactory
 	public final static String MERGE_STYLE = "mergeEdge";
 
 	public static String STYLE_TAG_FONTCOLOR = "tagFontColor";
-	public static String STYLE_BRANCH_FONTSTYLE = "branchFontStyle";
-	public static String STYLE_BRANCH_FILLCOLOR = "branchFillColor";
-	public static String STYLE_REGULAR_FONTSTYLE = "regularFontStyle";
 	public static String STYLE_REGULAR_FILLCOLOR = "regularFillColor";
+	public static String STYLE_SELECTED_FILLCOLOR = "selectedFillColor";
 
 	private static String STYLE_VERTEX_SHAPE = "GVTVertex";
 
@@ -73,7 +71,7 @@ public class GVTGraphFactory
 		Map<String, Object> commitEdge = new HashMap<String, Object> ();
 		commitEdge.put (mxConstants.STYLE_ROUNDED, false);
 		commitEdge.put (mxConstants.STYLE_ORTHOGONAL, false);
-		commitEdge.put (mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_TOPTOBOTTOM);
+		commitEdge.put (mxConstants.STYLE_EDGE, mxConstants.ELBOW_VERTICAL);
 		commitEdge.put (mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 		commitEdge.put (mxConstants.STYLE_ENDARROW, mxConstants.NONE);
 		commitEdge.put (mxConstants.STYLE_STROKECOLOR, "#000000");
@@ -106,9 +104,9 @@ public class GVTGraphFactory
 		vertexStyle.put (mxConstants.STYLE_FONTFAMILY, "Verdana");
 		vertexStyle.put (mxConstants.STYLE_FONTCOLOR, "#000000");
 		vertexStyle.put (mxConstants.STYLE_PERIMETER, mxPerimeter.RectanglePerimeter);
-		vertexStyle.put (mxConstants.STYLE_FONTSTYLE, mxConstants.FONT_BOLD);
+		vertexStyle.put (mxConstants.STYLE_FILLCOLOR, "#a0c8f0");
 		vertexStyle.put (STYLE_REGULAR_FILLCOLOR, "#a0c8f0");
-		vertexStyle.put (STYLE_REGULAR_FONTSTYLE, 0);
+		vertexStyle.put (STYLE_SELECTED_FILLCOLOR, "#c80000");
 		vertexStyle.put (STYLE_TAG_FONTCOLOR, "#7f0000");
 
 		GRAPH_STYLE.setDefaultVertexStyle (vertexStyle);
