@@ -23,7 +23,10 @@ import org.yuanheng.jgvt.gui.treetable.TreeTableModel;
  */
 class ChangeTreeTableModel extends AbstractTreeTableModel
 {
-	public static String[] COLUMN_NAMES = { "File", "Add", "Del" };
+	public final static int COL_ADDED = 1;
+	public final static int COL_DELETED = 2;
+
+	public static String[] COLUMN_NAMES = { "File", "Added", "Deleted" };
 
 	public ChangeTreeTableModel ()
 	{
@@ -70,9 +73,9 @@ class ChangeTreeTableModel extends AbstractTreeTableModel
 	{
 		switch (column)
 		{
-			case 1:
+			case COL_ADDED:
 				return ((ChangeTreeNode)node).getAdded ();
-			case 2:
+			case COL_DELETED:
 				return ((ChangeTreeNode)node).getDeleted ();
 			default:
 				return node;

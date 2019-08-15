@@ -48,12 +48,12 @@ class ChangeTreeFile extends ChangeTreeNode
 
 	public Integer getAdded ()
 	{
-		return m_info.getAdd ();
+		return m_info.getAdded ();
 	}
 
 	public Integer getDeleted ()
 	{
-		return m_info.getDelete ();
+		return -m_info.getDeleted ();
 	}
 
 	public String getDirectory ()

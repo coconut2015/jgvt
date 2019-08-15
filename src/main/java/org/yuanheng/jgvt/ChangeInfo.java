@@ -36,7 +36,7 @@ public class ChangeInfo
 		return m_entry;
 	}
 
-	public int getAdd ()
+	public int getAdded ()
 	{
 		return m_add;
 	}
@@ -46,7 +46,7 @@ public class ChangeInfo
 		m_add = add;
 	}
 
-	public int getDelete ()
+	public int getDeleted ()
 	{
 		return m_delete;
 	}
