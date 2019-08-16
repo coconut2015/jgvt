@@ -24,7 +24,6 @@ import java.util.Map;
 import org.yuanheng.jgvt.relation.RelationNode;
 
 import com.mxgraph.canvas.mxGraphics2DCanvas;
-import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.shape.mxRectangleShape;
 import com.mxgraph.util.mxConstants;

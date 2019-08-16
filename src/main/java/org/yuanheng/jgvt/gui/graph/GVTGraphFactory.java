@@ -30,6 +30,7 @@ import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxRectangle;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxPerimeter;
+import com.mxgraph.view.mxStyleRegistry;
 import com.mxgraph.view.mxStylesheet;
 
 /**
@@ -48,6 +49,10 @@ public class GVTGraphFactory
 	 */
 	public static double BRANCH_SPACING = 140.0;
 
+	public final static String MERGE_EDGE_STYLE = "mergeEdgeStyle";
+	public final static String MERGE_EDGE_SHAPE = "mergeEdgeShape";
+	public final static String STYLE_VERTEX_SHAPE = "GVTVertex";
+
 	public final static String COMMIT_STYLE = "commitEdge";
 	public final static String BRANCH_STYLE = "branchEdge";
 	public final static String MERGE_STYLE = "mergeEdge";
@@ -56,8 +61,6 @@ public class GVTGraphFactory
 	public static String STYLE_REGULAR_FILLCOLOR = "regularFillColor";
 	public static String STYLE_SELECTED_FILLCOLOR = "selectedFillColor";
 
-	private static String STYLE_VERTEX_SHAPE = "GVTVertex";
-
 	public static mxStylesheet GRAPH_STYLE;
 
 	static
@@ -65,6 +68,8 @@ public class GVTGraphFactory
 		mxConstants.RECTANGLE_ROUNDING_FACTOR = 0.5;
 
 		mxGraphics2DCanvas.putShape (STYLE_VERTEX_SHAPE, new GVTVertexShape ());
+		mxGraphics2DCanvas.putShape (MERGE_EDGE_SHAPE, new GVTMergeEdgeShape ());
+		mxStyleRegistry.putValue (MERGE_EDGE_STYLE, new GVTMergeEdgeStyle ());
 
 		GRAPH_STYLE = new mxStylesheet ();
 
@@ -87,8 +92,8 @@ public class GVTGraphFactory
 		Map<String, Object> mergeEdge = new HashMap<String, Object> ();
 		mergeEdge.put (mxConstants.STYLE_ROUNDED, true);
 		mergeEdge.put (mxConstants.STYLE_ORTHOGONAL, false);
-		mergeEdge.put (mxConstants.STYLE_EDGE, mxConstants.ELBOW_VERTICAL);
-		mergeEdge.put (mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
+		mergeEdge.put (mxConstants.STYLE_EDGE, MERGE_EDGE_STYLE);
+		mergeEdge.put (mxConstants.STYLE_SHAPE, MERGE_EDGE_SHAPE);
 		mergeEdge.put (mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
 		mergeEdge.put (mxConstants.STYLE_STROKECOLOR, "#ff0000");
 
