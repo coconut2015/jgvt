@@ -67,11 +67,13 @@ class RememberButton extends JButton
 		{
 			setText (EMPTYSTRING);
 			setEnabled (false);
+			setToolTipText (null);
 		}
 		else
 		{
 			setText (CommitUtils.getName (node.getCommit ()));
 			setEnabled (true);
+			setToolTipText (CommitUtils.getToolTipString (node.getCommit (), CommitUtils.TOOLTIP_ALL));
 		}
 	}
 }

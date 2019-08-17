@@ -71,7 +71,7 @@ public class GUI
 		private static final long serialVersionUID = 5063205298749002856L;
 
 		{
-			this.putValue (Action.MNEMONIC_KEY, (int)'x');
+			putValue (Action.MNEMONIC_KEY, (int)'x');
 		}
 
 		@Override
@@ -119,6 +119,7 @@ public class GUI
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'s');
+			putValue (Action.SHORT_DESCRIPTION, "Search");
 		}
 
 		@Override
@@ -214,6 +215,7 @@ public class GUI
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'a');
+			putValue (Action.SHORT_DESCRIPTION, "About");
 		}
 
 		@Override
