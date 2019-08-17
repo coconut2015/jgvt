@@ -37,7 +37,7 @@ public class ChangeTreeDiff extends ChangeTreeNode
 	{
 		String n1 = CommitUtils.getName (m_n1.getCommit ());
 		String n2 = CommitUtils.getName (m_n2.getCommit ());
-		return n1 + " - " + n2;
+		return n1 + ".." + n2;
 	}
 
 	public RelationNode getNode1 ()

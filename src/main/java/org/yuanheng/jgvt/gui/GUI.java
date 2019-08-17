@@ -124,6 +124,7 @@ public class GUI
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'r');
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_R, InputEvent.CTRL_MASK));
 		}
 
 		@Override
@@ -175,6 +176,7 @@ public class GUI
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'c');
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_C, InputEvent.CTRL_MASK));
 		}
 
 		@Override

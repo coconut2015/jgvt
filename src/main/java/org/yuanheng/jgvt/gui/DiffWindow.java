@@ -34,7 +34,7 @@ class DiffWindow extends JFrame
 
 	public DiffWindow (Controller controller, RelationNode n1, RelationNode n2)
 	{
-		setTitle ("jgvt diff: " + CommitUtils.getName (n1.getCommit ()) + " - " + CommitUtils.getName (n2.getCommit ()));
+		setTitle ("jgvt diff: " + CommitUtils.getName (n1.getCommit ()) + ".." + CommitUtils.getName (n2.getCommit ()));
 		setDefaultCloseOperation (JDialog.DISPOSE_ON_CLOSE);
 		Container contentPane = getContentPane ();
 		DiffPane diffPane = new DiffPane (controller, n1, n2);
