@@ -60,6 +60,7 @@ public class GUI
 	private JSplitPane m_splitPane;
 	private boolean m_splitPaneSetup;
 	private JFileChooser m_exportFileChooser;
+	private RememberButton m_rememberButton;
 
 	private String m_branch;
 	private String m_file;
@@ -339,6 +340,9 @@ public class GUI
 		m_toolBar.setFloatable (false);
 		m_toolBar.add (new ToolBarButton (m_searchAction));
 		m_toolBar.add (new ToolBarButton (m_aboutAction));
+		m_toolBar.addSeparator ();
+		m_rememberButton = new RememberButton (m_controller);
+		m_toolBar.add (m_rememberButton);
 	}
 
 	private void createGraphComp ()
@@ -439,6 +443,11 @@ public class GUI
 	public GVTGraph getGraph ()
 	{
 		return m_graph;
+	}
+
+	public void setRemembered (RelationNode node)
+	{
+		m_rememberButton.setNode (node);
 	}
 
 	public void select (RelationNode node, boolean center)

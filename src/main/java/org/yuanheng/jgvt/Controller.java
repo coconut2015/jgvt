@@ -196,12 +196,14 @@ public class Controller
 		}
 
 		m_rememberedNode = node;
+		m_gui.setRemembered (node);
 		return true;
 	}
 
 	public void clearRemember ()
 	{
 		m_rememberedNode = null;
+		m_gui.setRemembered (null);
 	}
 
 	public boolean locateRemember ()
