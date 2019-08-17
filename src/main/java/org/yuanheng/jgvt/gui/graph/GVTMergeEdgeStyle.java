@@ -67,10 +67,11 @@ class GVTMergeEdgeStyle implements mxEdgeStyleFunction
 			double newX = - Math.sin(angle) * height;
 			double newY = Math.cos(angle) * height;
 
-			if (dx < 0)
+			if ((dx < 0 && dy > 0) ||
+				(dx > 0 && dy < 0))
+			{
 				newX = -newX;
-			if (dy < 0)
-				newY = -newY;
+			}
 
 			pt.setX (midX + newX);
 			pt.setY (midY + newY);

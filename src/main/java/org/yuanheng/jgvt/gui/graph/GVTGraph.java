@@ -47,7 +47,7 @@ public class GVTGraph extends mxGraph
 
 		setAllowDanglingEdges (false);
 		setDropEnabled (false);
-		setAutoSizeCells (true);
+		setAutoSizeCells (false);
 		setSplitEnabled (false);
 		setModel (new mxGraphModel ());
 	}
@@ -70,7 +70,7 @@ public class GVTGraph extends mxGraph
 	 */
 	public boolean isCellSelectable(Object cell)
 	{
-		return this.model.isVertex (cell);
+		return model.isVertex (cell);
 	}
 
 	/**
@@ -84,12 +84,12 @@ public class GVTGraph extends mxGraph
 	public String getToolTipForCell (Object cell)
 	{
 		if (m_tree == null ||
-			this.model.isEdge (cell))
+			model.isEdge (cell))
 		{
 			return null;
 		}
 
-		GVTVertex v = (GVTVertex) this.model.getValue (cell);
+		GVTVertex v = (GVTVertex) model.getValue (cell);
 		if (v == null)
 			return null;
 
