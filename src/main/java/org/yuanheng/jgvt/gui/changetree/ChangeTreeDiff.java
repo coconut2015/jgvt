@@ -21,41 +21,38 @@ import org.yuanheng.jgvt.relation.RelationNode;
 /**
  * @author	Heng Yuan
  */
-class ChangeTreeRoot extends ChangeTreeNode
+public class ChangeTreeDiff extends ChangeTreeNode
 {
-	private RelationNode m_node;
+	private RelationNode m_n1;
+	private RelationNode m_n2;
 
-	public ChangeTreeRoot ()
+	public ChangeTreeDiff (RelationNode n1, RelationNode n2)
 	{
 		super (null);
+		m_n1 = n1;
+		m_n2 = n2;
 	}
 
 	public String toString ()
 	{
-		if (m_node == null)
-			return "";
-		return getNode().getCommit ().getId ().getName ();
+		String n1 = CommitUtils.getName (m_n1.getCommit ());
+		String n2 = CommitUtils.getName (m_n2.getCommit ());
+		return n1 + " - " + n2;
 	}
 
-	public RelationNode getNode ()
+	public RelationNode getNode1 ()
 	{
-		return m_node;
+		return m_n1;
 	}
 
-	public void setNode (RelationNode node)
+	public RelationNode getNode2 ()
 	{
-		m_node = node;
-		clearHtml ();
+		return m_n2;
 	}
 
 	@Override
 	String computeHtml ()
 	{
-		RelationNode node = m_node;
-		if (node != null)
-		{
-			return CommitUtils.getComment (node);
-		}
-		return "";
+		return CommitUtils.getComment (m_n1, m_n2);
 	}
 }

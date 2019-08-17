@@ -17,8 +17,11 @@ package org.yuanheng.jgvt;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.SwingUtilities;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.eclipse.jgit.lib.ObjectId;
 import org.yuanheng.jgvt.export.DotConverter;
@@ -37,14 +40,58 @@ import org.yuanheng.jgvt.relation.RelationTreeFactory;
  */
 public class Controller
 {
+	private final static HyperlinkListener s_browserUrlHandler = new HyperlinkListener ()
+	{
+		@Override
+		public void hyperlinkUpdate (HyperlinkEvent e)
+		{
+			try
+			{
+				if (e.getEventType () == HyperlinkEvent.EventType.ACTIVATED)
+				{
+					Utils.browse (e.getURL ().toURI ());
+				}
+			}
+			catch (Exception ex)
+			{
+			}
+		}
+	};
+
+	public static HyperlinkListener getBrowserUrlHandler ()
+	{
+		return s_browserUrlHandler;
+	}
+
 	private GUI m_gui;
 	private GitRepo m_gitRepo;
 	private File m_dir;
 	private File m_file;
 	private RelationTree m_tree;
 	private final Pref m_prefs;
+	private RelationNode m_selectedNode;
+	private RelationNode m_rememberedNode;
 
 	private DotFileOptions m_dotFileOptions;
+
+	private final HyperlinkListener m_commitUrlHandler = new HyperlinkListener ()
+	{
+		@Override
+		public void hyperlinkUpdate (HyperlinkEvent e)
+		{
+			try
+			{
+				if (e.getEventType () == HyperlinkEvent.EventType.ACTIVATED)
+				{
+					handleCommitURL (e.getURL ());
+				}
+			}
+			catch (Exception ex)
+			{
+				ex.printStackTrace ();
+			}
+		}
+	};
 
 	public Controller (GitRepo gitRepo, File dir, File file)
 	{
@@ -94,6 +141,7 @@ public class Controller
 
 	public void select (RelationNode node, boolean center)
 	{
+		m_selectedNode = node;
 		m_gui.select (node, center);
 	}
 
@@ -137,5 +185,75 @@ public class Controller
 	public GitRepo getGitRepo ()
 	{
 		return m_gitRepo;
+	}
+
+	public boolean remember ()
+	{
+		RelationNode node = m_selectedNode;
+		if (node == null)
+		{
+			return false;
+		}
+		if (m_rememberedNode == node)
+		{
+			return true;
+		}
+
+		m_rememberedNode = node;
+		return true;
+	}
+
+	public void clearRemember ()
+	{
+		m_rememberedNode = null;
+	}
+
+	public boolean locateRemember ()
+	{
+		if (m_rememberedNode == null)
+			return false;
+		m_gui.select (m_rememberedNode, true);
+		return true;
+	}
+
+	public boolean compareToRemember ()
+	{
+		if (m_selectedNode == null ||
+			m_rememberedNode == null ||
+			m_selectedNode == m_rememberedNode)
+			return false;
+		m_gui.showDiffWindow (m_rememberedNode, m_selectedNode);
+		return true;
+	}
+
+	public RelationNode getRememberedNode ()
+	{
+		return m_rememberedNode;
+	}
+
+	public boolean hasRememberNode ()
+	{
+		return m_rememberedNode != null;
+	}
+
+	public boolean hasSelectedNode ()
+	{
+		return m_selectedNode != null;
+	}
+
+	public HyperlinkListener getCommitUrlHandler ()
+	{
+		return m_commitUrlHandler;
+	}
+
+	public void handleCommitURL (URL url)
+	{
+		String protocol = url.getProtocol ();
+		if ("http".equals (protocol) &&
+			"commit".equals (url.getHost ()))
+		{
+			String commitId = url.getPath ().substring (1);
+			select (commitId, true);
+		}
 	}
 }

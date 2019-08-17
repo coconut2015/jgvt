@@ -36,6 +36,8 @@ public class CommitUtils
 	public final static int TOOLTIP_ALL = 0xFFFFFFFF;
 	private static String CSS;
 
+	public static int DEFAULT_ABBREV_LEN = 6;
+
 	static
 	{
 		try
@@ -46,6 +48,11 @@ public class CommitUtils
 		{
 			CSS = "";
 		}
+	}
+
+	public static String getName (RevCommit commit)
+	{
+		return commit.abbreviate (DEFAULT_ABBREV_LEN).name ();
 	}
 
 	public static String getToolTipString (RevCommit commit, int flag)
@@ -267,6 +274,23 @@ public class CommitUtils
 		builder.append ("<tr>");
 		builder.append (getHeader ("Message"));
 		builder.append (getValue (commit.getFullMessage ()));
+		builder.append ("</tr>");
+		builder.append ("</table><body></html>");
+		return builder.toString ();
+	}
+
+	public static String getComment (RelationNode n1, RelationNode n2)
+	{
+		StringBuilder builder = new StringBuilder ().append ("<html>");
+		builder.append ("<head>").append (CSS);
+		builder.append ("<body><table>");
+		builder.append ("<tr>");
+		builder.append (getHeader ("Commit 1 SHA-1"));
+		builder.append (getValue (n1.getCommit ().getId ().getName ()));
+		builder.append ("</tr>");
+		builder.append ("<tr>");
+		builder.append (getHeader ("Commit 2 SHA-1"));
+		builder.append (getValue (n1.getCommit ().getId ().getName ()));
 		builder.append ("</tr>");
 		builder.append ("</table><body></html>");
 		return builder.toString ();

@@ -19,10 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
-import org.yuanheng.jgvt.Utils;
+import org.yuanheng.jgvt.Controller;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Paddings;
@@ -45,33 +43,16 @@ class AboutDialog extends JDialog
 		}
 	};
 
-	private final HyperlinkListener m_urlHandler = new HyperlinkListener ()
-	{
-		@Override
-		public void hyperlinkUpdate (HyperlinkEvent e)
-		{
-			try
-			{
-				if (e.getEventType () == HyperlinkEvent.EventType.ACTIVATED)
-				{
-					Utils.browse (e.getURL ().toURI ());
-				}
-			}
-			catch (Exception ex)
-			{
-			}
-		}
-	};
-
 	public AboutDialog (JFrame parent)
 	{
 		super (parent);
 
 		setTitle ("About");
 		setModal (true);
+		setDefaultCloseOperation (JDialog.DISPOSE_ON_CLOSE);
 
 		JEditorPane htmlPane = new JEditorPane ();
-		htmlPane.addHyperlinkListener (m_urlHandler);
+		htmlPane.addHyperlinkListener (Controller.getBrowserUrlHandler ());
 		htmlPane.setEditable (false);
 		try
 		{

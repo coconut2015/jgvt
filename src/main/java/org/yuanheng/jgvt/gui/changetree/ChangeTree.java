@@ -98,9 +98,9 @@ public class ChangeTree extends JTreeTable
 		}
 	};
 
-	public ChangeTree ()
+	public ChangeTree (ChangeTreeNode root)
 	{
-		super (new ChangeTreeTableModel ());
+		super (new ChangeTreeTableModel (root));
 		getColumnModel().getColumn(ChangeTreeTableModel.COL_ADDED).setCellRenderer (m_addedCellRenderer);
 		getColumnModel().getColumn(ChangeTreeTableModel.COL_DELETED).setCellRenderer (m_deletedCellRenderer);
 		setSelectionMode (ListSelectionModel.SINGLE_SELECTION);
@@ -139,10 +139,15 @@ public class ChangeTree extends JTreeTable
 		tableColumn.setMaxWidth (maxWidth);
 	}
 
-	public void setList (RelationNode node, List<ChangeInfo> list)
+	public void updateCommitRoot (RelationNode node)
 	{
-		ChangeTreeRoot root = (ChangeTreeRoot) getTreeTableModel ().getRoot ();
+		ChangeTreeCommit root = (ChangeTreeCommit) getTreeTableModel ().getRoot ();
 		root.setNode (node);
+	}
+
+	public void setChanges (List<ChangeInfo> list)
+	{
+		ChangeTreeNode root = (ChangeTreeNode) getTreeTableModel ().getRoot ();
 		root.clear ();
 
 		HashMap<String, ChangeTreeDirectory> dirMap = new HashMap<String, ChangeTreeDirectory> ();

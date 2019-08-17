@@ -28,14 +28,14 @@ class ChangeTreeTableModel extends AbstractTreeTableModel
 
 	public static String[] COLUMN_NAMES = { "File", "Added", "Deleted" };
 
-	public ChangeTreeTableModel ()
+	public ChangeTreeTableModel (ChangeTreeNode root)
 	{
-		super (new ChangeTreeRoot ());
+		super (root);
 	}
 
-	public ChangeTreeRoot getRoot ()
+	public ChangeTreeNode getRoot ()
 	{
-		return (ChangeTreeRoot) root;
+		return (ChangeTreeNode) root;
 	}
 
 	@Override

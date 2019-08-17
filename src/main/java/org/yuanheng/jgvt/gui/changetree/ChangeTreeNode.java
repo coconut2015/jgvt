@@ -26,7 +26,7 @@ import javax.swing.tree.TreeNode;
 /**
  * @author	Heng Yuan
  */
-abstract class ChangeTreeNode implements TreeNode
+public abstract class ChangeTreeNode implements TreeNode
 {
 	private TreeNode m_parent;
 	private ArrayList<ChangeTreeNode> m_children;

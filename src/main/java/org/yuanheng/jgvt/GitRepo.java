@@ -189,17 +189,15 @@ public class GitRepo implements AutoCloseable
 		return reverseMap;
 	}
 
-	public List<ChangeInfo> getChanges (RevCommit commit)
+	private List<ChangeInfo> getChanges (RevTree t1, RevTree t2)
 	{
 		ArrayList<ChangeInfo> changes = new ArrayList<ChangeInfo> ();
 	    DiffFormatter diffFmt = new DiffFormatter(NullOutputStream.INSTANCE);
 	    diffFmt.setRepository(m_repo);
-        RevTree before = commit.getParentCount() > 0 ? commit.getParent(0).getTree() : null;
-        RevTree current = commit.getTree();
 
-        try
+	    try
         {
-	        for (DiffEntry diff: diffFmt.scan (before, current))
+	        for (DiffEntry diff: diffFmt.scan (t1, t2))
 	        {
 	        	ChangeInfo info = new ChangeInfo (diff);
 	        	int added = 0;
@@ -219,6 +217,22 @@ public class GitRepo implements AutoCloseable
         }
         diffFmt.close ();
 		return changes;
+	}
+
+	public List<ChangeInfo> getChanges (RevCommit commit)
+	{
+        RevTree before = commit.getParentCount() > 0 ? commit.getParent(0).getTree() : null;
+        RevTree current = commit.getTree();
+
+        return getChanges (before, current);
+	}
+
+	public List<ChangeInfo> getChanges (RevCommit c1, RevCommit c2)
+	{
+        RevTree t1 = c1.getTree ();
+        RevTree t2 = c2.getTree();
+
+        return getChanges (t1, t2);
 	}
 
 	@Override

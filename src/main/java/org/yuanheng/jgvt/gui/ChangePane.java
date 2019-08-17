@@ -19,53 +19,30 @@ import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.net.URL;
 import java.util.List;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.yuanheng.jgvt.ChangeInfo;
 import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.gui.changetree.ChangeTree;
-import org.yuanheng.jgvt.relation.RelationNode;
+import org.yuanheng.jgvt.gui.changetree.ChangeTreeNode;
 
 /**
  * @author	Heng Yuan
  */
-class PropertyPane extends JPanel
+class ChangePane extends JPanel
 {
-	private static final long serialVersionUID = -3411516962635048642L;
+	private static final long serialVersionUID = 1817444711843343803L;
 
 	private final Controller m_controller;
 	private ChangeTree m_changeTree;
 	private JEditorPane m_msgPane;
-	private RelationNode m_node;
-
-	private final HyperlinkListener m_urlHandler = new HyperlinkListener ()
-	{
-		@Override
-		public void hyperlinkUpdate (HyperlinkEvent e)
-		{
-			try
-			{
-				if (e.getEventType () == HyperlinkEvent.EventType.ACTIVATED)
-				{
-					handleURL (e.getURL ());
-				}
-			}
-			catch (Exception ex)
-			{
-				ex.printStackTrace ();
-			}
-		}
-	};
 
 	private final ListSelectionListener m_selectListener = new ListSelectionListener ()
 	{
@@ -92,11 +69,11 @@ class PropertyPane extends JPanel
 	    }
 	};
 
-	public PropertyPane (Controller controller)
+	public ChangePane (Controller controller, ChangeTreeNode root)
 	{
 		m_controller = controller;
 		setLayout (new BorderLayout ());
-		createChangeTree ();
+		m_changeTree = new ChangeTree (root);
 		createHtmlPane ();
 		JScrollPane scrollPane1 = new JScrollPane (m_changeTree);
 		JScrollPane scrollPane2 = new JScrollPane (m_msgPane);
@@ -108,38 +85,32 @@ class PropertyPane extends JPanel
 		m_changeTree.getSelectionModel ().addListSelectionListener (m_selectListener);
 	}
 
-	private void createChangeTree ()
-	{
-		m_changeTree = new ChangeTree ();
-	}
-
 	private void createHtmlPane ()
 	{
 		m_msgPane = new JEditorPane ();
 		m_msgPane.setContentType ("text/html");
 		m_msgPane.setEditable (false);
-		m_msgPane.addHyperlinkListener (m_urlHandler);
+		m_msgPane.addHyperlinkListener (m_controller.getCommitUrlHandler ());
 	}
 
-	public void handleURL (URL url)
+	public Controller getController ()
 	{
-		String protocol = url.getProtocol ();
-		if ("http".equals (protocol) &&
-			"commit".equals (url.getHost ()))
-		{
-			String commitId = url.getPath ().substring (1);
-			m_controller.select (commitId, true);
-		}
+		return m_controller;
 	}
 
-	public void select (RelationNode node)
+	public ChangeTree getChangeTree ()
 	{
-		if (m_node == node)
-			return;
-		m_node = node;
+		return m_changeTree;
+	}
 
-		List<ChangeInfo> changes = m_controller.getGitRepo ().getChanges (node.getCommit ());
-		m_changeTree.setList (node, changes);
+	public ChangeTreeNode getRoot ()
+	{
+		return (ChangeTreeNode)m_changeTree.getTreeTableModel ().getRoot ();
+	}
+
+	public void setChanges (List<ChangeInfo> changes)
+	{
+		m_changeTree.setChanges (changes);
 		m_changeTree.getSelectionModel ().setSelectionInterval (0, 0);
 	}
 }

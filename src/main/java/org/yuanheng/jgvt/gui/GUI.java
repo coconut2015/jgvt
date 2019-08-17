@@ -55,7 +55,7 @@ public class GUI
 	private final StatusBar m_statusBar;
 	private GVTGraph m_graph;
 	private GVTGraphComponent m_graphComp;
-	private PropertyPane m_propertyPane;
+	private CommitPane m_propertyPane;
 	private JSplitPane m_splitPane;
 	private boolean m_splitPaneSetup;
 	private JFileChooser m_fileChooser;
@@ -115,6 +115,85 @@ public class GUI
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
+		}
+	};
+
+	private Action m_rememberAction = new AbstractAction ("Remember selected")
+	{
+		private static final long serialVersionUID = -1447129537275798612L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'r');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			if (!m_controller.remember ())
+			{
+				JOptionPane.showMessageDialog (m_frame, "No selected commit.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	};
+
+	private Action m_clearRememberAction = new AbstractAction ("Clear remembered")
+	{
+		private static final long serialVersionUID = -1447129537275798612L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'m');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_controller.clearRemember ();
+		}
+	};
+
+	private Action m_locateRememberAction = new AbstractAction ("Locate remembered")
+	{
+		private static final long serialVersionUID = -1447129537275798612L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'l');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			if (!m_controller.locateRemember ())
+			{
+				JOptionPane.showMessageDialog (m_frame, "No remembered commit.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	};
+
+	private Action m_compareRememberAction = new AbstractAction ("Compare selected to remembered")
+	{
+		private static final long serialVersionUID = -1447129537275798612L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'c');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			if (!m_controller.hasRememberNode ())
+			{
+				JOptionPane.showMessageDialog (m_frame, "No remembered commit.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if (!m_controller.hasSelectedNode ())
+			{
+				JOptionPane.showMessageDialog (m_frame, "No selected commit.", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			if (!m_controller.compareToRemember ())
+			{
+				JOptionPane.showMessageDialog (m_frame, "Unable to compare.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	};
 
@@ -230,6 +309,14 @@ public class GUI
 		menu.add (new JMenuItem (m_exitAction));
 		m_menuBar.add (menu);
 
+		menu = new JMenu ("Compare");
+		menu.setMnemonic ('C');
+		menu.add (new JMenuItem (m_rememberAction));
+		menu.add (new JMenuItem (m_clearRememberAction));
+		menu.add (new JMenuItem (m_locateRememberAction));
+		menu.add (new JMenuItem (m_compareRememberAction));
+		m_menuBar.add (menu);
+
 		menu = new JMenu ("Help");
 		menu.setMnemonic ('H');
 		menu.add (new JMenuItem (m_aboutAction));
@@ -256,7 +343,7 @@ public class GUI
 
 	private void createPropertyPane ()
 	{
-		m_propertyPane = new PropertyPane (m_controller);
+		m_propertyPane = new CommitPane (m_controller);
 	}
 
 	public void setVisible (boolean visible)
@@ -387,5 +474,12 @@ public class GUI
 			title += " - " + m_file;
 		}
 		return title;
+	}
+
+	public void showDiffWindow (RelationNode n1, RelationNode n2)
+	{
+		DiffWindow dialog = new DiffWindow (m_controller, n1, n2);
+		dialog.setLocationRelativeTo (m_frame);
+		dialog.setVisible (true);
 	}
 }
