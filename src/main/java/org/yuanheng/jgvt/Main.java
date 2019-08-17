@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import org.yuanheng.jgvt.gui.GUI;
 
 /**
@@ -90,6 +92,13 @@ public class Main
 		controller.generateTree ();
 		gui.setVisible (true);
 		controller.centerTree ();
+		SwingUtilities.invokeLater (new Runnable ()
+		{
+			public void run ()
+			{
+				gui.getGraphComponent ().requestFocus ();
+			}
+		});
 
 		gui.waitForClose ();
 		System.exit (0);

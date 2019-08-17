@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 import org.yuanheng.jgvt.CommitUtils;
@@ -40,6 +41,7 @@ class RememberButton extends JButton
 	public RememberButton (Controller controller)
 	{
 		super (EMPTYSTRING);
+		setBorder (BorderFactory.createEmptyBorder ());
 		m_controller = controller;
 		setOpaque (true);
 		setBackground (new Color (0xa0c8f0));

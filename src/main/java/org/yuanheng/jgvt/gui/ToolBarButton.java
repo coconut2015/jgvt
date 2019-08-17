@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt.gui;
 
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 /**
@@ -29,5 +30,6 @@ class ToolBarButton extends JButton
 	{
 		super (action);
 		setHideActionText (true);
+		setBorder (BorderFactory.createEmptyBorder ());
 	}
 }

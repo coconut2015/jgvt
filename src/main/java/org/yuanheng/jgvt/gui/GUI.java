@@ -249,6 +249,7 @@ public class GUI
 			UIManager.setLookAndFeel (new Plastic3DLookAndFeel ());
 			UIDefaults defaults = UIManager.getDefaults ();
 			BorderUIResource emptyBorder = new BorderUIResource(BorderFactory.createEmptyBorder());
+			System.out.println (defaults);
 			defaults.put("SplitPaneDivider.border", emptyBorder);
 			defaults.put("SplitPane.border", emptyBorder);
 		}
@@ -438,6 +439,11 @@ public class GUI
 		m_file = file;
 		m_statusBar.setFile (file);
 		m_frame.setTitle (computeTitle ());
+	}
+
+	public GVTGraphComponent getGraphComponent ()
+	{
+		return m_graphComp;
 	}
 
 	public GVTGraph getGraph ()

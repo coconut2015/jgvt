@@ -15,14 +15,8 @@
  */
 package org.yuanheng.jgvt.gui;
 
-import java.awt.Color;
-import java.awt.Insets;
-
 import javax.swing.Icon;
-import javax.swing.JMenuItem;
-
-import jiconfont.icons.google_material_design_icons.GoogleMaterialDesignIcons;
-import jiconfont.swing.IconFontSwing;
+import javax.swing.ImageIcon;
 /**
  * @author	Heng Yuan
  */
@@ -33,13 +27,7 @@ class Icons
 
 	public Icons ()
 	{
-		JMenuItem item = new JMenuItem ("M");
-		int menuHeight = item.getPreferredSize ().height;
-		Insets menuInsets = item.getInsets ();
-		// infer the menu font height from menu size.
-		int iconSize = menuHeight - menuInsets.top - menuInsets.bottom;
-		IconFontSwing.register(GoogleMaterialDesignIcons.getIconFont());
-		ABOUT = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.HELP, iconSize, new Color(0x9b, 0, 0xff));
-		SEARCH = IconFontSwing.buildIcon(GoogleMaterialDesignIcons.SEARCH, iconSize, new Color(0x9b, 0, 0xff));
+		ABOUT = new ImageIcon (Icons.class.getResource ("icons/about.png"));
+		SEARCH = new ImageIcon (Icons.class.getResource ("icons/search.png"));
 	}
 }
