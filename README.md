@@ -3,6 +3,8 @@
 `jgvt` is a [git](https://git-scm.com/) version tree GUI viewer with more
 of a ClearCase version tree look-n-feel.
 
+![jgvt](docs/jgvt.png)
+
 It is written in Java using Swing.
 
 # Build

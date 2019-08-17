@@ -61,6 +61,10 @@ public class GUI
 	private JFileChooser m_fileChooser;
 	private DotFileChooser m_dotFileChooser;
 
+	private String m_branch;
+	private String m_file;
+	private String m_repo;
+
 	private Action m_exitAction = new AbstractAction ("Exit")
 	{
 		private static final long serialVersionUID = 5063205298749002856L;
@@ -181,7 +185,8 @@ public class GUI
 		createGraphComp ();
 		createPropertyPane ();
 
-		contentPane.add (m_statusBar, BorderLayout.SOUTH);
+		// disable status bar for now
+//		contentPane.add (m_statusBar, BorderLayout.SOUTH);
 
 		m_splitPane = new JSplitPane (JSplitPane.VERTICAL_SPLIT, m_graphComp, m_propertyPane);
 		m_splitPane.setResizeWeight (1);
@@ -315,17 +320,23 @@ public class GUI
 
 	public void setRoot (String repo)
 	{
+		m_repo = repo;
 		m_statusBar.setRoot (repo);
+		m_frame.setTitle (computeTitle ());
 	}
 
 	public void setBranch (String branch)
 	{
+		m_branch = branch;
 		m_statusBar.setBranch (branch);
+		m_frame.setTitle (computeTitle ());
 	}
 
 	public void setFile (String file)
 	{
+		m_file = file;
 		m_statusBar.setFile (file);
+		m_frame.setTitle (computeTitle ());
 	}
 
 	public GVTGraph getGraph ()
@@ -360,5 +371,21 @@ public class GUI
 		JFileChooser chooser = getFileChooser ();
 		m_dotFileChooser.updateJFileChooser (chooser);
 		return chooser;
+	}
+
+	private String computeTitle ()
+	{
+		if (m_repo == null)
+			return TITLE;
+		String title = "jgvt: " + m_repo;
+		if (m_branch != null)
+		{
+			title += " [ " + m_branch + " ]";
+		}
+		if (m_file != null && m_file.length () > 0)
+		{
+			title += " - " + m_file;
+		}
+		return title;
 	}
 }
