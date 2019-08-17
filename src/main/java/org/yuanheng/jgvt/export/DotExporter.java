@@ -30,18 +30,21 @@ import org.yuanheng.jgvt.relation.RelationTree;
 /**
  * @author	Heng Yuan
  */
-public class DotConverter
+public class DotExporter
 {
-	public DotConverter ()
+	private final DotOptions m_options;
+
+	public DotExporter (DotOptions options)
 	{
+		m_options = options;
 	}
 
 	private String getName (RelationNode node)
 	{
-		return "Node" + node.getCommit ().abbreviate (6).name ();
+		return "Node" + node.getCommit ().abbreviate (m_options.abbrevLength).name ();
 	}
 
-	public void save (File file, String graphName, DotFileOptions options, RelationTree tree) throws IOException
+	public void save (File file, String graphName, RelationTree tree) throws IOException
 	{
 		PrintWriter pw = new PrintWriter (new FileWriter (file));
 		pw.println ("digraph " + graphName + " {");
@@ -56,7 +59,7 @@ public class DotConverter
 				continue;
 			branchSet.put (branch, "");
 			List<RelationNode> list = branch.getOrderedList ();
-			if (options.groupNodes)
+			if (m_options.groupNodes)
 			{
 				pw.println ("  subgraph cluster_" + branch.hashCode () + " {");
 			}
@@ -101,7 +104,7 @@ public class DotConverter
 
 			if (annot == null)
 			{
-				pw.println ("  " + getName (node) + " [ label = \"" + node.getCommit ().abbreviate (options.abbrevLength).name () + "\" ]");
+				pw.println ("  " + getName (node) + " [ label = \"" + node.getCommit ().abbreviate (m_options.abbrevLength).name () + "\" ]");
 			}
 			else
 			{

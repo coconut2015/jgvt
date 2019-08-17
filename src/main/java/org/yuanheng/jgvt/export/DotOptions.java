@@ -18,7 +18,7 @@ package org.yuanheng.jgvt.export;
 /**
  * @author	Heng Yuan
  */
-public class DotFileOptions
+public class DotOptions
 {
 	public int abbrevLength = 6;
 	public boolean groupNodes = true;

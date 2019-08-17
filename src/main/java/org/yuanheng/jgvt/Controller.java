@@ -16,7 +16,6 @@
 package org.yuanheng.jgvt;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.SwingUtilities;
@@ -24,8 +23,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.eclipse.jgit.lib.ObjectId;
-import org.yuanheng.jgvt.export.DotConverter;
-import org.yuanheng.jgvt.export.DotFileOptions;
 import org.yuanheng.jgvt.gui.GUI;
 import org.yuanheng.jgvt.gui.graph.GVTGraph;
 import org.yuanheng.jgvt.gui.graph.GVTGraphFactory;
@@ -72,8 +69,6 @@ public class Controller
 	private RelationNode m_selectedNode;
 	private RelationNode m_rememberedNode;
 
-	private DotFileOptions m_dotFileOptions;
-
 	private final HyperlinkListener m_commitUrlHandler = new HyperlinkListener ()
 	{
 		@Override
@@ -104,6 +99,21 @@ public class Controller
 	public void setGUI (GUI gui)
 	{
 		m_gui = gui;
+	}
+
+	public GUI getGUI ()
+	{
+		return m_gui;
+	}
+
+	public GVTGraph getGraph ()
+	{
+		return m_gui.getGraph ();
+	}
+
+	public RelationTree getRelationTree ()
+	{
+		return m_tree;
 	}
 
 	public void generateTree () throws Exception
@@ -163,23 +173,9 @@ public class Controller
 		m_dir = dir;
 	}
 
-	public void exportDot (File file) throws IOException
-	{
-		new DotConverter ().save (file, "jgvt", getDotFileOptions (), m_tree);
-	}
-
 	public Pref getPrefs ()
 	{
 		return m_prefs;
-	}
-
-	public DotFileOptions getDotFileOptions ()
-	{
-		if (m_dotFileOptions == null)
-		{
-			m_dotFileOptions = new DotFileOptions ();
-		}
-		return m_dotFileOptions;
 	}
 
 	public GitRepo getGitRepo ()

@@ -21,10 +21,11 @@ import java.awt.event.*;
 import java.io.File;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.BorderUIResource;
 
 import org.yuanheng.jgvt.Controller;
-import org.yuanheng.jgvt.export.DotFileChooser;
+import org.yuanheng.jgvt.export.*;
 import org.yuanheng.jgvt.gui.graph.GVTGraph;
 import org.yuanheng.jgvt.gui.graph.GVTGraphComponent;
 import org.yuanheng.jgvt.gui.graph.GVTGraphFactory;
@@ -58,8 +59,7 @@ public class GUI
 	private CommitPane m_propertyPane;
 	private JSplitPane m_splitPane;
 	private boolean m_splitPaneSetup;
-	private JFileChooser m_fileChooser;
-	private DotFileChooser m_dotFileChooser;
+	private JFileChooser m_exportFileChooser;
 
 	private String m_branch;
 	private String m_file;
@@ -80,25 +80,33 @@ public class GUI
 		}
 	};
 
-	private Action m_exportDotAction = new AbstractAction ("Export Dot Graph")
+	private Action m_exportAction = new AbstractAction ("Export")
 	{
-		private static final long serialVersionUID = -2457064892479677548L;
+		private static final long serialVersionUID = -7051858706222087355L;
 
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
-			JFileChooser chooser = getExportDotFileChooser ();
+			JFileChooser chooser = getExportFileChooser ();
 			if (chooser.showSaveDialog (m_frame) == JFileChooser.APPROVE_OPTION)
 			{
+				ExportFileFilter filter = (ExportFileFilter) chooser.getFileFilter ();
+				String ext = filter.getExtension ();
 				File file = chooser.getSelectedFile ();
-				m_dotFileChooser.updateOptions ();
+				if (!file.getName ().endsWith (ext))
+				{
+					file = new File (file.getPath () + ext);
+				}
+
 				try
 				{
-					m_controller.exportDot (file);
+					filter.save (m_controller, file);
 				}
 				catch (Exception ex)
 				{
 					ex.printStackTrace ();
+					String msg = ex.getMessage ();
+					JOptionPane.showMessageDialog (m_frame, msg, "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -306,7 +314,7 @@ public class GUI
 
 		menu = new JMenu ("File");
 		menu.setMnemonic ('F');
-		menu.add (new JMenuItem (m_exportDotAction));
+		menu.add (new JMenuItem (m_exportAction));
 		menu.addSeparator ();
 		menu.add (new JMenuItem (m_exitAction));
 		m_menuBar.add (menu);
@@ -442,24 +450,34 @@ public class GUI
 		m_propertyPane.select (node);
 	}
 
-	private JFileChooser getFileChooser ()
+	private JFileChooser getExportFileChooser ()
 	{
-		if (m_fileChooser == null)
+		if (m_exportFileChooser == null)
 		{
-			m_fileChooser = new JFileChooser (m_controller.getPrefs ().getDefaultDirectory ());
-		}
-		return m_fileChooser;
-	}
+			JFileChooser chooser = new JFileChooser (m_controller.getPrefs ().getDefaultDirectory ());
+			chooser.setAcceptAllFileFilterUsed (false);
 
-	private JFileChooser getExportDotFileChooser ()
-	{
-		if (m_dotFileChooser == null)
-		{
-			m_dotFileChooser = new DotFileChooser (m_controller.getDotFileOptions ());
+			chooser.addChoosableFileFilter (new DotFileFilter ());
+			chooser.addChoosableFileFilter (new SvgFileFilter ());
+
+			chooser.setFileSelectionMode (JFileChooser.FILES_ONLY);
+			ExportChooserAccessoryUI accessaryUI = new ExportChooserAccessoryUI (chooser);
+			for (FileFilter f : chooser.getChoosableFileFilters ())
+			{
+				ExportFileFilter filter = (ExportFileFilter) f;
+				ExportFileFilterUI ui = filter.getUI ();
+				if (ui != null)
+				{
+					accessaryUI.addUI (filter.getExtension (), (JComponent)ui);
+				}
+			}
+			chooser.setAccessory (accessaryUI);
+			ExportFileFilter filter = (ExportFileFilter) chooser.getFileFilter ();
+			accessaryUI.switchTo (filter.getExtension ());
+			m_exportFileChooser = chooser;
 		}
-		JFileChooser chooser = getFileChooser ();
-		m_dotFileChooser.updateJFileChooser (chooser);
-		return chooser;
+		m_exportFileChooser.setSelectedFiles (new File[] { new File ("") });	// clear the previous selected files, if any.
+		return m_exportFileChooser;
 	}
 
 	private String computeTitle ()
