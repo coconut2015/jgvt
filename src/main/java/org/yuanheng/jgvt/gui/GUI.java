@@ -512,9 +512,11 @@ public class GUI
 		m_toolBar = new JToolBar ();
 		m_toolBar.setFloatable (false);
 		m_toolBar.add (new ToolBarButton (m_exportAction));
+		m_toolBar.addSeparator ();
 		m_toolBar.add (new ToolBarButton (m_searchCommitAction));
 		m_toolBar.add (new ToolBarButton (m_searchBranchAction));
 		m_toolBar.add (new ToolBarButton (m_searchTagAction));
+		m_toolBar.addSeparator ();
 		m_toolBar.add (new ToolBarButton (m_aboutAction));
 		m_toolBar.addSeparator ();
 		m_rememberButton = new RememberButton (m_controller);
