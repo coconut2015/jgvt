@@ -31,10 +31,12 @@ public class Icons
 
 	public Icon ABOUT;
 	public Icon SEARCH;
+	public Icon SEARCH_SMALL;
 
 	private Icons ()
 	{
 		ABOUT = new ImageIcon (Icons.class.getResource ("icons/about.png"));
 		SEARCH = new ImageIcon (Icons.class.getResource ("icons/search.png"));
+		SEARCH_SMALL = new ImageIcon (Icons.class.getResource ("icons/search_small.png"));
 	}
 }

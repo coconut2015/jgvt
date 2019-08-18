@@ -113,9 +113,42 @@ public class GUI
 		}
 	};
 
+	private ActionListener m_searchListener = new ActionListener ()
+	{
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			try
+			{
+				SearchDialog dialog = new SearchDialog (m_frame, "Commits", m_controller);
+				dialog.setLocationRelativeTo (m_frame);
+				dialog.setVisible (true);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog (m_frame, "Unable to get the commit list.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	};
+
 	private Action m_searchAction = new AbstractAction ("Search")
 	{
 		private static final long serialVersionUID = 5495164556562597316L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "Search");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_searchAction2 = new AbstractAction ("Search")
+	{
+		private static final long serialVersionUID = 3415698093054735622L;
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'s');
@@ -125,6 +158,7 @@ public class GUI
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
+			m_searchListener.actionPerformed (e);
 		}
 	};
 
@@ -356,6 +390,7 @@ public class GUI
 		Icons icons = Icons.getInstance ();
 
 		m_searchAction.putValue (Action.SMALL_ICON, icons.SEARCH);
+		m_searchAction2.putValue (Action.SMALL_ICON, icons.SEARCH_SMALL);
 		m_aboutAction.putValue (Action.SMALL_ICON, icons.ABOUT);
 	}
 
@@ -382,6 +417,7 @@ public class GUI
 
 		menu = new JMenu ("Repo");
 		menu.setMnemonic ('R');
+		menu.add (new JMenuItem (m_searchAction2));
 		menu.add (new JMenuItem (m_listBranchAction));
 		menu.add (new JMenuItem (m_listTagAction));
 		m_menuBar.add (menu);
