@@ -17,13 +17,19 @@ package org.yuanheng.jgvt;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import org.eclipse.jgit.api.ListBranchCommand.ListMode;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.yuanheng.jgvt.gui.GUI;
+import org.yuanheng.jgvt.gui.ListInfo;
 import org.yuanheng.jgvt.gui.graph.GVTGraph;
 import org.yuanheng.jgvt.gui.graph.GVTGraphFactory;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -253,5 +259,25 @@ public class Controller
 			String commitId = url.getPath ().substring (1);
 			select (commitId, true);
 		}
+	}
+
+	private List<ListInfo> getListInfo (List<Ref> refs)
+	{
+		ArrayList<ListInfo> listInfos = new ArrayList<ListInfo> ();
+		for (Ref ref : refs)
+		{
+			listInfos.add (new ListInfo (ref, m_tree.getNode (ref.getObjectId ())));
+		}
+		return listInfos;
+	}
+
+	public List<ListInfo> getBranchList () throws GitAPIException
+	{
+		return getListInfo (m_gitRepo.getGit ().branchList ().setListMode (ListMode.ALL).call ());
+	}
+
+	public List<ListInfo> getTagList () throws GitAPIException
+	{
+		return getListInfo (m_gitRepo.getGit ().tagList ().call ());
 	}
 }

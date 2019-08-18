@@ -209,6 +209,56 @@ public class GUI
 		}
 	};
 
+	private Action m_listBranchAction = new AbstractAction ("List branches")
+	{
+		private static final long serialVersionUID = 2439092079745308557L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'b');
+			putValue (Action.SHORT_DESCRIPTION, "List branches");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			try
+			{
+				ListDialog dialog = new ListDialog (m_frame, "Branches", m_controller, m_controller.getBranchList ());
+				dialog.setLocationRelativeTo (m_frame);
+				dialog.setVisible (true);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog (m_frame, "Unable to get branch list.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	};
+
+	private Action m_listTagAction = new AbstractAction ("List tags")
+	{
+		private static final long serialVersionUID = 2439092079745308557L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'b');
+			putValue (Action.SHORT_DESCRIPTION, "List branches");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			try
+			{
+				ListDialog dialog = new ListDialog (m_frame, "Tags", m_controller, m_controller.getTagList ());
+				dialog.setLocationRelativeTo (m_frame);
+				dialog.setVisible (true);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog (m_frame, "Unable to get branch list.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	};
+
 	private Action m_aboutAction = new AbstractAction ("About")
 	{
 		private static final long serialVersionUID = 7089364664624793507L;
@@ -251,7 +301,6 @@ public class GUI
 			UIManager.setLookAndFeel (new Plastic3DLookAndFeel ());
 			UIDefaults defaults = UIManager.getDefaults ();
 			BorderUIResource emptyBorder = new BorderUIResource(BorderFactory.createEmptyBorder());
-			System.out.println (defaults);
 			defaults.put("SplitPaneDivider.border", emptyBorder);
 			defaults.put("SplitPane.border", emptyBorder);
 		}
@@ -304,7 +353,7 @@ public class GUI
 
 	private void setupActions ()
 	{
-		Icons icons = new Icons ();
+		Icons icons = Icons.getInstance ();
 
 		m_searchAction.putValue (Action.SMALL_ICON, icons.SEARCH);
 		m_aboutAction.putValue (Action.SMALL_ICON, icons.ABOUT);
@@ -329,6 +378,12 @@ public class GUI
 		menu.add (new JMenuItem (m_clearRememberAction));
 		menu.add (new JMenuItem (m_locateRememberAction));
 		menu.add (new JMenuItem (m_compareRememberAction));
+		m_menuBar.add (menu);
+
+		menu = new JMenu ("Repo");
+		menu.setMnemonic ('R');
+		menu.add (new JMenuItem (m_listBranchAction));
+		menu.add (new JMenuItem (m_listTagAction));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Help");

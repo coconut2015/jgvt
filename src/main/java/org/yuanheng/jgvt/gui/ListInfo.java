@@ -15,26 +15,20 @@
  */
 package org.yuanheng.jgvt.gui;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import org.eclipse.jgit.lib.Ref;
+import org.yuanheng.jgvt.relation.RelationNode;
+
 /**
  * @author	Heng Yuan
  */
-public class Icons
+public class ListInfo
 {
-	private final static Icons s_icons = new Icons ();
+	public Ref ref;
+	public RelationNode node;
 
-	public static Icons getInstance ()
+	public ListInfo (Ref ref, RelationNode node)
 	{
-		return s_icons;
-	}
-
-	public Icon ABOUT;
-	public Icon SEARCH;
-
-	private Icons ()
-	{
-		ABOUT = new ImageIcon (Icons.class.getResource ("icons/about.png"));
-		SEARCH = new ImageIcon (Icons.class.getResource ("icons/search.png"));
+		this.ref = ref;
+		this.node = node;
 	}
 }

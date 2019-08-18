@@ -18,6 +18,7 @@ package org.yuanheng.jgvt;
 import java.io.IOException;
 
 import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -50,9 +51,9 @@ public class CommitUtils
 		}
 	}
 
-	public static String getName (RevCommit commit)
+	public static String getName (ObjectId id)
 	{
-		return commit.abbreviate (DEFAULT_ABBREV_LEN).name ();
+		return id.abbreviate (DEFAULT_ABBREV_LEN).name ();
 	}
 
 	public static String getToolTipString (RevCommit commit, int flag)
