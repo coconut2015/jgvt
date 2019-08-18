@@ -273,11 +273,11 @@ public class Controller
 
 	public List<ListInfo> getBranchList () throws GitAPIException
 	{
-		return getListInfo (m_gitRepo.getGit ().branchList ().setListMode (ListMode.ALL).call ());
+		return getListInfo (m_gitRepo.getAllBranches ());
 	}
 
 	public List<ListInfo> getTagList () throws GitAPIException
 	{
-		return getListInfo (m_gitRepo.getGit ().tagList ().call ());
+		return getListInfo (m_gitRepo.getTags ());
 	}
 }

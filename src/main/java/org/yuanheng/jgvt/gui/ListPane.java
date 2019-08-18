@@ -18,6 +18,8 @@ package org.yuanheng.jgvt.gui;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -98,6 +100,7 @@ class ListPane extends JPanel
 		m_input.getDocument ().addDocumentListener (m_inputListener);
 		builder.add (m_input).xy (1, 1);
 		m_table = new JTable (new ListPaneModel (listInfos));
+		m_table.setDefaultRenderer (Date.class, new DateTimeRenderer (DateFormat.getDateTimeInstance ()));
 		m_sorter = new TableRowSorter<TableModel>(m_table.getModel());
 		m_sorter.setRowFilter (m_filter);
 		m_table.setRowSorter (m_sorter);

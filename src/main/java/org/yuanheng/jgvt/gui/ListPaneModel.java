@@ -15,6 +15,7 @@
  */
 package org.yuanheng.jgvt.gui;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -28,9 +29,10 @@ public class ListPaneModel extends AbstractTableModel
 
 	public final static int COL_COMMIT = 0;
 	public final static int COL_NAME = 1;
-	public final static int COL_DESCRIPTION = 2;
+	public final static int COL_TIME = 2;
+	public final static int COL_DESCRIPTION = 3;
 
-	public static String[] COLUMN_NAMES = { "Commit", "Name", "Description" };
+	public static String[] COLUMN_NAMES = { "Commit", "Name", "Time", "Description" };
 
 	private final List<ListInfo> m_listInfo;
 
@@ -48,7 +50,7 @@ public class ListPaneModel extends AbstractTableModel
 	@Override
 	public int getColumnCount ()
 	{
-		return 3;
+		return 4;
 	}
 
 	@Override
@@ -60,6 +62,8 @@ public class ListPaneModel extends AbstractTableModel
 	@Override
 	public Class<?> getColumnClass (int column)
 	{
+		if (column == COL_TIME)
+			return Date.class;
 		return String.class;
 	}
 
@@ -73,6 +77,8 @@ public class ListPaneModel extends AbstractTableModel
 				return info.node.getCommit ().getName ();
 			case COL_NAME:
 				return info.ref.getName ();
+			case COL_TIME:
+				return info.node.getCommit ().getCommitterIdent ().getWhen ();
 			case COL_DESCRIPTION:
 				return info.node.getCommit ().getShortMessage ();
 		}

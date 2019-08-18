@@ -147,12 +147,22 @@ public class GitRepo implements AutoCloseable
 		return log.call ();
 	}
 
+	public List<Ref> getAllBranches () throws GitAPIException
+	{
+		return m_git.branchList ().setListMode (ListMode.ALL).call ();
+	}
+
+	public List<Ref> getTags () throws GitAPIException
+	{
+		return m_git.tagList ().call ();
+	}
+
 	public Map<ObjectId, Ref> getTagMap () throws GitAPIException
 	{
 		Map<ObjectId, Ref> map = m_tagMap.get ();
 		if (map == null)
 		{
-			List<Ref> refs = m_git.tagList ().call ();
+			List<Ref> refs = getTags ();
 			map = new HashMap<ObjectId, Ref> ();
 			for (Ref ref : refs)
 				map.put (ref.getObjectId (), ref);
