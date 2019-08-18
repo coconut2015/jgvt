@@ -81,10 +81,8 @@ public class GUI
 		}
 	};
 
-	private Action m_exportAction = new AbstractAction ("Export")
+	private ActionListener m_exportListener = new ActionListener ()
 	{
-		private static final long serialVersionUID = -7051858706222087355L;
-
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
@@ -113,58 +111,39 @@ public class GUI
 		}
 	};
 
-	private ActionListener m_searchListener = new ActionListener ()
+	private Action m_exportAction = new AbstractAction ()
 	{
+		private static final long serialVersionUID = -3891179358209369117L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "Export");
+		}
+
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
-			try
-			{
-				SearchDialog dialog = new SearchDialog (m_frame, "Commits", m_controller);
-				dialog.setLocationRelativeTo (m_frame);
-				dialog.setVisible (true);
-			}
-			catch (Exception ex)
-			{
-				JOptionPane.showMessageDialog (m_frame, "Unable to get the commit list.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			m_exportListener.actionPerformed (e);
 		}
 	};
 
-	private Action m_searchAction = new AbstractAction ("Search")
+	private Action m_exportAction2 = new AbstractAction ("Export")
 	{
-		private static final long serialVersionUID = 5495164556562597316L;
+		private static final long serialVersionUID = -7051858706222087355L;
 
 		{
-			putValue (Action.SHORT_DESCRIPTION, "Search");
+			putValue (Action.MNEMONIC_KEY, (int)'e');
 		}
 
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
-			m_searchListener.actionPerformed (e);
-		}
-	};
-
-	private Action m_searchAction2 = new AbstractAction ("Search")
-	{
-		private static final long serialVersionUID = 3415698093054735622L;
-
-		{
-			putValue (Action.MNEMONIC_KEY, (int)'s');
-			putValue (Action.SHORT_DESCRIPTION, "Search");
-		}
-
-		@Override
-		public void actionPerformed (ActionEvent e)
-		{
-			m_searchListener.actionPerformed (e);
+			m_exportListener.actionPerformed (e);
 		}
 	};
 
 	private Action m_rememberAction = new AbstractAction ("Remember selected")
 	{
-		private static final long serialVersionUID = -1447129537275798612L;
+		private static final long serialVersionUID = 3415698093054735622L;
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'r');
@@ -198,7 +177,7 @@ public class GUI
 
 	private Action m_locateRememberAction = new AbstractAction ("Locate remembered")
 	{
-		private static final long serialVersionUID = -1447129537275798612L;
+		private static final long serialVersionUID = -2363655691891537720L;
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'l');
@@ -216,7 +195,7 @@ public class GUI
 
 	private Action m_compareRememberAction = new AbstractAction ("Compare selected to remembered")
 	{
-		private static final long serialVersionUID = -1447129537275798612L;
+		private static final long serialVersionUID = 2439092079745308557L;
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'c');
@@ -243,15 +222,56 @@ public class GUI
 		}
 	};
 
-	private Action m_listBranchAction = new AbstractAction ("List branches")
+	private ActionListener m_searchListener = new ActionListener ()
 	{
-		private static final long serialVersionUID = 2439092079745308557L;
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			try
+			{
+				SearchDialog dialog = new SearchDialog (m_frame, "Commits", m_controller);
+				dialog.setLocationRelativeTo (m_frame);
+				dialog.setVisible (true);
+			}
+			catch (Exception ex)
+			{
+				JOptionPane.showMessageDialog (m_frame, "Unable to get the commit list.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	};
+
+	private Action m_searchCommitAction = new AbstractAction ()
+	{
+		private static final long serialVersionUID = 5495164556562597316L;
 
 		{
-			putValue (Action.MNEMONIC_KEY, (int)'b');
-			putValue (Action.SHORT_DESCRIPTION, "List branches");
+			putValue (Action.SHORT_DESCRIPTION, "Search commits");
 		}
 
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_searchCommitAction2 = new AbstractAction ("Search commits")
+	{
+		private static final long serialVersionUID = -3123479739031644852L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'c');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchListener.actionPerformed (e);
+		}
+	};
+
+	private ActionListener m_searchBranchListener = new ActionListener ()
+	{
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
@@ -268,15 +288,38 @@ public class GUI
 		}
 	};
 
-	private Action m_listTagAction = new AbstractAction ("List tags")
+	private Action m_searchBranchAction = new AbstractAction ()
 	{
-		private static final long serialVersionUID = 2439092079745308557L;
+		private static final long serialVersionUID = -3081431635785233383L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "Search branches");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchBranchListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_searchBranchAction2 = new AbstractAction ("Search branches")
+	{
+		private static final long serialVersionUID = -1510278584367430303L;
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'b');
-			putValue (Action.SHORT_DESCRIPTION, "List branches");
 		}
 
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchBranchListener.actionPerformed (e);
+		}
+	};
+
+	private ActionListener m_searchTagListener = new ActionListener ()
+	{
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
@@ -290,6 +333,36 @@ public class GUI
 			{
 				JOptionPane.showMessageDialog (m_frame, "Unable to get branch list.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
+		}
+	};
+
+	private Action m_searchTagAction = new AbstractAction ()
+	{
+		private static final long serialVersionUID = -5545585336599216782L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "Search tags");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchTagListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_searchTagAction2 = new AbstractAction ("Search tags")
+	{
+		private static final long serialVersionUID = -5229584358642625498L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'t');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_searchTagListener.actionPerformed (e);
 		}
 	};
 
@@ -389,8 +462,14 @@ public class GUI
 	{
 		Icons icons = Icons.getInstance ();
 
-		m_searchAction.putValue (Action.SMALL_ICON, icons.SEARCH);
-		m_searchAction2.putValue (Action.SMALL_ICON, icons.SEARCH_SMALL);
+		m_exportAction.putValue (Action.SMALL_ICON, icons.SAVE);
+		m_exportAction2.putValue (Action.SMALL_ICON, icons.SAVE_SMALL);
+		m_searchCommitAction.putValue (Action.SMALL_ICON, icons.SEARCH);
+		m_searchCommitAction2.putValue (Action.SMALL_ICON, icons.SEARCH_SMALL);
+		m_searchBranchAction.putValue (Action.SMALL_ICON, icons.SEARCHBRANCH);
+		m_searchBranchAction2.putValue (Action.SMALL_ICON, icons.SEARCHBRANCH_SMALL);
+		m_searchTagAction.putValue (Action.SMALL_ICON, icons.SEARCHTAG);
+		m_searchTagAction2.putValue (Action.SMALL_ICON, icons.SEARCHTAG_SMALL);
 		m_aboutAction.putValue (Action.SMALL_ICON, icons.ABOUT);
 	}
 
@@ -402,7 +481,7 @@ public class GUI
 
 		menu = new JMenu ("File");
 		menu.setMnemonic ('F');
-		menu.add (new JMenuItem (m_exportAction));
+		menu.add (new JMenuItem (m_exportAction2));
 		menu.addSeparator ();
 		menu.add (new JMenuItem (m_exitAction));
 		m_menuBar.add (menu);
@@ -417,9 +496,9 @@ public class GUI
 
 		menu = new JMenu ("Repo");
 		menu.setMnemonic ('R');
-		menu.add (new JMenuItem (m_searchAction2));
-		menu.add (new JMenuItem (m_listBranchAction));
-		menu.add (new JMenuItem (m_listTagAction));
+		menu.add (new JMenuItem (m_searchCommitAction2));
+		menu.add (new JMenuItem (m_searchBranchAction2));
+		menu.add (new JMenuItem (m_searchTagAction2));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Help");
@@ -432,7 +511,10 @@ public class GUI
 	{
 		m_toolBar = new JToolBar ();
 		m_toolBar.setFloatable (false);
-		m_toolBar.add (new ToolBarButton (m_searchAction));
+		m_toolBar.add (new ToolBarButton (m_exportAction));
+		m_toolBar.add (new ToolBarButton (m_searchCommitAction));
+		m_toolBar.add (new ToolBarButton (m_searchBranchAction));
+		m_toolBar.add (new ToolBarButton (m_searchTagAction));
 		m_toolBar.add (new ToolBarButton (m_aboutAction));
 		m_toolBar.addSeparator ();
 		m_rememberButton = new RememberButton (m_controller);

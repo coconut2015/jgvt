@@ -40,8 +40,10 @@ class SearchDialog extends JDialog
 
 		JPanel contentPane = new JPanel (new BorderLayout ());
 		contentPane.setBorder (Paddings.DIALOG);
-		contentPane.add (new SearchPane (controller), BorderLayout.CENTER);
 		setContentPane (contentPane);
+
+		contentPane.add (new SearchPane (controller), BorderLayout.CENTER);
+
 		setSize (480, 400);
 	}
 }

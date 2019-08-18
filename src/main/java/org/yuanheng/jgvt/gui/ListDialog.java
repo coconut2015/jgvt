@@ -41,8 +41,10 @@ class ListDialog extends JDialog
 
 		JPanel contentPane = new JPanel (new BorderLayout ());
 		contentPane.setBorder (Paddings.DIALOG);
-		contentPane.add (new ListPane (controller, listInfos), BorderLayout.CENTER);
 		setContentPane (contentPane);
+
+		contentPane.add (new ListPane (controller, listInfos), BorderLayout.CENTER);
+
 		setSize (480, 400);
 	}
 }

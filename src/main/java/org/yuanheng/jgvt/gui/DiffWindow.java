@@ -16,14 +16,16 @@
 package org.yuanheng.jgvt.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Container;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.yuanheng.jgvt.CommitUtils;
 import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.relation.RelationNode;
+
+import com.jgoodies.forms.factories.Paddings;
 
 /**
  * @author	Heng Yuan
@@ -36,7 +38,11 @@ class DiffWindow extends JFrame
 	{
 		setTitle ("jgvt diff: " + CommitUtils.getName (n1.getCommit ()) + ".." + CommitUtils.getName (n2.getCommit ()));
 		setDefaultCloseOperation (JDialog.DISPOSE_ON_CLOSE);
-		Container contentPane = getContentPane ();
+
+		JPanel contentPane = new JPanel (new BorderLayout ());
+		contentPane.setBorder (Paddings.DIALOG);
+		setContentPane (contentPane);
+
 		DiffPane diffPane = new DiffPane (controller, n1, n2);
 		contentPane.add (diffPane, BorderLayout.CENTER);
 		pack ();

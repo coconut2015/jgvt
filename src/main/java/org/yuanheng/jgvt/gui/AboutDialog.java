@@ -66,9 +66,11 @@ class AboutDialog extends JDialog
 
 		JPanel contentPane = new JPanel (new BorderLayout ());
 		contentPane.setBorder (Paddings.DIALOG);
+		setContentPane (contentPane);
+
 		contentPane.add (new JScrollPane (htmlPane), BorderLayout.CENTER);
 		contentPane.add (buttomPanel, BorderLayout.SOUTH);
-		setContentPane (contentPane);
+
 		setSize (480, 400);
 	}
 }

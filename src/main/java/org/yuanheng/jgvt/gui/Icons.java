@@ -29,14 +29,26 @@ public class Icons
 		return s_icons;
 	}
 
-	public Icon ABOUT;
+	public Icon SAVE;
+	public Icon SAVE_SMALL;
 	public Icon SEARCH;
 	public Icon SEARCH_SMALL;
+	public Icon SEARCHBRANCH;
+	public Icon SEARCHBRANCH_SMALL;
+	public Icon SEARCHTAG;
+	public Icon SEARCHTAG_SMALL;
+	public Icon ABOUT;
 
 	private Icons ()
 	{
-		ABOUT = new ImageIcon (Icons.class.getResource ("icons/about.png"));
+		SAVE = new ImageIcon (Icons.class.getResource ("icons/save.png"));
+		SAVE_SMALL = new ImageIcon (Icons.class.getResource ("icons/save_small.png"));
 		SEARCH = new ImageIcon (Icons.class.getResource ("icons/search.png"));
 		SEARCH_SMALL = new ImageIcon (Icons.class.getResource ("icons/search_small.png"));
+		SEARCHBRANCH = new ImageIcon (Icons.class.getResource ("icons/searchbranch.png"));
+		SEARCHBRANCH_SMALL = new ImageIcon (Icons.class.getResource ("icons/searchbranch_small.png"));
+		SEARCHTAG = new ImageIcon (Icons.class.getResource ("icons/searchtag.png"));
+		SEARCHTAG_SMALL = new ImageIcon (Icons.class.getResource ("icons/searchtag_small.png"));
+		ABOUT = new ImageIcon (Icons.class.getResource ("icons/about.png"));
 	}
 }
