@@ -28,6 +28,11 @@ import org.yuanheng.jgvt.GitRepo;
  */
 public class RelationTree
 {
+	private static void debug (String msg)
+	{
+//		System.out.println (msg);
+	}
+
 	private final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
 	{
 		@Override
@@ -236,7 +241,7 @@ public class RelationTree
 					// merge the two branches.
 					branch.merge (parent.getRelationBranch ());
 
-					System.out.println (CommitUtils.getName (firstNode.getCommit ()) + " 1CM");
+					debug (CommitUtils.getName (firstNode.getCommit ()) + " 1CM");
 					checkBranches.add (branch);
 				}
 			}
@@ -304,7 +309,7 @@ public class RelationTree
 				{
 					branch.merge (rightBranch);
 
-					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM right");
+					debug (CommitUtils.getName (lastNode.getCommit ()) + " 2CM right");
 					checkBranches.add (branch);
 					continue;
 				}
@@ -315,7 +320,7 @@ public class RelationTree
 				{
 					branch.merge (leftBranch);
 
-					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM left");
+					debug (CommitUtils.getName (lastNode.getCommit ()) + " 2CM left");
 					checkBranches.add (branch);
 					continue;
 				}
@@ -366,7 +371,7 @@ public class RelationTree
 				{
 					branch.merge (leftBranch);
 
-					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " RM left");
+					debug (CommitUtils.getName (lastNode.getCommit ()) + " RM left");
 					checkBranches.add (branch);
 					continue;
 				}
@@ -378,7 +383,7 @@ public class RelationTree
 				{
 					branch.merge (rightBranch);
 
-					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " RM right");
+					debug (CommitUtils.getName (lastNode.getCommit ()) + " RM right");
 					checkBranches.add (branch);
 					continue;
 				}
@@ -444,12 +449,12 @@ public class RelationTree
 			}
 		}
 		int index = 0;
-		System.out.println ("index: " + index + ": " + branchSets[index].size ());
+		debug ("index: " + index + ": " + branchSets[index].size ());
 		while (branchSets[index].size () > 0)
 		{
 			int nextIndex = 1 - index;
 			branchSets[nextIndex].clear ();
-			System.out.println ("index: " + index + ": " + branchSets[index].size ());
+			debug ("index: " + index + ": " + branchSets[index].size ());
 
 			// perform simple branch merging
 			branchMergeCaseSingleChild (branchSets[index], branchSets[nextIndex]);

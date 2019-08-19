@@ -41,14 +41,14 @@ public class Icons
 
 	private Icons ()
 	{
-		SAVE = new ImageIcon (Icons.class.getResource ("icons/save.png"));
-		SAVE_SMALL = new ImageIcon (Icons.class.getResource ("icons/save_small.png"));
-		SEARCH = new ImageIcon (Icons.class.getResource ("icons/search.png"));
-		SEARCH_SMALL = new ImageIcon (Icons.class.getResource ("icons/search_small.png"));
-		SEARCHBRANCH = new ImageIcon (Icons.class.getResource ("icons/searchbranch.png"));
-		SEARCHBRANCH_SMALL = new ImageIcon (Icons.class.getResource ("icons/searchbranch_small.png"));
-		SEARCHTAG = new ImageIcon (Icons.class.getResource ("icons/searchtag.png"));
-		SEARCHTAG_SMALL = new ImageIcon (Icons.class.getResource ("icons/searchtag_small.png"));
-		ABOUT = new ImageIcon (Icons.class.getResource ("icons/about.png"));
+		SAVE = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/save.png"));
+		SAVE_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/save_small.png"));
+		SEARCH = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/search.png"));
+		SEARCH_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/search_small.png"));
+		SEARCHBRANCH = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchbranch.png"));
+		SEARCHBRANCH_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchbranch_small.png"));
+		SEARCHTAG = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchtag.png"));
+		SEARCHTAG_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchtag_small.png"));
+		ABOUT = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/about.png"));
 	}
 }

@@ -56,7 +56,7 @@ class AboutDialog extends JDialog
 		htmlPane.setEditable (false);
 		try
 		{
-			htmlPane.setPage (AboutDialog.class.getResource ("about.html"));
+			htmlPane.setPage (ClassLoader.getSystemResource ("META-INF/jgvt/about.html"));
 		}
 		catch (Exception ex)
 		{

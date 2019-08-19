@@ -43,7 +43,7 @@ public class CommitUtils
 	{
 		try
 		{
-			CSS = Utils.getString (CommitUtils.class.getResourceAsStream ("jgvt.css"));
+			CSS = Utils.getString (ClassLoader.getSystemResourceAsStream ("META-INF/jgvt/jgvt.css"));
 		}
 		catch (IOException ex)
 		{
