@@ -236,7 +236,7 @@ public class RelationTree
 					// merge the two branches.
 					branch.merge (parent.getRelationBranch ());
 
-//					System.out.println (CommitUtils.getName (firstNode.getCommit ()) + " 1CM");
+					System.out.println (CommitUtils.getName (firstNode.getCommit ()) + " 1CM");
 					checkBranches.add (branch);
 				}
 			}
@@ -286,11 +286,13 @@ public class RelationTree
 
 				RelationNode leftNode = lastNode.getChildren ()[0];
 				List<RelationNode> leftList = leftBranch.getOrderedList ();
+				// make sure the left child is the first node of the child branch
 				if (leftList.get (0) != leftNode)
 					continue;
 
 				RelationNode rightNode = lastNode.getChildren ()[1];
 				List<RelationNode> rightList = rightBranch.getOrderedList ();
+				// make sure the right child is the first node of the child branch
 				if (rightList.get (0) != rightNode)
 					continue;
 
@@ -302,7 +304,7 @@ public class RelationTree
 				{
 					branch.merge (rightBranch);
 
-//					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM right");
+					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM right");
 					checkBranches.add (branch);
 					continue;
 				}
@@ -313,7 +315,70 @@ public class RelationTree
 				{
 					branch.merge (leftBranch);
 
-//					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM left");
+					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM left");
+					checkBranches.add (branch);
+					continue;
+				}
+			}
+		}
+	}
+
+	/**
+	 * For this case, we have a branch A which has one child merge to
+	 * branch B, and its other child in branch C also merge to branch B.
+	 * In this case, consider merging A and C.
+	 *
+	 * This case is different from branchMergeCaseTwoChildren in that
+	 * branch B could be the parent of A.
+	 */
+	private void branchMergeCaseRepeatMerge (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () == 0)
+				continue;
+
+			List<RelationNode> nodeList = branch.getOrderedList ();
+			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+
+			if (lastNode.getChildren ().length == 2)
+			{
+				RelationBranch leftBranch = lastNode.getChildren ()[0].getRelationBranch ();
+				RelationBranch rightBranch = lastNode.getChildren ()[1].getRelationBranch ();
+
+				if (branch == leftBranch ||
+					branch == rightBranch ||
+					leftBranch == rightBranch)
+					continue;
+
+				RelationNode leftNode = lastNode.getChildren ()[0];
+				List<RelationNode> leftList = leftBranch.getOrderedList ();
+
+				RelationNode rightNode = lastNode.getChildren ()[1];
+				List<RelationNode> rightList = rightBranch.getOrderedList ();
+
+				// now check if leftBranch merges to rightBranch or
+				// vice versa
+				RelationNode leftLast = leftList.get (leftList.size () - 1);
+				if (leftLast.getChildren ().length == 1 &&
+					leftLast.getChildren ()[0].getRelationBranch () == rightBranch &&
+					rightList.get (0) != rightNode)
+				{
+					branch.merge (leftBranch);
+
+					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " RM left");
+					checkBranches.add (branch);
+					continue;
+				}
+
+				RelationNode rightLast = rightList.get (rightList.size () - 1);
+				if (rightLast.getChildren ().length == 1 &&
+					rightLast.getChildren ()[0].getRelationBranch () == leftBranch &&
+					leftList.get (0) != leftNode)
+				{
+					branch.merge (rightBranch);
+
+					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " RM right");
 					checkBranches.add (branch);
 					continue;
 				}
@@ -379,18 +444,20 @@ public class RelationTree
 			}
 		}
 		int index = 0;
-//		System.out.println ("index: " + index + ": " + branchSets[index].size ());
+		System.out.println ("index: " + index + ": " + branchSets[index].size ());
 		while (branchSets[index].size () > 0)
 		{
 			int nextIndex = 1 - index;
 			branchSets[nextIndex].clear ();
-//			System.out.println ("index: " + index + ": " + branchSets[index].size ());
+			System.out.println ("index: " + index + ": " + branchSets[index].size ());
 
 			// perform simple branch merging
 			branchMergeCaseSingleChild (branchSets[index], branchSets[nextIndex]);
 	
 			// perform slightly more complicated merging
 			branchMergeCaseTwoChildren (branchSets[index], branchSets[nextIndex]);
+
+			branchMergeCaseRepeatMerge (branchSets[index], branchSets[nextIndex]);
 
 			index = nextIndex;
 		}
