@@ -399,14 +399,10 @@ public class RelationTree
 	 * @throws	GitAPIException
 	 * 			in case of git error
 	 */
-	public void inferBranches (List<RelationNode> importantBranches) throws GitAPIException
+	public void inferBranches (RelationNode startNode) throws GitAPIException
 	{
 		// See if we can trace from the main branch and collect branches.
-		if (importantBranches.size () > 0)
-		{
-			RelationNode startNode = importantBranches.get (0);
-			discoverBranches (startNode);
-		}
+		discoverBranches (startNode);
 
 		// Now find remaining nodes with multiple parents.
 		ArrayList<RelationNode> multiParentNodes = new ArrayList<RelationNode> ();

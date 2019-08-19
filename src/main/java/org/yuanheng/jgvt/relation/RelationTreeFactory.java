@@ -69,23 +69,16 @@ public class RelationTreeFactory
 		return branches;
 	}
 
-	private void layoutBranches (RelationTree tree, List<RelationNode> importantBranches) throws GitAPIException, IOException
+	private void layoutBranches (RelationTree tree, RelationNode startNode) throws GitAPIException, IOException
 	{
 		LayoutMatrix matrix = new LayoutMatrix ();
 		LinkedList<LayoutState> states = new LinkedList<LayoutState> ();
-		RelationNode startNode = null;
-		if (importantBranches.size () == 0)
 		{
-			throw new RuntimeException ("Not yet implemented.");
-		}
-		else
-		{
-			startNode = importantBranches.get (0);
 			RelationBranch mainBranch = startNode.getRelationBranch ();
 			LayoutInfo layoutInfo = mainBranch.getLayoutInfo ();
 			layoutInfo.setX (0);
 			layoutInfo.setY (0);
-
+	
 			LayoutState state = new LayoutState (mainBranch);
 			state.setX (0);
 			state.setY (0);
@@ -156,7 +149,7 @@ public class RelationTreeFactory
 		}
 	}
 
-	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
+	public RelationTree createTree (String startCommit, Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
 	{
 		RelationTree tree = new RelationTree ();
 
@@ -166,12 +159,38 @@ public class RelationTreeFactory
 
 		// Second pass to reconstruct branches
 		Map<String, ObjectId> reverseBranchMap = m_gitRepo.getReverseBranchMap ();
-		List<RelationNode> importantBranches = getBranches (tree, m_importantBranchNames, reverseBranchMap);
-
-		tree.inferBranches (importantBranches);
+		RelationNode startNode = null;
+		if (startCommit == null)
+		{
+			List<RelationNode> importantBranches = getBranches (tree, m_importantBranchNames, reverseBranchMap);
+			if (importantBranches.size () == 0)
+			{
+				System.out.println ("Unable to determine the main branch.  Please specify the last commit of the main branch.");
+				System.exit (1);
+			}
+			startNode = importantBranches.get (0);
+		}
+		else
+		{
+			m_gitRepo.fetch ();
+			try
+			{
+				ObjectId id = m_gitRepo.getRepo ().resolve (startCommit);
+				startNode = tree.getNode (id);
+			}
+			catch (Exception ex)
+			{
+			}
+			if (startNode == null)
+			{
+				System.out.println ("Invalid commit name.");
+				System.exit (1);
+			}
+		}
+		tree.inferBranches (startNode);
 
 		// Third pass to layout the branches
-		layoutBranches (tree, importantBranches);
+		layoutBranches (tree, startNode);
 
 		return tree;
 	}

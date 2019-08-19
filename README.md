@@ -23,6 +23,7 @@ tests when building the package.
 
 Additionally, it uses some libraries with permissive licenses.
 
+* [Apache Commons CLI](http://commons.apache.org/proper/commons-cli/) - APL 2.0
 * [JGit](https://www.eclipse.org/jgit/) - [Eclipse Distribution License 1.0](https://www.eclipse.org/org/documents/edl-v10.php)
 * [JGoodies](http://www.jgoodies.com/freeware/libraries/) - [BSD License](http://www.jgoodies.com/downloads/libraries/)
 * [JGraphX](https://github.com/jgraph/jgraphx) - [BSD License](https://github.com/jgraph/jgraphx/blob/master/license.txt)

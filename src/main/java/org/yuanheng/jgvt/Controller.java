@@ -121,7 +121,7 @@ public class Controller
 		return m_tree;
 	}
 
-	public void generateTree () throws Exception
+	public void generateTree (String startCommit) throws Exception
 	{
 		m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
 		m_gui.setBranch (m_gitRepo.getBranch ());
@@ -132,7 +132,7 @@ public class Controller
 
 		GVTGraph graph = m_gui.getGraph ();
 		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo, RelationTreeFactory.getDefaultImportantBranchNames ());
-		m_tree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
+		m_tree = nodeFactory.createTree (startCommit, m_gitRepo.getCommitLogs (m_file));
 
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());

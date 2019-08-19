@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import org.apache.commons.cli.*;
 import org.yuanheng.jgvt.gui.GUI;
 
 /**
@@ -28,14 +29,38 @@ import org.yuanheng.jgvt.gui.GUI;
  */
 public class Main
 {
+	private static Options createOptions ()
+	{
+		Options options = new Options ();
+		options.addOption ("h", "help", false, "print this message");
+		options.addOption ("s", true, "specify the last commit of the main branch");
+		return options;
+	}
 	public static void main (String[] args) throws Exception
 	{
 		GitRepo gitRepo = null;
 		File dir = null;
 		File file = null;
+		String startCommit = null;
 
 		try
 		{
+			CommandLineParser parser = new DefaultParser();
+			Options options = createOptions ();
+			CommandLine cmd = parser.parse(options, args);
+
+			if (cmd.hasOption ('h'))
+			{
+				HelpFormatter formatter = new HelpFormatter ();
+				formatter.printHelp ("jgvt", options);
+				System.exit (0);
+			}
+			if (cmd.hasOption ('s'))
+			{
+				startCommit = cmd.getOptionValue ('s');
+			}
+			args = cmd.getArgs ();
+
 			if (args.length > 0)
 			{
 				file = new File (args[0]);
@@ -89,7 +114,7 @@ public class Main
 
 		Controller controller = new Controller (gitRepo, dir, file);
 		GUI gui = new GUI (controller);
-		controller.generateTree ();
+		controller.generateTree (startCommit);
 		gui.setVisible (true);
 		controller.centerTree ();
 		SwingUtilities.invokeLater (new Runnable ()
