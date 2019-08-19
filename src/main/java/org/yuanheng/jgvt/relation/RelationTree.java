@@ -265,9 +265,9 @@ public class RelationTree
 	}
 
 	/**
-	 * For this case, we have two child branches for a branch A.  However, child
-	 * branch B eventually merges to child branch C.  In this case, we
-	 * merge A and C.
+	 * For this case, we have two child branches B and C for a branch A.
+	 * However, child branch B eventually merges to child branch C.  In
+	 * this case, we merge A and C.
 	 */
 	private void branchMergeCaseTwoChildren (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
@@ -392,6 +392,38 @@ public class RelationTree
 	}
 
 	/**
+	 * We need to expand the search since the branchSet only contains the ones
+	 * just got modified.  We need to include parents and children the modified
+	 * branches.
+	 *
+	 * @param	branchSet
+	 *			the modified branches
+	 */
+	private void expandSearch (Set<RelationBranch> branchSet)
+	{
+		HashSet<RelationBranch> expandSet = new HashSet<RelationBranch> ();
+
+		for (RelationBranch branch: branchSet)
+		{
+			if (branch.size () == 0)
+				continue;
+			List<RelationNode> nodes = branch.getOrderedList ();
+			RelationNode firstNode = nodes.get (0);
+			for (RelationNode parent : firstNode.getParents ())
+			{
+				expandSet.add (parent.getRelationBranch ());
+			}
+			RelationNode lastNode = nodes.get (nodes.size () - 1);
+			for (RelationNode child : lastNode.getChildren ())
+			{
+				expandSet.add (child.getRelationBranch ());
+			}
+		}
+
+		branchSet.addAll (expandSet);
+	}
+
+	/**
 	 * Infer branches from the tree nodes, and a list of important branches.
 	 *
 	 * @param	importantBranches
@@ -461,6 +493,7 @@ public class RelationTree
 			branchMergeCaseRepeatMerge (branchSets[index], branchSets[nextIndex]);
 
 			index = nextIndex;
+			expandSearch(branchSets[index]);
 		}
 
 		// scan and put all the branches in a list

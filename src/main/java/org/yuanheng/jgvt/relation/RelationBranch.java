@@ -158,4 +158,10 @@ public class RelationBranch implements Comparable<RelationBranch>
 	{
 		return m_layoutInfo;
 	}
+
+	@Override
+	public String toString ()
+	{
+		return "[" + m_id + "]";
+	}
 }
