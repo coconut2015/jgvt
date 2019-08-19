@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;
@@ -71,6 +72,7 @@ class AboutDialog extends JDialog
 		contentPane.add (new JScrollPane (htmlPane), BorderLayout.CENTER);
 		contentPane.add (buttomPanel, BorderLayout.SOUTH);
 
+		setMinimumSize (new Dimension (300, 300));
 		setSize (480, 400);
 	}
 }

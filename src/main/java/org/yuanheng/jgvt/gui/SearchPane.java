@@ -97,7 +97,7 @@ class SearchPane extends JPanel
 		nodes.addAll (controller.getRelationTree ().getNodes ());
 		FormBuilder builder = FormBuilder.create ()
 				.columns("default:grow")
-				.rows("pref:grow, $lg, p:grow");
+				.rows("p, $lg, fill:min:grow");
 		builder.panel (this);
 		m_input = new JTextField ();
 		m_input.getDocument ().addDocumentListener (m_inputListener);

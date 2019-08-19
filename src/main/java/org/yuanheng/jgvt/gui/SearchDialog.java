@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -44,6 +45,7 @@ class SearchDialog extends JDialog
 
 		contentPane.add (new SearchPane (controller), BorderLayout.CENTER);
 
+		setMinimumSize (new Dimension (300, 300));
 		setSize (480, 400);
 	}
 }

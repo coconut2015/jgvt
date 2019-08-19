@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -45,6 +46,7 @@ class ListDialog extends JDialog
 
 		contentPane.add (new ListPane (controller, listInfos), BorderLayout.CENTER);
 
+		setMinimumSize (new Dimension (300, 300));
 		setSize (480, 400);
 	}
 }
