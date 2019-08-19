@@ -118,13 +118,20 @@ public class RelationBranch implements Comparable<RelationBranch>
 					break;
 				}
 				boolean found = false;
+				int index = 0;
 				for (RelationNode c : node.getChildren ())
 				{
 					if (has (c))
 					{
-						node = c;
 						found = true;
+						if (index != 0)
+						{
+							node.setNthChild (c, 0);
+						}
+						node = c;
+						break;
 					}
+					++index;
 				}
 				if (!found)
 					break;

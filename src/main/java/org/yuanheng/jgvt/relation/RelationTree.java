@@ -20,6 +20,7 @@ import java.util.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.yuanheng.jgvt.CommitUtils;
 import org.yuanheng.jgvt.GitRepo;
 
 /**
@@ -215,14 +216,18 @@ public class RelationTree
 	 * A simple merge of two branches if the parent branch only has 1 child,
 	 * which happens to be the child branch.
 	 */
-	private void branchMergeCaseSingleChild ()
+	private void branchMergeCaseSingleChild (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
-		for (RelationNode node : getNodes ())
+		for (RelationBranch branch : branches)
 		{
-			if (node.getParents ().length > 0)
+			if (branch.size () == 0)
+				continue;
+
+			List<RelationNode> nodeList = branch.getOrderedList ();
+			RelationNode firstNode = nodeList.get (0);
+			if (firstNode.getParents ().length > 0)
 			{
-				RelationNode parent = node.getParents ()[0];
-				RelationBranch branch = node.getRelationBranch ();
+				RelationNode parent = firstNode.getParents ()[0];
 				if (parent.getRelationBranch () != branch &&
 					parent.getChildren ().length == 1)
 				{
@@ -230,6 +235,9 @@ public class RelationTree
 					// and the parent is in a different branch.
 					// merge the two branches.
 					branch.merge (parent.getRelationBranch ());
+
+//					System.out.println (CommitUtils.getName (firstNode.getCommit ()) + " 1CM");
+					checkBranches.add (branch);
 				}
 			}
 		}
@@ -256,27 +264,32 @@ public class RelationTree
 	 * branch B eventually merges to child branch C.  In this case, we
 	 * merge A and C.
 	 */
-	private void branchMergeCaseTwoChildren ()
+	private void branchMergeCaseTwoChildren (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
-		for (RelationNode node : getNodes ())
+		for (RelationBranch branch : branches)
 		{
-			if (node.getChildren ().length == 2)
+			if (branch.size () == 0)
+				continue;
+
+			List<RelationNode> nodeList = branch.getOrderedList ();
+			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+
+			if (lastNode.getChildren ().length == 2)
 			{
-				RelationBranch branch = node.getRelationBranch ();
-				RelationBranch leftBranch = node.getChildren ()[0].getRelationBranch ();
-				RelationBranch rightBranch = node.getChildren ()[1].getRelationBranch ();
+				RelationBranch leftBranch = lastNode.getChildren ()[0].getRelationBranch ();
+				RelationBranch rightBranch = lastNode.getChildren ()[1].getRelationBranch ();
 
 				if (branch == leftBranch ||
 					branch == rightBranch ||
 					leftBranch == rightBranch)
 					continue;
 
-				RelationNode leftNode = node.getChildren ()[0];
+				RelationNode leftNode = lastNode.getChildren ()[0];
 				List<RelationNode> leftList = leftBranch.getOrderedList ();
 				if (leftList.get (0) != leftNode)
 					continue;
 
-				RelationNode rightNode = node.getChildren ()[1];
+				RelationNode rightNode = lastNode.getChildren ()[1];
 				List<RelationNode> rightList = rightBranch.getOrderedList ();
 				if (rightList.get (0) != rightNode)
 					continue;
@@ -288,6 +301,9 @@ public class RelationTree
 					leftLast.getChildren ()[0].getRelationBranch () == rightBranch)
 				{
 					branch.merge (rightBranch);
+
+//					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM right");
+					checkBranches.add (branch);
 					continue;
 				}
 
@@ -296,6 +312,9 @@ public class RelationTree
 					rightLast.getChildren ()[0].getRelationBranch () == leftBranch)
 				{
 					branch.merge (leftBranch);
+
+//					System.out.println (CommitUtils.getName (lastNode.getCommit ()) + " 2CM left");
+					checkBranches.add (branch);
 					continue;
 				}
 			}
@@ -348,11 +367,33 @@ public class RelationTree
 			discoverBranches (node);
 		}
 
-		// perform simple branch merging
-		branchMergeCaseSingleChild ();
+		@SuppressWarnings ("unchecked")
+		HashSet<RelationBranch>[] branchSets = (HashSet<RelationBranch>[]) new HashSet<?>[2]; 
+		branchSets[0] = new HashSet<RelationBranch> ();
+		branchSets[1] = new HashSet<RelationBranch> ();
+		{
+			HashSet<RelationBranch> set = branchSets[0];
+			for (RelationNode node : getNodes ())
+			{
+				set.add (node.getRelationBranch ());
+			}
+		}
+		int index = 0;
+//		System.out.println ("index: " + index + ": " + branchSets[index].size ());
+		while (branchSets[index].size () > 0)
+		{
+			int nextIndex = 1 - index;
+			branchSets[nextIndex].clear ();
+//			System.out.println ("index: " + index + ": " + branchSets[index].size ());
 
-		// perform slightly more complicated merging
-		branchMergeCaseTwoChildren ();
+			// perform simple branch merging
+			branchMergeCaseSingleChild (branchSets[index], branchSets[nextIndex]);
+	
+			// perform slightly more complicated merging
+			branchMergeCaseTwoChildren (branchSets[index], branchSets[nextIndex]);
+
+			index = nextIndex;
+		}
 
 		// scan and put all the branches in a list
 		Set<RelationBranch> branchSet = getBranchSet ();
