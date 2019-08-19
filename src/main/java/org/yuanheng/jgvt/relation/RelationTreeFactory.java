@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.yuanheng.jgvt.GitRepo;
 
@@ -49,24 +49,37 @@ public class RelationTreeFactory
 		m_importantBranchNames = importantBranchNames;
 	}
 
-	private static List<RelationNode> getBranches (RelationTree tree, List<Pattern> importantBranches, Map<String, ObjectId> reverseBranchMap)
+	private static RelationNode getImportantNode (RelationTree tree, List<Pattern> importantBranches, GitRepo gitRepo) throws GitAPIException
 	{
-		ArrayList<RelationNode> branches = new ArrayList<RelationNode> ();
 		if (importantBranches.size () == 0)
-			return branches;
+			return null;
 
-		for (String branchName : reverseBranchMap.keySet ())
+		Ref matchRef = null;
+		int matchIndex = Integer.MAX_VALUE;
+
+		List<Ref> branches = gitRepo.getAllBranches ();
+		ExitLoop:
+		for (Ref ref : branches)
 		{
+			String name = ref.getName ();
 			for (int i = 0; i < importantBranches.size (); ++i)
 			{
-				if (importantBranches.get (i).matcher (branchName).matches ())
+				if (importantBranches.get (i).matcher (name).matches ())
 				{
-					branches.add (tree.getNode (reverseBranchMap.get (branchName)));
+					if (i < matchIndex)
+					{
+						matchRef = ref;
+						matchIndex = i;
+						if (i == 0)
+							break ExitLoop;
+					}
 					break;
 				}
 			}
 		}
-		return branches;
+		if (matchRef == null)
+			return null;
+		return tree.getNode (matchRef.getObjectId ());
 	}
 
 	private void layoutBranches (RelationTree tree, RelationNode startNode) throws GitAPIException, IOException
@@ -157,18 +170,15 @@ public class RelationTreeFactory
 		// relationship.
 		tree.addNodes (commitLogs, m_gitRepo);
 
-		// Second pass to reconstruct branches
-		Map<String, ObjectId> reverseBranchMap = m_gitRepo.getReverseBranchMap ();
 		RelationNode startNode = null;
 		if (startCommit == null)
 		{
-			List<RelationNode> importantBranches = getBranches (tree, m_importantBranchNames, reverseBranchMap);
-			if (importantBranches.size () == 0)
+			startNode = getImportantNode (tree, m_importantBranchNames, m_gitRepo);
+			if (startNode == null)
 			{
 				System.out.println ("Unable to determine the main branch.  Please specify the last commit of the main branch.");
 				System.exit (1);
 			}
-			startNode = importantBranches.get (0);
 		}
 		else
 		{

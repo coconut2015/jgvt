@@ -16,12 +16,15 @@
 package org.yuanheng.jgvt;
 
 import java.io.File;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.cli.*;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.Ref;
 import org.yuanheng.jgvt.gui.GUI;
 
 /**
@@ -34,20 +37,42 @@ public class Main
 		Options options = new Options ();
 		options.addOption ("h", "help", false, "print this message");
 		options.addOption ("s", true, "specify the last commit of the main branch");
+		options.addOption ("b", "branch", false, "list branches");
+		options.addOption ("t", "tag", false, "list tags");
 		return options;
 	}
+
+	private static void printRefs (List<Ref> refs)
+	{
+		for (Ref ref : refs)
+		{
+			System.out.println (ref.getName ());
+		}
+	}
+
+	private static void listBranches (GitRepo gitRepo) throws GitAPIException
+	{
+		printRefs (gitRepo.getAllBranches ());
+	}
+
+	private static void listTags (GitRepo gitRepo) throws GitAPIException
+	{
+		printRefs (gitRepo.getTags ());
+	}
+
 	public static void main (String[] args) throws Exception
 	{
 		GitRepo gitRepo = null;
 		File dir = null;
 		File file = null;
 		String startCommit = null;
+		CommandLine cmd = null;
 
 		try
 		{
 			CommandLineParser parser = new DefaultParser();
 			Options options = createOptions ();
-			CommandLine cmd = parser.parse(options, args);
+			cmd = parser.parse(options, args);
 
 			if (cmd.hasOption ('h'))
 			{
@@ -104,9 +129,15 @@ public class Main
 			System.exit (1);;
 		}
 
-		if (gitRepo == null)
+		if (cmd.hasOption ('b'))
 		{
-			System.exit (1);;
+			listBranches (gitRepo);
+			System.exit (0);
+		}
+		if (cmd.hasOption ('t'))
+		{
+			listTags (gitRepo);
+			System.exit (0);
 		}
 
 		// disable JGraphX drag-n-drop error logging
