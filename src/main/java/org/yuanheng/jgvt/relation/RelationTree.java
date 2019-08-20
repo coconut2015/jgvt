@@ -447,8 +447,8 @@ public class RelationTree
 
 	/**
 	 * For this case, if branch A is of size 1.  Its parent 0 is the last
-	 * node of branch B.  If A and parent B both have merge arrows from
-	 * branch C, then merge A and B.
+	 * node of branch B.  Then parent 0 has a merge arrow to branch C, and
+	 * C merges to branch A.
 	 *
 	 * In this case, we merge A and B.
 	 */
@@ -477,20 +477,16 @@ public class RelationTree
 			if (leftParent != leftList.get (leftList.size () - 1))
 				continue;
 
-			boolean hasMergeFromRight = false;
-ExitLoop:
-			for (RelationNode n : leftList)
+			boolean hasMergeToRight = false;
+			for (RelationNode child : leftParent.getChildren ())
 			{
-				for (RelationNode p : n.getParents ())
+				if (child.getRelationBranch () == rightParentBranch)
 				{
-					if (p.getRelationBranch () == rightParentBranch)
-					{
-						hasMergeFromRight = true;
-						break ExitLoop;
-					}
+					hasMergeToRight = true;
+					break;
 				}
 			}
-			if (hasMergeFromRight)
+			if (hasMergeToRight)
 			{
 				branch.merge (leftParentBranch);
 
