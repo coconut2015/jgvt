@@ -30,7 +30,7 @@ public class RelationTree
 {
 	private static void debug (String msg)
 	{
-//		System.out.println (msg);
+		System.out.println (msg);
 	}
 
 	private final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
@@ -365,7 +365,8 @@ public class RelationTree
 				// now check if leftBranch merges to rightBranch or
 				// vice versa
 				RelationNode leftLast = leftList.get (leftList.size () - 1);
-				if (leftLast.getChildren ().length == 1 &&
+				if (leftNode == leftList.get (0) &&
+					leftLast.getChildren ().length == 1 &&
 					leftLast.getChildren ()[0].getRelationBranch () == rightBranch &&
 					rightList.get (0) != rightNode)
 				{
@@ -377,7 +378,8 @@ public class RelationTree
 				}
 
 				RelationNode rightLast = rightList.get (rightList.size () - 1);
-				if (rightLast.getChildren ().length == 1 &&
+				if (rightNode == rightList.get (0) &&
+					rightLast.getChildren ().length == 1 &&
 					rightLast.getChildren ()[0].getRelationBranch () == leftBranch &&
 					leftList.get (0) != leftNode)
 				{
