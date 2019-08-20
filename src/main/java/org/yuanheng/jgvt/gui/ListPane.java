@@ -83,7 +83,10 @@ class ListPane extends JPanel
 					row = m_table.convertRowIndexToModel (row);
 					ListPaneModel model = (ListPaneModel) m_table.getModel ();
 					ListInfo listInfo = model.getRow (row);
-					m_controller.select (listInfo.node, true);
+					if (listInfo.node != null)
+					{
+						m_controller.select (listInfo.node, true);
+					}
 				}
 			}
 		}
