@@ -446,6 +446,61 @@ public class RelationTree
 	}
 
 	/**
+	 * For this case, if branch A is of size 1.  Its parent 0 is the last
+	 * node of branch B.  If A and parent B both have merge arrows from
+	 * branch C, then merge A and B.
+	 *
+	 * In this case, we merge A and B.
+	 */
+	private void branchMergeCaseSingleNodeBranchMergeParent (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () != 1)
+				continue;
+
+			RelationNode node = branch.getOrderedList ().get (0);
+			if (node.getParents ().length != 2)
+				continue;
+
+			RelationNode leftParent = node.getParents ()[0];
+			RelationNode rightParent = node.getParents ()[1];
+			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+			RelationBranch rightParentBranch = rightParent.getRelationBranch ();
+
+			if (branch == leftParentBranch ||
+				branch == rightParentBranch ||
+				leftParentBranch == rightParentBranch)
+				continue;
+
+			List<RelationNode> leftList = leftParentBranch.getOrderedList ();
+			if (leftParent != leftList.get (leftList.size () - 1))
+				continue;
+
+			boolean hasMergeFromRight = false;
+ExitLoop:
+			for (RelationNode n : leftList)
+			{
+				for (RelationNode p : n.getParents ())
+				{
+					if (p.getRelationBranch () == rightParentBranch)
+					{
+						hasMergeFromRight = true;
+						break ExitLoop;
+					}
+				}
+			}
+			if (hasMergeFromRight)
+			{
+				branch.merge (leftParentBranch);
+
+				debug (CommitUtils.getName (node.getCommit ()) + " SNBMP");
+				checkBranches.add (branch);
+			}
+		}
+	}
+
+	/**
 	 * We need to expand the search since the branchSet only contains the ones
 	 * just got modified.  We need to include parents and children the modified
 	 * branches.
@@ -547,6 +602,8 @@ public class RelationTree
 			branchMergeCaseRepeatMerge (branchSets[index], branchSets[nextIndex]);
 
 			branchMergeCaseSwapMergeParents (branchSets[index], branchSets[nextIndex]);
+
+			branchMergeCaseSingleNodeBranchMergeParent (branchSets[index], branchSets[nextIndex]);
 
 			index = nextIndex;
 			expandSearch(branchSets[index]);
