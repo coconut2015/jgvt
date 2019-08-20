@@ -30,7 +30,7 @@ public class RelationTree
 {
 	private static void debug (String msg)
 	{
-//		System.out.println (msg);
+		System.out.println (msg);
 	}
 
 	private final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
@@ -394,6 +394,58 @@ public class RelationTree
 	}
 
 	/**
+	 * For this case, main branch A has a side branch B.  Then A and B
+	 * are merged to create branch C.  Eventually, C merges back to A.
+	 * This is an issue usually because C's parents A and B are swapped
+	 * (i.e. index 0 is A, and index 1 is B).
+	 *
+	 * In this case, consider merging B and C.
+	 */
+	private void branchMergeCaseSwapMergeParents (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () == 0)
+				continue;
+
+			List<RelationNode> nodeList = branch.getOrderedList ();
+			RelationNode firstNode = nodeList.get (0);
+			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+
+			if (firstNode.getParents ().length == 2 &&
+				lastNode.getChildren ().length == 1)
+			{
+				RelationNode leftParent = firstNode.getParents ()[0];
+				RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+				RelationNode rightParent = firstNode.getParents ()[1];
+				RelationBranch rightParentBranch = rightParent.getRelationBranch ();
+
+				if (branch == leftParentBranch ||
+					branch == rightParentBranch ||
+					leftParentBranch == rightParentBranch)
+					continue;
+
+				List<RelationNode> rightList = rightParentBranch.getOrderedList ();
+				if (rightParent != rightList.get (rightList.size () - 1))
+					continue;
+
+				RelationNode rightParentBranchFirstNode = rightList.get (0);
+				if (rightParentBranchFirstNode.getParents ().length == 1 &&
+					rightParentBranchFirstNode.getParents ()[0].getRelationBranch () == leftParentBranch &&
+					lastNode.getChildren ()[0].getRelationBranch () == leftParentBranch)
+				{
+					firstNode.getParents ()[0] = rightParent;
+					firstNode.getParents ()[1] = leftParent;
+					branch.merge (rightParentBranch);
+
+					debug (CommitUtils.getName (firstNode.getCommit ()) + " SMP");
+					checkBranches.add (branch);
+				}
+			}
+		}
+	}
+
+	/**
 	 * We need to expand the search since the branchSet only contains the ones
 	 * just got modified.  We need to include parents and children the modified
 	 * branches.
@@ -493,6 +545,8 @@ public class RelationTree
 			branchMergeCaseTwoChildren (branchSets[index], branchSets[nextIndex]);
 
 			branchMergeCaseRepeatMerge (branchSets[index], branchSets[nextIndex]);
+
+			branchMergeCaseSwapMergeParents (branchSets[index], branchSets[nextIndex]);
 
 			index = nextIndex;
 			expandSearch(branchSets[index]);
