@@ -74,13 +74,25 @@ public class ListPaneModel extends AbstractTableModel
 		switch (column)
 		{
 			case COL_COMMIT:
-				return info.node.getCommit ().getName ();
+			{
+				return info.ref.getObjectId ().getName ();
+			}
 			case COL_NAME:
+			{
 				return info.ref.getName ();
+			}
 			case COL_TIME:
+			{
+				if (info.node == null)
+					return null;
 				return info.node.getCommit ().getCommitterIdent ().getWhen ();
+			}
 			case COL_DESCRIPTION:
+			{
+				if (info.node == null)
+					return null;
 				return info.node.getCommit ().getShortMessage ();
+			}
 		}
 		return null;
 	}
