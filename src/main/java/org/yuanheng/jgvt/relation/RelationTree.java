@@ -30,7 +30,7 @@ public class RelationTree
 {
 	private static void debug (String msg)
 	{
-		System.out.println (msg);
+//		System.out.println (msg);
 	}
 
 	private final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
