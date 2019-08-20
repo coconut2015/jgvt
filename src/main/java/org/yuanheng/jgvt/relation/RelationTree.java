@@ -446,25 +446,25 @@ public class RelationTree
 	}
 
 	/**
-	 * For this case, if branch A is of size 1.  Its parent 0 is the last
+	 * For this case, if branch A firstNode's parent 0 is the last
 	 * node of branch B.  Then parent 0 has a merge arrow to branch C, and
 	 * C merges to branch A.
 	 *
 	 * In this case, we merge A and B.
 	 */
-	private void branchMergeCaseSingleNodeBranchMergeParent (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	private void branchMergeCaseMergeOutMergeIn (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
 		for (RelationBranch branch : branches)
 		{
-			if (branch.size () != 1)
+			if (branch.size () == 0)
 				continue;
 
-			RelationNode node = branch.getOrderedList ().get (0);
-			if (node.getParents ().length != 2)
+			RelationNode firstNode = branch.getOrderedList ().get (0);
+			if (firstNode.getParents ().length != 2)
 				continue;
 
-			RelationNode leftParent = node.getParents ()[0];
-			RelationNode rightParent = node.getParents ()[1];
+			RelationNode leftParent = firstNode.getParents ()[0];
+			RelationNode rightParent = firstNode.getParents ()[1];
 			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
 			RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
@@ -490,7 +490,7 @@ public class RelationTree
 			{
 				branch.merge (leftParentBranch);
 
-				debug (CommitUtils.getName (node.getCommit ()) + " SNBMP");
+				debug (CommitUtils.getName (firstNode.getCommit ()) + " MOMI");
 				checkBranches.add (branch);
 			}
 		}
@@ -599,7 +599,7 @@ public class RelationTree
 
 			branchMergeCaseSwapMergeParents (branchSets[index], branchSets[nextIndex]);
 
-			branchMergeCaseSingleNodeBranchMergeParent (branchSets[index], branchSets[nextIndex]);
+			branchMergeCaseMergeOutMergeIn (branchSets[index], branchSets[nextIndex]);
 
 			index = nextIndex;
 			expandSearch(branchSets[index]);
