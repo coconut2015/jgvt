@@ -154,6 +154,8 @@ public class RelationTreeFactory
 				int y2 = y + childState.size () - 1;
 				while (matrix.isTaken (checkX, y, y2))
 					++checkX;
+				childLayoutInfo.setX (checkX);
+				childLayoutInfo.setY (y);
 				childState.setX (checkX);
 				childState.setY (y);
 				matrix.take (checkX, y, y2);
