@@ -19,7 +19,9 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.BorderUIResource;
@@ -417,6 +419,13 @@ public class GUI
 
 		m_frame = new JFrame ();
 		m_frame.setTitle (TITLE);
+		try
+		{
+			m_frame.setIconImage (ImageIO.read (ClassLoader.getSystemResource ("META-INF/jgvt/jgvt.png")));
+		}
+		catch (IOException ex)
+		{
+		}
 		m_frame.setSize (1024, 768);
 
 		setupActions ();
