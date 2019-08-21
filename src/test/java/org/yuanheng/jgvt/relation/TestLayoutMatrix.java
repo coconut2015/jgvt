@@ -46,4 +46,23 @@ public class TestLayoutMatrix
 		matrix.take (5, 5);
 		Assert.assertTrue (matrix.isTaken (5, 1, 5));
 	}
+
+	@Test
+	public void testTake3 () throws Exception
+	{
+		LayoutMatrix matrix = new LayoutMatrix ();
+		for (int x = 0; x < 33; ++x)
+		{
+			Assert.assertFalse (matrix.isTaken (x, 1, 5));
+		}
+		for (int x = 0; x < 33; ++x)
+		{
+			matrix.take (x, 1, 5);
+		}
+		for (int x = 0; x < 33; ++x)
+		{
+			Assert.assertTrue (matrix.isTaken (x, 1, 5));
+		}
+	}
+
 }

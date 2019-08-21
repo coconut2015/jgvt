@@ -28,9 +28,9 @@ import org.yuanheng.jgvt.GitRepo;
  */
 public class RelationTree
 {
-	private static void debug (String msg)
+	static void debug (String msg)
 	{
-		System.out.println (msg);
+//		System.out.println (msg);
 	}
 
 	private final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
@@ -253,7 +253,7 @@ public class RelationTree
 	 *
 	 * @return	all the unique branches in the tree.
 	 */
-	private Set<RelationBranch> getBranchSet ()
+	public Set<RelationBranch> getBranchSet ()
 	{
 		// scan and put all the branches in a list
 		HashSet<RelationBranch> branchSet = new HashSet<RelationBranch> ();

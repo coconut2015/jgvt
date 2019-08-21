@@ -36,10 +36,6 @@ public class RelationBranch implements Comparable<RelationBranch>
 	{
 		m_id = s_id++;
 		m_nodes.add (node);
-		LayoutInfo lastLayoutInfo = node.getLayoutInfo ();
-		getLayoutInfo().setWeight (lastLayoutInfo.getWeight ());
-		getLayoutInfo().setX (lastLayoutInfo.getX ());
-		getLayoutInfo().setY (lastLayoutInfo.getY ());
 		node.setRelationBranch (this);
 	}
 

@@ -20,15 +20,10 @@ package org.yuanheng.jgvt.relation;
  */
 public class LayoutInfo
 {
-	/**
-	 * The weight of the node.  Higher value indicates less weight.
-	 */
-	private int m_weight = Integer.MAX_VALUE;
-	private int m_rank;
 	private boolean m_visited = false;
 
-	private int m_x;
-	private int m_y;
+	private int m_x = -1;
+	private int m_y = -1;
 
 	public void visit ()
 	{
@@ -43,21 +38,6 @@ public class LayoutInfo
 	public void resetVisit ()
 	{
 		m_visited = false;
-	}
-
-	public int getWeight ()
-	{
-		return m_weight;
-	}
-
-	public void setWeight (int weight)
-	{
-		m_weight = weight;
-	}
-
-	public void resetWeight ()
-	{
-		m_weight = Integer.MAX_VALUE;
 	}
 
 	public int getX ()
@@ -78,15 +58,5 @@ public class LayoutInfo
 	public void setY (int y)
 	{
 		m_y = y;
-	}
-
-	public int getRank ()
-	{
-		return m_rank;
-	}
-
-	public void setRank (int rank)
-	{
-		m_rank = rank;
 	}
 }

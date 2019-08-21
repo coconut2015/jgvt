@@ -40,9 +40,9 @@ class LayoutMatrix
 			}
 		}
 		int[] row = m_matrix.get (y);
-		if (row == null || row.length <= (x / 8))
+		if (row == null || row.length <= (x / 32))
 		{
-			int[] newRow = new int[(x / 8) + 10];
+			int[] newRow = new int[(x / 32) + 10];
 			if (row != null)
 			{
 				for (int i = 0; i < row.length; ++i)
@@ -77,7 +77,7 @@ class LayoutMatrix
 			return false;
 		}
 		int[] row = m_matrix.get (y);
-		if (row == null || row.length <= x)
+		if (row == null || row.length <= (x / 32))
 		{
 			return false;
 		}
@@ -96,11 +96,11 @@ class LayoutMatrix
 
 	private static boolean isBitSet (int[] arr, int bit)
 	{
-		return ((arr[bit / 8]) & (1 << (bit % 8))) != 0;
+		return ((arr[bit / 32]) & (1 << (bit % 32))) != 0;
 	}
 
 	private static void setBit (int[] arr, int bit)
 	{
-		arr[bit / 8] |= (1 << (bit % 8));
+		arr[bit / 32] |= (1 << (bit % 32));
 	}
 }
