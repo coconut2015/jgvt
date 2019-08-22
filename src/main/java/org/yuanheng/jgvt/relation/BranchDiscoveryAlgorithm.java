@@ -27,7 +27,7 @@ class BranchDiscoveryAlgorithm
 {
 	static void debug (String msg)
 	{
-		System.out.println (msg);
+//		System.out.println (msg);
 	}
 
 	/**
