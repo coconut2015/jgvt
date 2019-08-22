@@ -43,7 +43,7 @@ class BranchDiscoveryAlgorithm
 	public static void inferBranches (RelationTree tree, RelationNode startNode) throws GitAPIException
 	{
 		// See if we can trace from the main branch and collect branches.
-		discoverInitialBranches (startNode);
+		discoverInitialBranches (startNode, true);
 	
 		// Now find remaining nodes with multiple parents.
 		ArrayList<RelationNode> multiParentNodes = new ArrayList<RelationNode> ();
@@ -61,7 +61,7 @@ class BranchDiscoveryAlgorithm
 		{
 			if (node.getLayoutInfo ().isVisited ())
 				continue;
-			discoverInitialBranches (node);
+			discoverInitialBranches (node, false);
 		}
 	
 		// find any remaining branches starting from leaves.
@@ -71,7 +71,7 @@ class BranchDiscoveryAlgorithm
 		{
 			if (node.getLayoutInfo ().isVisited ())
 				continue;
-			discoverInitialBranches (node);
+			discoverInitialBranches (node, false);
 		}
 	
 		@SuppressWarnings ("unchecked")
@@ -115,10 +115,10 @@ class BranchDiscoveryAlgorithm
 	 * @param	startNode
 	 * 			the last node of the main branch
 	 */
-	private static void discoverInitialBranches (RelationNode startNode)
+	private static void discoverInitialBranches (RelationNode startNode, boolean reachRoot)
 	{
 		ArrayList<RelationNode> stack = new ArrayList<RelationNode> ();
-	
+
 		// initiate the tree with the main branch on the left.
 		RelationNode node = startNode;
 		RelationBranch mainBranch = new RelationBranch (startNode);
@@ -132,7 +132,13 @@ class BranchDiscoveryAlgorithm
 				{
 					break;
 				}
-	
+				if (!reachRoot &&
+					(parents.length > 1 ||
+					 parents[0].getChildren ().length > 1))
+				{
+					break;
+				}
+
 				// set this child as the parent's first
 				parents[0].setNthChild (node, 0);
 				node = parents[0];

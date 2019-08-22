@@ -53,32 +53,35 @@ public class RelationTreeFactory
 		if (importantBranches.size () == 0)
 			return null;
 
-		Ref matchRef = null;
-		int matchIndex = Integer.MAX_VALUE;
+		RevCommit matchCommit = null;
 
 		List<Ref> branches = gitRepo.getAllBranches ();
-		ExitLoop:
-		for (Ref ref : branches)
+		for (int i = 0; i < importantBranches.size () && matchCommit == null; ++i)
 		{
-			String name = ref.getName ();
-			for (int i = 0; i < importantBranches.size (); ++i)
+			Pattern p = importantBranches.get (i);
+			for (Ref ref : branches)
 			{
-				if (importantBranches.get (i).matcher (name).matches ())
+				String name = ref.getName ();
 				{
-					if (i < matchIndex)
+					if (p.matcher (name).matches ())
 					{
-						matchRef = ref;
-						matchIndex = i;
-						if (i == 0)
-							break ExitLoop;
+						RelationNode newNode = tree.getNode (ref.getObjectId ());
+						if (newNode != null)
+						{
+							RevCommit newCommit = newNode.getCommit ();
+							if (matchCommit == null ||
+								matchCommit.getCommitTime () < newCommit.getCommitTime ())
+							{
+								matchCommit = newCommit;
+							}
+						}
 					}
-					break;
 				}
 			}
 		}
-		if (matchRef == null)
+		if (matchCommit == null)
 			return null;
-		return tree.getNode (matchRef.getObjectId ());
+		return tree.getNode (matchCommit);
 	}
 
 	public RelationTree createTree (String startCommit, Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
