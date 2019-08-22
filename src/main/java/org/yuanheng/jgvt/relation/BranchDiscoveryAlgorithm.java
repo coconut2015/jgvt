@@ -202,8 +202,7 @@ class BranchDiscoveryAlgorithm
 			if (branch.size () == 0)
 				continue;
 	
-			List<RelationNode> nodeList = branch.getOrderedList ();
-			RelationNode firstNode = nodeList.get (0);
+			RelationNode firstNode = branch.getFirst ();
 			if (firstNode.getParents ().length > 0)
 			{
 				RelationNode parent = firstNode.getParents ()[0];
@@ -234,8 +233,7 @@ class BranchDiscoveryAlgorithm
 			if (branch.size () == 0)
 				continue;
 	
-			List<RelationNode> nodeList = branch.getOrderedList ();
-			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+			RelationNode lastNode = branch.getLast ();
 	
 			if (lastNode.getChildren ().length == 2)
 			{
@@ -248,20 +246,18 @@ class BranchDiscoveryAlgorithm
 					continue;
 	
 				RelationNode leftNode = lastNode.getChildren ()[0];
-				List<RelationNode> leftList = leftBranch.getOrderedList ();
 				// make sure the left child is the first node of the child branch
-				if (leftList.get (0) != leftNode)
+				if (leftNode != leftBranch.getFirst ())
 					continue;
 	
 				RelationNode rightNode = lastNode.getChildren ()[1];
-				List<RelationNode> rightList = rightBranch.getOrderedList ();
 				// make sure the right child is the first node of the child branch
-				if (rightList.get (0) != rightNode)
+				if (rightNode != rightBranch.getFirst ())
 					continue;
 	
 				// now check if leftBranch merges to rightBranch or
 				// vice versa
-				RelationNode leftLast = leftList.get (leftList.size () - 1);
+				RelationNode leftLast = leftBranch.getLast ();
 				if (leftLast.getChildren ().length == 1 &&
 					leftLast.getChildren ()[0].getRelationBranch () == rightBranch)
 				{
@@ -272,7 +268,7 @@ class BranchDiscoveryAlgorithm
 					continue;
 				}
 	
-				RelationNode rightLast = rightList.get (rightList.size () - 1);
+				RelationNode rightLast = rightBranch.getLast ();
 				if (rightLast.getChildren ().length == 1 &&
 					rightLast.getChildren ()[0].getRelationBranch () == leftBranch)
 				{
@@ -297,17 +293,16 @@ class BranchDiscoveryAlgorithm
 		{
 			if (branch.size () == 0)
 				continue;
-	
-			List<RelationNode> nodeList = branch.getOrderedList ();
-			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
-	
+
+			RelationNode lastNode = branch.getLast ();
+
 			if (lastNode.getChildren ().length > 2)
 			{
 				childBranchSet.clear ();
 				for (RelationNode child : lastNode.getChildren ())
 				{
 					RelationBranch childBranch = child.getRelationBranch ();
-					if (childBranch.getOrderedList ().get (0) != child)
+					if (child != childBranch.getFirst ())
 						break;
 					childBranchSet.add (child.getRelationBranch ());
 				}
@@ -320,8 +315,11 @@ class BranchDiscoveryAlgorithm
 				RelationBranch toMerge = null;
 				for (RelationBranch childBranch : childBranchSet)
 				{
-					List<RelationNode> list = childBranch.getOrderedList ();
-					RelationNode childLastNode = list.get (list.size () - 1);
+					RelationNode childLastNode = childBranch.getLast ();
+					if (childLastNode.getChildren ().length == 0)
+					{
+						continue;
+					}
 					if (childLastNode.getChildren ().length > 1)
 					{
 						if (toMerge == null)
@@ -332,17 +330,21 @@ class BranchDiscoveryAlgorithm
 						{
 							mergeToEachOther = false;
 						}
-						break;
-					}
-					if (childLastNode.getChildren ().length == 0)
-					{
 						continue;
 					}
 					RelationBranch mergeToBranch = childLastNode.getChildren ()[0].getRelationBranch ();
 					if (!childBranchSet.contains (mergeToBranch))
 					{
-						mergeToEachOther = false;
-						break;
+						if (toMerge == null)
+						{
+							toMerge = childBranch;
+						}
+						else if (toMerge != childBranch)
+						{
+							mergeToEachOther = false;
+							break;
+						}
+						continue;
 					}
 					if (toMerge == null)
 					{
@@ -381,8 +383,7 @@ class BranchDiscoveryAlgorithm
 			if (branch.size () == 0)
 				continue;
 	
-			List<RelationNode> nodeList = branch.getOrderedList ();
-			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+			RelationNode lastNode = branch.getLast ();
 	
 			if (lastNode.getChildren ().length == 2)
 			{
@@ -395,18 +396,15 @@ class BranchDiscoveryAlgorithm
 					continue;
 	
 				RelationNode leftNode = lastNode.getChildren ()[0];
-				List<RelationNode> leftList = leftBranch.getOrderedList ();
-	
 				RelationNode rightNode = lastNode.getChildren ()[1];
-				List<RelationNode> rightList = rightBranch.getOrderedList ();
 	
 				// now check if leftBranch merges to rightBranch or
 				// vice versa
-				RelationNode leftLast = leftList.get (leftList.size () - 1);
-				if (leftNode == leftList.get (0) &&
+				RelationNode leftLast = leftBranch.getLast ();
+				if (leftNode == leftBranch.getFirst () &&
 					leftLast.getChildren ().length == 1 &&
 					leftLast.getChildren ()[0].getRelationBranch () == rightBranch &&
-					rightList.get (0) != rightNode)
+					rightNode != rightBranch.getFirst ())
 				{
 					branch.merge (leftBranch);
 	
@@ -415,11 +413,11 @@ class BranchDiscoveryAlgorithm
 					continue;
 				}
 	
-				RelationNode rightLast = rightList.get (rightList.size () - 1);
-				if (rightNode == rightList.get (0) &&
+				RelationNode rightLast = rightBranch.getLast ();
+				if (rightNode == rightBranch.getFirst () &&
 					rightLast.getChildren ().length == 1 &&
 					rightLast.getChildren ()[0].getRelationBranch () == leftBranch &&
-					leftList.get (0) != leftNode)
+					leftNode != leftBranch.getFirst ())
 				{
 					branch.merge (rightBranch);
 	
@@ -446,9 +444,8 @@ class BranchDiscoveryAlgorithm
 			if (branch.size () == 0)
 				continue;
 	
-			List<RelationNode> nodeList = branch.getOrderedList ();
-			RelationNode firstNode = nodeList.get (0);
-			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+			RelationNode firstNode = branch.getFirst ();
+			RelationNode lastNode = branch.getLast ();
 	
 			if (firstNode.getParents ().length == 2 &&
 				lastNode.getChildren ().length == 1)
@@ -463,11 +460,10 @@ class BranchDiscoveryAlgorithm
 					leftParentBranch == rightParentBranch)
 					continue;
 	
-				List<RelationNode> rightList = rightParentBranch.getOrderedList ();
-				if (rightParent != rightList.get (rightList.size () - 1))
+				if (rightParent != rightParentBranch.getLast ())
 					continue;
 	
-				RelationNode rightParentBranchFirstNode = rightList.get (0);
+				RelationNode rightParentBranchFirstNode = rightParentBranch.getFirst ();
 				if (rightParentBranchFirstNode.getParents ().length == 1 &&
 					rightParentBranchFirstNode.getParents ()[0].getRelationBranch () == leftParentBranch &&
 					lastNode.getChildren ()[0].getRelationBranch () == leftParentBranch)
@@ -497,7 +493,7 @@ class BranchDiscoveryAlgorithm
 			if (branch.size () == 0)
 				continue;
 	
-			RelationNode firstNode = branch.getOrderedList ().get (0);
+			RelationNode firstNode = branch.getFirst ();
 			if (firstNode.getParents ().length != 2)
 				continue;
 	
@@ -511,8 +507,7 @@ class BranchDiscoveryAlgorithm
 				leftParentBranch == rightParentBranch)
 				continue;
 	
-			List<RelationNode> leftList = leftParentBranch.getOrderedList ();
-			if (leftParent != leftList.get (leftList.size () - 1))
+			if (leftParent != leftParentBranch.getLast ())
 				continue;
 	
 			boolean hasMergeToRight = false;
@@ -550,13 +545,12 @@ class BranchDiscoveryAlgorithm
 		{
 			if (branch.size () == 0)
 				continue;
-			List<RelationNode> nodes = branch.getOrderedList ();
-			RelationNode firstNode = nodes.get (0);
+			RelationNode firstNode = branch.getFirst ();
 			for (RelationNode parent : firstNode.getParents ())
 			{
 				expandSet.add (parent.getRelationBranch ());
 			}
-			RelationNode lastNode = nodes.get (nodes.size () - 1);
+			RelationNode lastNode = branch.getLast ();
 			for (RelationNode child : lastNode.getChildren ())
 			{
 				expandSet.add (child.getRelationBranch ());

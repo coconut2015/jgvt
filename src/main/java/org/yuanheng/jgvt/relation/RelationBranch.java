@@ -151,10 +151,21 @@ public class RelationBranch implements Comparable<RelationBranch>
 				if (!found)
 					break;
 			}
+			if (m_orderedList.size () != m_nodes.size ())
+				throw new RuntimeException ("Build orderd list failure: size = " + size () + ", order = " + m_orderedList.size ());
 		}
-		if (m_orderedList.size () != m_nodes.size ())
-			throw new RuntimeException ("Build orderd list failure: size = " + size () + ", order = " + m_orderedList.size ());
 		return m_orderedList;
+	}
+
+	public RelationNode getFirst ()
+	{
+		return getOrderedList ().get (0);
+	}
+
+	public RelationNode getLast ()
+	{
+		List<RelationNode> list = getOrderedList ();
+		return list.get (list.size () - 1);
 	}
 
 	@Override
