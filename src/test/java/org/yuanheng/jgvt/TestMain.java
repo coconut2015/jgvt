@@ -27,8 +27,8 @@ public class TestMain
 	@Test
 	public void testMain () throws Exception
 	{
-//		Main.main(new String[] {"../react/"});
-		Main.main(new String[] {"../sqlite-jdbc/"});
+		Main.main(new String[] {"../react/"});
+//		Main.main(new String[] {"../sqlite-jdbc/"});
 //		Main.main(new String[] {"../sqlite-jdbc/README.md"});
 //		Main.main(new String[] {"../bsonspec.org/"});
 //		Main.main(new String[] {"../bsonspec.org/implementations.html"});

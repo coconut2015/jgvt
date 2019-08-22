@@ -27,7 +27,7 @@ class BranchDiscoveryAlgorithm
 {
 	static void debug (String msg)
 	{
-//		System.out.println (msg);
+		System.out.println (msg);
 	}
 
 	/**
@@ -92,6 +92,7 @@ class BranchDiscoveryAlgorithm
 	
 			// perform slightly more complicated merging
 			branchMergeCaseTwoChildren (branchSets[index], branchSets[nextIndex]);
+			branchMergeCaseMultipleChildren (branchSets[index], branchSets[nextIndex]);
 	
 			branchMergeCaseRepeatMerge (branchSets[index], branchSets[nextIndex]);
 	
@@ -275,6 +276,86 @@ class BranchDiscoveryAlgorithm
 					checkBranches.add (branch);
 					continue;
 				}
+			}
+		}
+	}
+
+	/**
+	 * This is similar to branchMergeCaseTwoChildren, but with more than 2 children.
+	 * Separate them to optimize the cases a little.
+	 */
+	private static void branchMergeCaseMultipleChildren (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		HashSet<RelationBranch> childBranchSet = new HashSet<RelationBranch> ();
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () == 0)
+				continue;
+	
+			List<RelationNode> nodeList = branch.getOrderedList ();
+			RelationNode lastNode = nodeList.get (nodeList.size () - 1);
+	
+			if (lastNode.getChildren ().length > 2)
+			{
+				childBranchSet.clear ();
+				for (RelationNode child : lastNode.getChildren ())
+				{
+					RelationBranch childBranch = child.getRelationBranch ();
+					if (childBranch.getOrderedList ().get (0) != child)
+						break;
+					childBranchSet.add (child.getRelationBranch ());
+				}
+				if (childBranchSet.size () != lastNode.getChildren ().length)
+				{
+					childBranchSet.clear ();
+					continue;
+				}
+				boolean mergeToEachOther = true;
+				RelationBranch toMerge = null;
+				for (RelationBranch childBranch : childBranchSet)
+				{
+					List<RelationNode> list = childBranch.getOrderedList ();
+					RelationNode childLastNode = list.get (list.size () - 1);
+					if (childLastNode.getChildren ().length > 1)
+					{
+						if (toMerge == null)
+						{
+							toMerge = childBranch;
+						}
+						else if (toMerge != childBranch)
+						{
+							mergeToEachOther = false;
+						}
+						break;
+					}
+					if (childLastNode.getChildren ().length == 0)
+					{
+						continue;
+					}
+					RelationBranch mergeToBranch = childLastNode.getChildren ()[0].getRelationBranch ();
+					if (!childBranchSet.contains (mergeToBranch))
+					{
+						mergeToEachOther = false;
+						break;
+					}
+					if (toMerge == null)
+					{
+						toMerge = mergeToBranch;
+					}
+					else if (toMerge != mergeToBranch)
+					{
+						mergeToEachOther = false;
+						break;
+					}
+				}
+				if (!mergeToEachOther || toMerge == null)
+				{
+					childBranchSet.clear ();
+					continue;
+				}
+				branch.merge (toMerge);
+				debug (CommitUtils.getName (lastNode.getCommit ()) + " MC");
+				checkBranches.add (branch);
 			}
 		}
 	}
