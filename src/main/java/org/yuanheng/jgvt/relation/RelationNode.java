@@ -196,6 +196,16 @@ public class RelationNode implements Serializable, Comparable<RelationNode>
 		return m_tags;
 	}
 
+	public void swapParentOrder ()
+	{
+		if (m_parents.length == 2)
+		{
+			RelationNode tmp = m_parents[0];
+			m_parents[0] = m_parents[1];
+			m_parents[1] = tmp;
+		}
+	}
+
 	@Override
 	public int compareTo (RelationNode o)
 	{

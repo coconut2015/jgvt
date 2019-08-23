@@ -188,7 +188,7 @@ public class CommitUtils
 
 		builder.append ("<tr>");
 		builder.append (getHeader ("SHA-1"));
-		builder.append (getValue (commit.getId ().getName ()));
+		builder.append (getCommitLink (commit));
 		builder.append ("</tr>");
 
 		PersonIdent authorIdent = commit.getAuthorIdent();
