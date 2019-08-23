@@ -56,6 +56,11 @@ public class CommitUtils
 		return id.abbreviate (DEFAULT_ABBREV_LEN).name ();
 	}
 
+	public static String getName (RelationNode node)
+	{
+		return getName (node.getCommit ());
+	}
+
 	public static String getToolTipString (RevCommit commit, int flag)
 	{
 		boolean first = true;

@@ -48,17 +48,17 @@ class BranchLayoutAlgorithm
 			while (states.size () > 0)
 			{
 				LayoutState state = states.getLast ();
-	
+
 				if (!state.hasNext ())
 				{
 					states.removeLast ();
 					continue;
 				}
-	
+
 				RelationNode node = state.next ();
 				RelationBranch branch = node.getRelationBranch ();
 				LayoutInfo layoutInfo = node.getLayoutInfo ();
-	
+
 				int x = state.getX ();
 				int y = state.getY ();
 
@@ -66,7 +66,7 @@ class BranchLayoutAlgorithm
 				layoutInfo.setY (y);
 				++y;
 				state.setY (y);
-	
+
 				int index = 0;
 				for (RelationNode child : node.getChildren ())
 				{
@@ -81,9 +81,16 @@ class BranchLayoutAlgorithm
 					LayoutInfo childLayoutInfo = childBranch.getLayoutInfo ();
 					if (childLayoutInfo.isVisited ())
 					{
-						// we do not need to do anything other than having
-						// a merge-out arrow from parent to child.
-						child.setRelation (node, RelationType.MERGE);
+						if (child.getParents ()[0] == node)
+						{
+							child.setRelation (node, RelationType.BRANCH);
+						}
+						else
+						{
+							// we do not need to do anything other than having
+							// a merge-out arrow from parent to child.
+							child.setRelation (node, RelationType.MERGE);
+						}
 						continue;
 					}
 					branchSet.remove (childBranch);

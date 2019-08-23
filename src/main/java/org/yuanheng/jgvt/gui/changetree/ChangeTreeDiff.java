@@ -33,10 +33,11 @@ public class ChangeTreeDiff extends ChangeTreeNode
 		m_n2 = n2;
 	}
 
+	@Override
 	public String toString ()
 	{
-		String n1 = CommitUtils.getName (m_n1.getCommit ());
-		String n2 = CommitUtils.getName (m_n2.getCommit ());
+		String n1 = CommitUtils.getName (m_n1);
+		String n2 = CommitUtils.getName (m_n2);
 		return n1 + ".." + n2;
 	}
 
