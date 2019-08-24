@@ -15,8 +15,12 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
+import javax.swing.tree.TreeNode;
+
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.yuanheng.jgvt.ChangeInfo;
+import org.yuanheng.jgvt.CommitUtils;
 
 /**
  * @author	Heng Yuan
@@ -46,11 +50,13 @@ class ChangeTreeFile extends ChangeTreeNode
 		}
 	}
 
+	@Override
 	public Integer getAdded ()
 	{
 		return m_info.getAdded ();
 	}
 
+	@Override
 	public Integer getDeleted ()
 	{
 		return -m_info.getDeleted ();
@@ -97,6 +103,24 @@ class ChangeTreeFile extends ChangeTreeNode
 	@Override
 	String computeHtml ()
 	{
+		TreeNode node = getParent ();
+		while (node.getParent () != null)
+			node = node.getParent ();
+		if (node instanceof ChangeTreeCommit)
+		{
+			ChangeTreeCommit c = (ChangeTreeCommit) node;
+			RevCommit c1 = c.getNode ().getCommit ();
+			RevCommit c2 = null;
+			if (c1.getParentCount () > 0)
+				c2 = c1.getParent (0);
+			return CommitUtils.getComment (c1, c2, m_info);
+		}
+		else if (node instanceof ChangeTreeDiff)
+		{
+			ChangeTreeDiff diff = (ChangeTreeDiff) node;
+			return CommitUtils.getComment (diff.getNode1 ().getCommit (), diff.getNode2 ().getCommit (), m_info);
+		}
+		// should not reach here.
 		return getChangeType () + " " + toString ();
 	}
 }

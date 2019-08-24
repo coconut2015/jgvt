@@ -17,6 +17,7 @@ package org.yuanheng.jgvt;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -146,6 +147,7 @@ public class Controller
 			final RelationNode node = m_tree.getNode (head);
 			SwingUtilities.invokeLater (new Runnable ()
 			{
+				@Override
 				public void run ()
 				{
 					select (node, true);
@@ -251,12 +253,30 @@ public class Controller
 
 	public void handleCommitURL (URL url)
 	{
-		String protocol = url.getProtocol ();
-		if ("http".equals (protocol) &&
-			"commit".equals (url.getHost ()))
+		try
 		{
-			String commitId = url.getPath ().substring (1);
-			select (commitId, true);
+			String protocol = url.getProtocol ();
+			if ("http".equals (protocol))
+			{
+				String host = url.getHost ();
+				if (CommitUtils.HOST_COMMIT.equals (host))
+				{
+					String commitId = url.getPath ().substring (1);
+					select (commitId, true);
+				}
+				else if (CommitUtils.HOST_DIFFTOOL.equals (url.getHost ()))
+				{
+					String encodedCommits = url.getPath ().substring (1);
+					String commits = URLDecoder.decode (encodedCommits, "UTF-8");
+					String cmd = "git difftool " + commits;
+					System.out.println (cmd);
+					Runtime.getRuntime ().exec (cmd, null, m_gitRepo.getRoot ());
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace ();
 		}
 	}
 

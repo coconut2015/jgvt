@@ -16,7 +16,10 @@
 package org.yuanheng.jgvt;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
+import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -29,6 +32,9 @@ import org.yuanheng.jgvt.relation.RelationNode;
  */
 public class CommitUtils
 {
+	public final static String HOST_COMMIT = "commit.jgvt";
+	public final static String HOST_DIFFTOOL = "difftool.jgvt";
+
 	public final static int TOOLTIP_AUTHOR = 0x01;
 	public final static int TOOLTIP_AUTHOR_TS = 0x02;
 	public final static int TOOLTIP_COMMITTER = 0x04;
@@ -174,7 +180,29 @@ public class CommitUtils
 	private static String getCommitLink (RevCommit commit)
 	{
 		String name = commit.getId ().getName ();
-		return "<a href=\"http://commit/" + name + "\">" + name + "</a>";
+		return "<a href=\"http://" + HOST_COMMIT + "/" + name + "\">" + name + "</a>";
+	}
+
+	private static String getDiffToolLink (RevCommit c1, RevCommit c2, String file)
+	{
+		String str = c1.getId ().getName ();
+		if (c2 != null)
+		{
+			str += " " + c2.getId ().getName ();
+		}
+		if (file != null)
+		{
+			str += " " + file;
+		}
+		String path = "";
+		try
+		{
+			path = URLEncoder.encode (str, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+		}
+		return "<a href=\"http://" + HOST_DIFFTOOL + "/" + path + "\">Launch DiffTool</a>";
 	}
 
 	public static String getComment (RelationNode node)
@@ -188,7 +216,7 @@ public class CommitUtils
 
 		builder.append ("<tr>");
 		builder.append (getHeader ("SHA-1"));
-		builder.append (getCommitLink (commit));
+		builder.append (getValue (getCommitLink (commit)));
 		builder.append ("</tr>");
 
 		PersonIdent authorIdent = commit.getAuthorIdent();
@@ -281,6 +309,10 @@ public class CommitUtils
 		builder.append (getHeader ("Message"));
 		builder.append (getValue (commit.getFullMessage ()));
 		builder.append ("</tr>");
+		builder.append ("<tr>");
+		builder.append (getHeader (""));
+		builder.append (getValue (getDiffToolLink (node.getCommit (), (node.getCommit ().getParentCount () > 0 ? node.getCommit ().getParent (0) : null), null)));
+		builder.append ("</tr>");
 		builder.append ("</table><body></html>");
 		return builder.toString ();
 	}
@@ -292,12 +324,49 @@ public class CommitUtils
 		builder.append ("<body><table>");
 		builder.append ("<tr>");
 		builder.append (getHeader ("Commit 1 SHA-1"));
-		builder.append (getValue (n1.getCommit ().getId ().getName ()));
+		builder.append (getValue (getCommitLink (n1.getCommit ())));
 		builder.append ("</tr>");
 		builder.append ("<tr>");
 		builder.append (getHeader ("Commit 2 SHA-1"));
-		builder.append (getValue (n1.getCommit ().getId ().getName ()));
+		builder.append (getValue (getCommitLink (n2.getCommit ())));
 		builder.append ("</tr>");
+		builder.append ("<tr>");
+		builder.append (getHeader (""));
+		builder.append (getValue (getDiffToolLink (n1.getCommit (), n2.getCommit (), null)));
+		builder.append ("</tr>");
+		builder.append ("</table><body></html>");
+		return builder.toString ();
+	}
+
+	public static String getComment (RevCommit c1, RevCommit c2, ChangeInfo changeInfo)
+	{
+		StringBuilder builder = new StringBuilder ().append ("<html>");
+		builder.append ("<head>").append (CSS);
+		builder.append ("<body><table>");
+		builder.append ("<tr>");
+		DiffEntry entry = changeInfo.getDiffEntry ();
+		builder.append (getHeader (entry.getChangeType ().toString ()));
+		String path = null;
+		switch (entry.getChangeType ())
+		{
+			case RENAME:
+				builder.append (getValue (entry.getOldPath () + " -> " + entry.getNewPath ()));
+				break;
+			case DELETE:
+				builder.append (getValue (entry.getOldPath ()));
+			default:
+				path = entry.getNewPath ();
+				builder.append (getValue (path));
+				break;
+		}
+		builder.append ("</tr>");
+		if (path != null)
+		{
+			builder.append ("<tr>");
+			builder.append (getHeader (""));
+			builder.append (getValue (getDiffToolLink (c1, c2, path)));
+			builder.append ("</tr>");
+		}
 		builder.append ("</table><body></html>");
 		return builder.toString ();
 	}

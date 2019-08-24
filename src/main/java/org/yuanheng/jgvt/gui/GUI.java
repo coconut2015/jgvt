@@ -495,19 +495,19 @@ public class GUI
 		menu.add (new JMenuItem (m_exitAction));
 		m_menuBar.add (menu);
 
+		menu = new JMenu ("Search");
+		menu.setMnemonic ('R');
+		menu.add (new JMenuItem (m_searchCommitAction2));
+		menu.add (new JMenuItem (m_searchBranchAction2));
+		menu.add (new JMenuItem (m_searchTagAction2));
+		m_menuBar.add (menu);
+
 		menu = new JMenu ("Compare");
 		menu.setMnemonic ('C');
 		menu.add (new JMenuItem (m_rememberAction));
 		menu.add (new JMenuItem (m_clearRememberAction));
 		menu.add (new JMenuItem (m_locateRememberAction));
 		menu.add (new JMenuItem (m_compareRememberAction));
-		m_menuBar.add (menu);
-
-		menu = new JMenu ("Repo");
-		menu.setMnemonic ('R');
-		menu.add (new JMenuItem (m_searchCommitAction2));
-		menu.add (new JMenuItem (m_searchBranchAction2));
-		menu.add (new JMenuItem (m_searchTagAction2));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Help");
@@ -566,6 +566,7 @@ public class GUI
 		// start a thread that detects if the JFrame is closed.
 		Thread detectThread = new Thread ()
 		{
+			@Override
 			public void run ()
 			{
 				synchronized (lock)
@@ -588,6 +589,7 @@ public class GUI
 		// notify detect thread if the frame is closed.
 		m_frame.addWindowListener (new WindowAdapter ()
 		{
+			@Override
 			public void windowClosing (WindowEvent e)
 			{
 				synchronized (lock)

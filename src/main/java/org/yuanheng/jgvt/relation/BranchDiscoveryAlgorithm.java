@@ -22,13 +22,20 @@ import org.eclipse.jgit.lib.PersonIdent;
 import org.yuanheng.jgvt.CommitUtils;
 
 /**
+ * I am primarily using the following GitHub repos to learn the branch patterns:
+ * <p>
+ * <ul>
+ * <li>SQLite JDBC Driver: https://github.com/xerial/sqlite-jdbc
+ * <li>React: https://github.com/facebook/react
+ * </ul>
+ *
  * @author	Heng Yuan
  */
 class BranchDiscoveryAlgorithm
 {
 	static void debug (String msg)
 	{
-		System.out.println (msg);
+//		System.out.println (msg);
 	}
 
 	/**
