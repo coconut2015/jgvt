@@ -28,7 +28,7 @@ class BranchDiscoveryAlgorithm
 {
 	static void debug (String msg)
 	{
-//		System.out.println (msg);
+		System.out.println (msg);
 	}
 
 	/**
@@ -352,14 +352,30 @@ class BranchDiscoveryAlgorithm
 		}
 	}
 
+	private static boolean isSame (PersonIdent i1, PersonIdent i2)
+	{
+		if (!i1.getName ().equals (i2.getName ()))
+			return false;
+		if (!i1.getEmailAddress ().equals (i2.getEmailAddress ()))
+			return false;
+		return true;
+	}
+
 	/**
 	 * For this case, the first node of branch A has two parent branches
 	 * B and C, which both ends at A.  We determine which is the main
-	 * branch by using the committer ident.
+	 * branch by using the author ident.
 	 *
-	 * The assumption is that the person does the merge merges the branch
-	 * to the main branch.  Thus, we merge the parent branch that has
-	 * different ident with A.
+	 * The assumption is that the person creates the pull request is
+	 * the same person that creates the side branch.  Thus, the main branch
+	 * parent's author ident will be different.
+	 *
+	 * Thus, if two parents with authors A, and B, and the child has
+	 * an author of B.  We merge the child node with the parent A.
+	 *
+	 * We use author ident here since committer is the person who
+	 * approved / did the merge of the pull request, but not necessarily
+	 * created the code.
 	 */
 	private static void branchMergeCaseSingleChildTwoParents (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
@@ -380,10 +396,9 @@ class BranchDiscoveryAlgorithm
 					rightParent != rightParentBranch.getLast ())
 					continue;
 
-				// now check the committer info.
-				PersonIdent leftIdent = leftParent.getCommit ().getCommitterIdent ();
-				PersonIdent rightIdent = rightParent.getCommit ().getCommitterIdent ();
-				PersonIdent personIdent = firstNode.getCommit ().getCommitterIdent ();
+				PersonIdent leftIdent = leftParent.getCommit ().getAuthorIdent ();
+				PersonIdent rightIdent = rightParent.getCommit ().getAuthorIdent ();
+				PersonIdent personIdent = firstNode.getCommit ().getAuthorIdent ();
 
 				if (isSame (leftIdent, personIdent) &&
 					!isSame (rightIdent, personIdent))
@@ -801,14 +816,5 @@ class BranchDiscoveryAlgorithm
 		}
 
 		branchSet.addAll (expandSet);
-	}
-
-	private static boolean isSame (PersonIdent i1, PersonIdent i2)
-	{
-		if (!i1.getName ().equals (i2.getName ()))
-			return false;
-		if (!i1.getEmailAddress ().equals (i2.getEmailAddress ()))
-			return false;
-		return true;
 	}
 }
