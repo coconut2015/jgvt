@@ -17,10 +17,7 @@ package org.yuanheng.jgvt.gui.graph;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 import org.yuanheng.jgvt.relation.RelationNode;
 
@@ -71,5 +68,25 @@ public class GVTGraphComponent extends mxGraphComponent
 		// fake selection event
 		MouseEvent e = new MouseEvent (this, MouseEvent.MOUSE_CLICKED, 0, MouseEvent.BUTTON1_MASK, 0, 0, 1, false);
 		selectCellForEvent (cell, e);
+	}
+
+	@Override
+	protected void processMouseWheelEvent (MouseWheelEvent e)
+	{
+		if (e.getModifiers () == MouseEvent.CTRL_MASK)
+		{
+			if (e.getWheelRotation() < 0)
+			{
+				zoomIn ();
+			}
+			else
+			{
+				zoomOut ();
+			}
+		}
+		else
+		{
+			super.processMouseWheelEvent (e);
+		}
 	}
 }

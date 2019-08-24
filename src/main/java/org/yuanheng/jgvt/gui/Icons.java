@@ -37,7 +37,14 @@ public class Icons
 	public Icon SEARCHBRANCH_SMALL;
 	public Icon SEARCHTAG;
 	public Icon SEARCHTAG_SMALL;
+	public Icon ZOOMIN;
+	public Icon ZOOMIN_SMALL;
+	public Icon ZOOMOUT;
+	public Icon ZOOMOUT_SMALL;
+	public Icon ZOOMRESET;
+	public Icon ZOOMRESET_SMALL;
 	public Icon ABOUT;
+	public Icon ABOUT_SMALL;
 
 	private Icons ()
 	{
@@ -49,6 +56,13 @@ public class Icons
 		SEARCHBRANCH_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchbranch_small.png"));
 		SEARCHTAG = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchtag.png"));
 		SEARCHTAG_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/searchtag_small.png"));
+		ZOOMIN = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/zoomin.png"));
+		ZOOMIN_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/zoomin_small.png"));
+		ZOOMOUT = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/zoomout.png"));
+		ZOOMOUT_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/zoomout_small.png"));
+		ZOOMRESET = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/zoomreset.png"));
+		ZOOMRESET_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/zoomreset_small.png"));
 		ABOUT = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/about.png"));
+		ABOUT_SMALL = new ImageIcon (ClassLoader.getSystemResource ("META-INF/jgvt/icons/about_small.png"));
 	}
 }

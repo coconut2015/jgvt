@@ -368,21 +368,164 @@ public class GUI
 		}
 	};
 
-	private Action m_aboutAction = new AbstractAction ("About")
+	private ActionListener m_zoomInListener = new ActionListener ()
 	{
-		private static final long serialVersionUID = 7089364664624793507L;
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_graphComp.zoomIn ();
+		}
+	};
+
+	private Action m_zoomInAction = new AbstractAction ()
+	{
+		private static final long serialVersionUID = -7620237457388167152L;
 
 		{
-			putValue (Action.MNEMONIC_KEY, (int)'a');
-			putValue (Action.SHORT_DESCRIPTION, "About");
+			putValue (Action.SHORT_DESCRIPTION, "Zoom in");
 		}
 
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_zoomInListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_zoomInAction2 = new AbstractAction ("Zoom in")
+	{
+		private static final long serialVersionUID = -3438718584546464839L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'i');
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_PLUS, InputEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_zoomInListener.actionPerformed (e);
+		}
+	};
+
+	private ActionListener m_zoomOutListener = new ActionListener ()
+	{
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_graphComp.zoomOut ();
+		}
+	};
+
+	private Action m_zoomOutAction = new AbstractAction ()
+	{
+		private static final long serialVersionUID = 1245038749655657265L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "Zoom out");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_zoomOutListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_zoomOutAction2 = new AbstractAction ("Zoom out")
+	{
+		private static final long serialVersionUID = -482961184150515444L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'o');
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_MINUS, InputEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_zoomOutListener.actionPerformed (e);
+		}
+	};
+
+	private ActionListener m_zoomResetListener = new ActionListener ()
+	{
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_graphComp.zoomTo (1.0, true);
+		}
+	};
+
+	private Action m_zoomResetAction = new AbstractAction ()
+	{
+		private static final long serialVersionUID = -5649817480346963149L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "Zoom reset");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_zoomResetListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_zoomResetAction2 = new AbstractAction ("Zoom reset")
+	{
+		private static final long serialVersionUID = 8070169564849661643L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'r');
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_SLASH, InputEvent.CTRL_MASK));
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_zoomResetListener.actionPerformed (e);
+		}
+	};
+
+	private ActionListener m_aboutListener = new ActionListener ()
+	{
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
 			AboutDialog dialog = new AboutDialog (m_frame);
 			dialog.setLocationRelativeTo (m_frame);
 			dialog.setVisible (true);
+		}
+	};
+
+	private Action m_aboutAction = new AbstractAction ()
+	{
+		private static final long serialVersionUID = 7089364664624793507L;
+
+		{
+			putValue (Action.SHORT_DESCRIPTION, "About");
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_aboutListener.actionPerformed (e);
+		}
+	};
+
+	private Action m_aboutAction2 = new AbstractAction ("About")
+	{
+		private static final long serialVersionUID = -1495062852291512816L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'a');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_aboutListener.actionPerformed (e);
 		}
 	};
 
@@ -479,7 +622,14 @@ public class GUI
 		m_searchBranchAction2.putValue (Action.SMALL_ICON, icons.SEARCHBRANCH_SMALL);
 		m_searchTagAction.putValue (Action.SMALL_ICON, icons.SEARCHTAG);
 		m_searchTagAction2.putValue (Action.SMALL_ICON, icons.SEARCHTAG_SMALL);
+		m_zoomInAction.putValue (Action.SMALL_ICON, icons.ZOOMIN);
+		m_zoomInAction2.putValue (Action.SMALL_ICON, icons.ZOOMIN_SMALL);
+		m_zoomOutAction.putValue (Action.SMALL_ICON, icons.ZOOMOUT);
+		m_zoomOutAction2.putValue (Action.SMALL_ICON, icons.ZOOMOUT_SMALL);
+		m_zoomResetAction.putValue (Action.SMALL_ICON, icons.ZOOMRESET);
+		m_zoomResetAction2.putValue (Action.SMALL_ICON, icons.ZOOMRESET_SMALL);
 		m_aboutAction.putValue (Action.SMALL_ICON, icons.ABOUT);
+		m_aboutAction2.putValue (Action.SMALL_ICON, icons.ABOUT_SMALL);
 	}
 
 	private void createMenuBar ()
@@ -510,9 +660,16 @@ public class GUI
 		menu.add (new JMenuItem (m_compareRememberAction));
 		m_menuBar.add (menu);
 
+		menu = new JMenu ("Zoom");
+		menu.setMnemonic ('Z');
+		menu.add (new JMenuItem (m_zoomInAction2));
+		menu.add (new JMenuItem (m_zoomOutAction2));
+		menu.add (new JMenuItem (m_zoomResetAction2));
+		m_menuBar.add (menu);
+
 		menu = new JMenu ("Help");
 		menu.setMnemonic ('H');
-		menu.add (new JMenuItem (m_aboutAction));
+		menu.add (new JMenuItem (m_aboutAction2));
 		m_menuBar.add (menu);
 	}
 
@@ -525,6 +682,10 @@ public class GUI
 		m_toolBar.add (new ToolBarButton (m_searchCommitAction));
 		m_toolBar.add (new ToolBarButton (m_searchBranchAction));
 		m_toolBar.add (new ToolBarButton (m_searchTagAction));
+		m_toolBar.addSeparator ();
+		m_toolBar.add (new ToolBarButton (m_zoomInAction));
+		m_toolBar.add (new ToolBarButton (m_zoomOutAction));
+		m_toolBar.add (new ToolBarButton (m_zoomResetAction));
 		m_toolBar.addSeparator ();
 		m_toolBar.add (new ToolBarButton (m_aboutAction));
 		m_toolBar.addSeparator ();
