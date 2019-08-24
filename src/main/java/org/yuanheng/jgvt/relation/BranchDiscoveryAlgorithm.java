@@ -383,9 +383,18 @@ class BranchDiscoveryAlgorithm
 	 * We use author ident here since committer is the person who
 	 * approved / did the merge of the pull request, but not necessarily
 	 * created the code.
+	 *
+	 * Example: React-4f17e8
+	 * Counter Example: React-39a811
+	 *
 	 */
+	@SuppressWarnings ("unused")
 	private static void branchMergeCaseSingleChildTwoParents (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
+		/* Disable for now since there are counter examples to this algorithm */
+		if (true)
+			return;
+
 		for (RelationBranch branch : branches)
 		{
 			if (branch.size () == 0)

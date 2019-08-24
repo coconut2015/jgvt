@@ -30,6 +30,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.Edit;
+import org.eclipse.jgit.diff.RenameDetector;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -51,6 +52,7 @@ public class GitRepo implements AutoCloseable
 	private final Git m_git;
 	private final File m_root;
 	private boolean m_fetched;
+	private RenameDetector m_rd;
 	private WeakReference<Map<ObjectId, Ref>> m_tagMap = new WeakReference<Map<ObjectId, Ref>> (null);
 	private WeakReference<Map<ObjectId, Ref>> m_branchMap = new WeakReference<Map<ObjectId, Ref>> (null);
 
@@ -189,6 +191,19 @@ public class GitRepo implements AutoCloseable
 		return map;
 	}
 
+	private RenameDetector getRenameDetector ()
+	{
+		if (m_rd == null)
+		{
+			m_rd = new RenameDetector (m_repo);
+		}
+		else
+		{
+			m_rd.reset ();
+		}
+		return m_rd;
+	}
+
 	private List<ChangeInfo> getChanges (RevTree t1, RevTree t2)
 	{
 		ArrayList<ChangeInfo> changes = new ArrayList<ChangeInfo> ();
@@ -197,7 +212,17 @@ public class GitRepo implements AutoCloseable
 
 	    try
         {
-	        for (DiffEntry diff: diffFmt.scan (t1, t2))
+	    	List<DiffEntry> entries = diffFmt.scan (t1, t2);
+	    	RenameDetector rd = getRenameDetector ();
+	    	rd.addAll (entries);
+	    	try
+	    	{
+	    		entries = rd.compute ();
+	    	}
+	    	catch (Exception ex)
+	    	{
+	    	}
+	        for (DiffEntry diff: entries)
 	        {
 	        	ChangeInfo info = new ChangeInfo (diff);
 	        	int added = 0;

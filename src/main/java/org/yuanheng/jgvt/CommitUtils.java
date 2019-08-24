@@ -243,13 +243,13 @@ public class CommitUtils
 		builder.append (getHeader ("Parents"));
 		first = true;
 		subBuilder = new StringBuilder ();
-		for (RelationNode n : node.getParents ())
+		for (RevCommit c : node.getCommit ().getParents ())
 		{
 			if (first)
 				first = false;
 			else
 				subBuilder.append ("<br/>");
-			subBuilder.append (getCommitLink (n.getCommit ()));
+			subBuilder.append (getCommitLink (c));
 		}
 		builder.append (getValue (subBuilder.toString ()));
 		builder.append ("</tr>");
@@ -354,6 +354,7 @@ public class CommitUtils
 				break;
 			case DELETE:
 				builder.append (getValue (entry.getOldPath ()));
+				break;
 			default:
 				path = entry.getNewPath ();
 				builder.append (getValue (path));

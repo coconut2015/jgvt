@@ -42,6 +42,7 @@ public class ChangeTree extends JTreeTable
 {
 	public static Color COLOR_ADDED = new Color (36, 159, 64);
 	public static Color COLOR_DELETED = new Color (203, 36, 49);
+	public static Color COLOR_RENAMED = new Color (36, 203, 49);
 
 	public static Color BG_COLOR_LINE_ADDED = new Color (230, 255, 237);
 	public static Color BG_COLOR_LINE_DELETED = new Color (255, 238, 240);
@@ -74,6 +75,7 @@ public class ChangeTree extends JTreeTable
 	{
 		private static final long serialVersionUID = 7735958871205684849L;
 
+		@Override
 		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
 		{
 			Component comp = super.getTreeCellRendererComponent (tree, value, selected, expanded, leaf, row, hasFocus);
@@ -86,6 +88,9 @@ public class ChangeTree extends JTreeTable
 					case ADD:
 					case COPY:
 						comp.setForeground (COLOR_ADDED);
+						break;
+					case RENAME:
+						comp.setForeground (COLOR_RENAMED);
 						break;
 					case DELETE:
 						comp.setForeground (COLOR_DELETED);
@@ -109,6 +114,7 @@ public class ChangeTree extends JTreeTable
 		autoFitColumn (ChangeTreeTableModel.COL_DELETED, 1);
 	}
 
+	@Override
 	public TreeTableModel getTreeTableModel ()
 	{
 		return (TreeTableModel) getTree ().getModel ();
