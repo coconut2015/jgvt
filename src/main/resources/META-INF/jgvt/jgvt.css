@@ -8,7 +8,9 @@ body
 }
 table
 {
-	border-collapse: collapse; 
+	border-collapse: collapse;
+	border-spacing: 0px;
+	border: 1px solid black;
 	padding: 0px;
 }
 .subject
@@ -22,5 +24,20 @@ table
 	border: 1px solid #cdcdcd;
 	padding: 1pt;
 	width: 100%;
+}
+.commit
+{
+	display: inline-block;
+    border-radius: 12px;
+    padding: 2px 12px 2px 12px;
+    color: #000000;
+}
+.launch
+{
+	display: inline-block;
+	text-decoration: none;
+	color: white;
+	font-weight: bold;
+	background-color: #538fbe;
 }
 --></style>

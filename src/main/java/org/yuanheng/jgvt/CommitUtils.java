@@ -180,7 +180,7 @@ public class CommitUtils
 	private static String getCommitLink (RevCommit commit)
 	{
 		String name = commit.getId ().getName ();
-		return "<a href=\"http://" + HOST_COMMIT + "/" + name + "\">" + name + "</a>";
+		return "<a class=\"commit\" href=\"http://" + HOST_COMMIT + "/" + name + "\">" + name + "</a>";
 	}
 
 	private static String getDiffToolLink (RevCommit c1, RevCommit c2, String file)
@@ -202,7 +202,7 @@ public class CommitUtils
 		catch (UnsupportedEncodingException e)
 		{
 		}
-		return "<a href=\"http://" + HOST_DIFFTOOL + "/" + path + "\">Launch DiffTool</a>";
+		return "<a class=\"launch\" href=\"http://" + HOST_DIFFTOOL + "/" + path + "\">Launch DiffTool</a>";
 	}
 
 	public static String getComment (RelationNode node)
@@ -309,10 +309,12 @@ public class CommitUtils
 		builder.append (getHeader ("Message"));
 		builder.append (getValue (commit.getFullMessage ()));
 		builder.append ("</tr>");
+/*
 		builder.append ("<tr>");
 		builder.append (getHeader (""));
 		builder.append (getValue (getDiffToolLink (node.getCommit (), (node.getCommit ().getParentCount () > 0 ? node.getCommit ().getParent (0) : null), null)));
 		builder.append ("</tr>");
+*/
 		builder.append ("</table><body></html>");
 		return builder.toString ();
 	}
@@ -330,10 +332,12 @@ public class CommitUtils
 		builder.append (getHeader ("Commit 2 SHA-1"));
 		builder.append (getValue (getCommitLink (n2.getCommit ())));
 		builder.append ("</tr>");
+/*
 		builder.append ("<tr>");
 		builder.append (getHeader (""));
 		builder.append (getValue (getDiffToolLink (n1.getCommit (), n2.getCommit (), null)));
 		builder.append ("</tr>");
+*/
 		builder.append ("</table><body></html>");
 		return builder.toString ();
 	}
