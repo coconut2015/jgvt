@@ -35,6 +35,7 @@ import com.mxgraph.view.mxCellState;
  */
 public class GVTVertexShape extends mxRectangleShape
 {
+	@Override
 	public void paintShape(mxGraphics2DCanvas canvas, mxCellState state)
 	{
 		GVTGraph graph = (GVTGraph)state.getView ().getGraph ();
@@ -73,7 +74,7 @@ public class GVTVertexShape extends mxRectangleShape
 			Rectangle rect = new Rectangle ((int) (state.getX ()), (int) (state.getY ()), (int)state.getWidth (), (int)state.getHeight ());
 			rect.x += rect.getWidth ();
 
-			g.setFont (mxUtils.getFont (state.getStyle ()));
+			g.setFont (mxUtils.getFont (state.getStyle (), state.getView ().getScale ()));
 			g.setColor (Color.decode ((String) state.getStyle ().get (GVTGraphFactory.STYLE_TAG_FONTCOLOR)));
 
 			drawStringLeft (g, rect, annot);
