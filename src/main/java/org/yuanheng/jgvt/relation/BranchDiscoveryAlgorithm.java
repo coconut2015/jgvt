@@ -33,9 +33,39 @@ import org.yuanheng.jgvt.CommitUtils;
  */
 class BranchDiscoveryAlgorithm
 {
+	private final static boolean DEBUG = false;
+
 	static void debug (String msg)
 	{
-//		System.out.println (msg);
+		if (DEBUG)
+		{
+			System.out.println (msg);
+		}
+	}
+
+	/**
+	 * Practically any commits with "Merge pull requests" should not be
+	 * trusted with the ordering of the parent commits, since they are
+	 * usually ordered by time, which is completely useless and redundant.
+	 *
+	 * On the other hand, if the first parent's timestamp is older than
+	 * the second parent's, it is trust worthy.
+	 *
+	 * @param	node
+	 * 			a node to check
+	 * @return	true if the node is a merge pull request node.
+	 * 			false otherwise.
+	 */
+	private static boolean isMergePullRequest(RelationNode node)
+	{
+		return node.getParents ().length == 2 && node.getCommit ().getFullMessage ().startsWith ("Merge pull request");
+	}
+
+	private static boolean isSideBranch (RelationBranch parent, RelationBranch child)
+	{
+		RelationNode firstNode = child.getFirst ();
+		return (firstNode.getParents ().length == 1) &&
+			   (firstNode.getParents ()[0].getRelationBranch () == parent);
 	}
 
 	/**
@@ -48,6 +78,7 @@ class BranchDiscoveryAlgorithm
 	 * @throws	GitAPIException
 	 * 			in case of git error
 	 */
+	@SuppressWarnings ("unused")
 	public static void inferBranches (RelationTree tree, RelationNode startNode) throws GitAPIException
 	{
 		// See if we can trace from the main branch and collect branches.
@@ -107,6 +138,10 @@ class BranchDiscoveryAlgorithm
 
 			branchSets[index].addAll (singleNodeBranchSets[index]);
 
+			/////////////////////////////////////////////////////////////
+			// start of algorithms
+			/////////////////////////////////////////////////////////////
+
 			// perform simple branch merging
 			branchMergeCaseSingleChild (branchSets[index], branchSets[nextIndex]);
 			branchMergeCaseSideMergeSingleChild (branchSets[index], branchSets[nextIndex]);
@@ -124,6 +159,16 @@ class BranchDiscoveryAlgorithm
 
 			branchMergeCaseMergeOutMergeIn (branchSets[index], branchSets[nextIndex]);
 
+			/////////////////////////////////////////////////////////////
+			// algorithms that can have errors
+			/////////////////////////////////////////////////////////////
+			branchMergeCaseDiamondMergeLeftParent (branchSets[index], branchSets[nextIndex]);
+			branchMergeCaseSwapParentsLongerChain (branchSets[index], branchSets[nextIndex]);
+			branchMergeCaseDiamondSwapParentsTwoLongChain (branchSets[index], branchSets[nextIndex]);
+
+			/////////////////////////////////////////////////////////////
+			// end of algorithms
+			/////////////////////////////////////////////////////////////
 			singleNodeBranchSets[nextIndex].clear ();
 			for (RelationBranch branch : singleNodeBranchSets[index])
 			{
@@ -134,20 +179,21 @@ class BranchDiscoveryAlgorithm
 			expandSearch(branchSets[index]);
 		}
 
-/*
-		for (RelationNode node : tree.getNodes ())
+		if (DEBUG)
 		{
-			RelationBranch branch = node.getRelationBranch ();
-			if (node == branch.getFirst () ||
-				node == branch.getLast ())
+			for (RelationNode node : tree.getNodes ())
 			{
-				if (node.getCommit ().getFullMessage ().startsWith ("Merge"))
+				RelationBranch branch = node.getRelationBranch ();
+				if (node == branch.getFirst () ||
+					node == branch.getLast ())
 				{
-					System.out.println ("Investigate: " + CommitUtils.getName (node));
+					if (node.getCommit ().getFullMessage ().startsWith ("Merge"))
+					{
+						System.out.println ("Investigate: " + CommitUtils.getName (node));
+					}
 				}
 			}
 		}
-*/
 		tree.resetVisit ();
 	}
 
@@ -209,8 +255,7 @@ class BranchDiscoveryAlgorithm
 			}
 			layoutInfo.visit ();
 
-			// scan parent first.
-
+			// scan parents
 			if (node.getParents ().length == 1 &&
 				node.getParents ()[0].getChildren ().length == 1 &&
 				node.getParents ()[0].getRelationBranch () == null)
@@ -295,6 +340,7 @@ class BranchDiscoveryAlgorithm
 						 rightParent == rightParent.getRelationBranch ().getLast () &&
 						 leftParent != leftParent.getRelationBranch ().getLast ())
 				{
+					firstNode.swapParentOrder ();
 					branch.merge (rightParent.getRelationBranch ());
 
 					debug (CommitUtils.getName (firstNode) + " SM1C left");
@@ -327,32 +373,33 @@ class BranchDiscoveryAlgorithm
 
 				if (leftParent.getChildren ().length == 1 &&
 					leftParent == leftParent.getRelationBranch ().getLast () &&
-					rightParentBranch.getFirst ().getParents ().length == 1 &&
-					rightParentBranch.getFirst ().getParents ()[0].getRelationBranch () == leftParentBranch)
+					rightParent.getChildren ().length == 1 &&
+					rightParent == rightParent.getRelationBranch ().getLast ())
 				{
-					RelationNode midNode = rightParentBranch.getFirst ().getParents ()[0];
-					if (midNode != leftParentBranch.getFirst () &&
-						midNode != leftParentBranch.getLast ())
+					if (isSideBranch (leftParentBranch, rightParentBranch))
 					{
-						branch.merge (leftParent.getRelationBranch ());
+						RelationNode midNode = rightParentBranch.getFirst ().getParents ()[0];
+						if (midNode != leftParentBranch.getFirst () &&
+							midNode != leftParentBranch.getLast ())
+						{
+							branch.merge (leftParent.getRelationBranch ());
 
-						debug (CommitUtils.getName (firstNode) + " SBMC left");
-						checkBranches.add (branch);
+							debug (CommitUtils.getName (firstNode) + " SBMC left");
+							checkBranches.add (branch);
+						}
 					}
-				}
-				else if (rightParent.getChildren ().length == 1 &&
-						 rightParent == rightParent.getRelationBranch ().getLast () &&
-						 leftParentBranch.getFirst ().getParents ().length == 1 &&
-								 leftParentBranch.getFirst ().getParents ()[0].getRelationBranch () == rightParentBranch)
-				{
-					RelationNode midNode = leftParentBranch.getFirst ().getParents ()[0];
-					if (midNode != rightParentBranch.getFirst () &&
-						midNode != rightParentBranch.getLast ())
+					else if (isSideBranch (rightParentBranch, leftParentBranch))
 					{
-						branch.merge (rightParent.getRelationBranch ());
+						RelationNode midNode = leftParentBranch.getFirst ().getParents ()[0];
+						if (midNode != rightParentBranch.getFirst () &&
+							midNode != rightParentBranch.getLast ())
+						{
+							firstNode.swapParentOrder ();
+							branch.merge (rightParent.getRelationBranch ());
 
-						debug (CommitUtils.getName (firstNode) + " SBMC right");
-						checkBranches.add (branch);
+							debug (CommitUtils.getName (firstNode) + " SBMC right");
+							checkBranches.add (branch);
+						}
 					}
 				}
 			}
@@ -678,9 +725,7 @@ class BranchDiscoveryAlgorithm
 
 				if (rightParent == rightParentBranch.getLast ())
 				{
-					RelationNode rightParentBranchFirstNode = rightParentBranch.getFirst ();
-					if (rightParentBranchFirstNode.getParents ().length == 1 &&
-						rightParentBranchFirstNode.getParents ()[0].getRelationBranch () == leftParentBranch &&
+					if (isSideBranch (leftParentBranch, rightParentBranch) &&
 						lastNode.getChildren ()[0].getRelationBranch () == leftParentBranch)
 					{
 						firstNode.swapParentOrder ();
@@ -692,9 +737,7 @@ class BranchDiscoveryAlgorithm
 				}
 				else if (leftParent == leftParentBranch.getLast ())
 				{
-					RelationNode leftParentBranchFirstNode = leftParentBranch.getFirst ();
-					if (leftParentBranchFirstNode.getParents ().length == 1 &&
-						leftParentBranchFirstNode.getParents ()[0].getRelationBranch () == rightParentBranch &&
+					if (isSideBranch(rightParentBranch, leftParentBranch) &&
 						lastNode.getChildren ()[0].getRelationBranch () == rightParentBranch)
 					{
 						branch.merge (leftParentBranch);
@@ -731,16 +774,15 @@ class BranchDiscoveryAlgorithm
 				if (leftParent == leftParentBranch.getLast () &&
 					rightParent == rightParentBranch.getLast ())
 				{
-					if (leftParentBranch.getFirst ().getParents ().length == 1 &&
-						leftParentBranch.getFirst ().getParents ()[0].getRelationBranch () == rightParentBranch)
+					if (isSideBranch (rightParentBranch, leftParentBranch))
 					{
+						firstNode.swapParentOrder ();
 						branch.merge (rightParentBranch);
 
 						debug (CommitUtils.getName (firstNode) + " MPR right");
 						checkBranches.add (branch);
 					}
-					else if (rightParentBranch.getFirst ().getParents ().length == 1 &&
-							 rightParentBranch.getFirst ().getParents ()[0].getRelationBranch () == leftParentBranch)
+					else if (isSideBranch(leftParentBranch, rightParentBranch))
 					{
 						branch.merge (leftParentBranch);
 
@@ -799,6 +841,135 @@ class BranchDiscoveryAlgorithm
 				debug (CommitUtils.getName (firstNode) + " MOMI");
 				checkBranches.add (branch);
 			}
+		}
+	}
+
+	/**
+	 * For this case, branch A and branch B shares a common parent C
+	 * and common child D.  Thus forming a diamond shape.  In this
+	 * case, we would let child D merge with parent 0 branch (left)
+	 *
+	 * In this case, we merge A and B.
+	 *
+	 * Case: React-f0a4b2
+	 */
+	private static void branchMergeCaseDiamondMergeLeftParent (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () == 0)
+				continue;
+
+			RelationNode firstNode = branch.getFirst ();
+			if (firstNode.getParents ().length != 2)
+				continue;
+			RelationNode leftParent = firstNode.getParents ()[0];
+			RelationNode rightParent = firstNode.getParents ()[1];
+			if (leftParent.getChildren ().length == 1 &&
+				rightParent.getChildren ().length == 1)
+			{
+				RelationNode leftFirst = leftParent.getRelationBranch ().getFirst ();
+				if (leftFirst.getParents ().length != 1)
+					continue;
+				RelationNode rightFirst = leftParent.getRelationBranch ().getFirst ();
+				if (rightFirst.getParents ().length != 1)
+					continue;
+				if (leftFirst.getParents ()[0] == rightFirst.getParents ()[0])
+				{
+					branch.merge (leftParent.getRelationBranch ());
+
+					debug (CommitUtils.getName (firstNode) + " DMLP");
+					checkBranches.add (branch);
+				}
+			}
+		}
+	}
+
+	/**
+	 * For this case, branch A's first node is the 2nd to the last of branch B.
+	 * branch A's second node's second parent is the last node of the branch B.
+	 * In this case, branch A's second node's parents should be swapped such
+	 * that we get a much longer branch B.
+	 *
+	 * Case: React-0db777
+	 */
+	private static void branchMergeCaseSwapParentsLongerChain (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			// if the chain is smaller than 3, not worth doing it.
+			if (branch.size () < 3)
+				continue;
+
+			RelationNode firstNode = branch.getFirst ();
+			if (firstNode.getParents ().length != 1)
+				continue;
+			RelationNode secondNode = branch.getOrderedList ().get (1);
+			if (secondNode.getParents ().length != 2)
+				continue;
+
+			RelationBranch parentBranch = firstNode.getParents ()[0].getRelationBranch ();
+			if (secondNode.getParents ()[1].getRelationBranch () != parentBranch)
+				continue;
+			if (parentBranch.getLast () != secondNode.getParents ()[1])
+				continue;
+
+			// the first node is in a branch by itself
+			new RelationBranch (firstNode);
+
+			secondNode.swapParentOrder ();
+
+			branch.merge (parentBranch);
+			debug (CommitUtils.getName (firstNode) + " SPLC");
+
+			checkBranches.add (branch);
+		}
+	}
+
+	/**
+	 * For this case, the first node of branch A has two parent branches
+	 * B and C.  C has only one child in A, but B has two children.  B
+	 * and C share a common parent.
+	 *
+	 * Case: React-ec036e
+	 */
+	private static void branchMergeCaseDiamondSwapParentsTwoLongChain (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			// if the chain is smaller than 3, not worth doing it.
+			if (branch.size () == 0)
+				continue;
+
+			RelationNode firstNode = branch.getFirst ();
+			if (firstNode.getParents ().length != 2)
+				continue;
+
+			RelationNode leftParent = firstNode.getParents ()[0];
+			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+			RelationNode rightParent = firstNode.getParents ()[1];
+			RelationBranch rightParentBranch = rightParent.getRelationBranch ();
+
+			if (leftParent != leftParentBranch.getLast () ||
+				rightParent != rightParentBranch.getLast () ||
+				leftParent.getChildren ().length != 2 ||
+				rightParent.getChildren ().length != 1)
+				continue;
+
+			RelationNode leftParentFirst = leftParentBranch.getFirst ();
+			RelationNode rightParentFirst = rightParentBranch.getFirst ();
+
+			if (leftParentFirst.getParents ().length != 1 ||
+				rightParentFirst.getParents ().length != 1 ||
+				leftParentFirst.getParents ()[0] != rightParentFirst.getParents ()[0])
+				continue;
+
+			firstNode.swapParentOrder ();
+			branch.merge (rightParentBranch);
+
+			debug (CommitUtils.getName (firstNode) + " DSPTLC");
+
+			checkBranches.add (branch);
 		}
 	}
 

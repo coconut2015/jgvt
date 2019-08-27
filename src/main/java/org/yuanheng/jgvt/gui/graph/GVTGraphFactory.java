@@ -86,7 +86,7 @@ public class GVTGraphFactory
 		branchEdge.put (mxConstants.STYLE_ORTHOGONAL, false);
 		branchEdge.put (mxConstants.STYLE_EDGE, mxConstants.ELBOW_VERTICAL);
 		branchEdge.put (mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
-		branchEdge.put (mxConstants.STYLE_ENDARROW, mxConstants.NONE);
+		branchEdge.put (mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
 		branchEdge.put (mxConstants.STYLE_STROKECOLOR, "#007f00");
 
 		Map<String, Object> mergeEdge = new HashMap<String, Object> ();

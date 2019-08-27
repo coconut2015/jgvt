@@ -35,8 +35,7 @@ public class RelationBranch implements Comparable<RelationBranch>
 	public RelationBranch (RelationNode node)
 	{
 		m_id = s_id++;
-		m_nodes.add (node);
-		node.setRelationBranch (this);
+		add (node);
 	}
 
 	public int size ()
