@@ -17,11 +17,13 @@ package org.yuanheng.jgvt.gui.graph;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.*;
 
 import org.yuanheng.jgvt.relation.RelationNode;
 
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxRubberband;
 
 /**
  * @author	Heng Yuan
@@ -57,6 +59,57 @@ public class GVTGraphComponent extends mxGraphComponent
 		getViewport ().setOpaque (true);
 		getViewport ().setBackground (Color.WHITE);
 		setToolTips (true);
+
+		new mxRubberband (this)
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				if (e.getModifiers () == (MouseEvent.CTRL_MASK | MouseEvent.BUTTON1_MASK))
+				{
+					super.mousePressed (e);
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+            {
+				// have to get the bounds first.
+                Rectangle rect = bounds;
+
+				super.mouseReleased (e);
+
+				if (rect != null &&
+					rect.width > 0 &&
+					rect.height > 0)
+				{
+					double oldScale = graph.getView ().getScale ();
+
+					Dimension viewPortSize = getViewport ().getSize ();
+					double newScale = Math.min (viewPortSize.getWidth () / rect.width, viewPortSize.getHeight () / rect.height);
+					zoom (newScale);
+
+					// Get the actual scale used.
+					newScale = graph.getView ().getScale () / oldScale;
+
+					Rectangle newRect = new Rectangle ();
+
+					newRect.x = (int) (rect.x * newScale);
+					newRect.y = (int) (rect.y * newScale);
+					newRect.width = (int) (rect.width * newScale);
+					newRect.height = (int) (rect.height * newScale);
+
+					getGraphControl ().scrollRectToVisible (newRect);
+
+				}
+            }
+
+			@Override
+			public Object[] select(Rectangle rect, MouseEvent e)
+			{
+				return null;
+			}
+		};
 	}
 
 	public void center (RelationNode node)
