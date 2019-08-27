@@ -15,22 +15,10 @@
  */
 package org.yuanheng.jgvt;
 
-import org.junit.Test;
-
 /**
- * Dummy test class to make launching the gui easier.
- *
  * @author	Heng Yuan
  */
-public class TestMain
+public class Configs
 {
-	@Test
-	public void testMain () throws Exception
-	{
-		Main.main(new String[] {"-d", "../react/"});
-//		Main.main(new String[] {"-d", "../sqlite-jdbc/"});
-//		Main.main(new String[] {"-d", "../sqlite-jdbc/README.md"});
-//		Main.main(new String[] {"-d", "../bsonspec.org/"});
-//		Main.main(new String[] {"-d", "../bsonspec.org/implementations.html"});
-	}
+	public boolean debug;
 }

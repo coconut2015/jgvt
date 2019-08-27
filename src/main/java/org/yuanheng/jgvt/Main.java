@@ -32,12 +32,15 @@ import org.yuanheng.jgvt.gui.GUI;
  */
 public class Main
 {
+	public static Configs configs = new Configs ();
+
 	private static Options createOptions ()
 	{
 		Options options = new Options ();
+		options.addOption ("b", "branch", false, "list branches");
+		options.addOption ("d", "debug", false, "print debug messages");
 		options.addOption ("h", "help", false, "print this message");
 		options.addOption ("s", true, "specify the last commit of the main branch");
-		options.addOption ("b", "branch", false, "list branches");
 		options.addOption ("t", "tag", false, "list tags");
 		return options;
 	}
@@ -129,6 +132,10 @@ public class Main
 			System.exit (1);;
 		}
 
+		if (cmd.hasOption ('d'))
+		{
+			configs.debug = true;
+		}
 		if (cmd.hasOption ('b'))
 		{
 			listBranches (gitRepo);
@@ -150,6 +157,7 @@ public class Main
 		controller.centerTree ();
 		SwingUtilities.invokeLater (new Runnable ()
 		{
+			@Override
 			public void run ()
 			{
 				gui.getGraphComponent ().requestFocus ();

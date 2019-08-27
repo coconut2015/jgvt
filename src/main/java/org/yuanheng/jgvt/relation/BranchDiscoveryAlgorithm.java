@@ -20,6 +20,7 @@ import java.util.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.yuanheng.jgvt.CommitUtils;
+import org.yuanheng.jgvt.Main;
 
 /**
  * I am primarily using the following GitHub repos to learn the branch patterns:
@@ -33,11 +34,9 @@ import org.yuanheng.jgvt.CommitUtils;
  */
 class BranchDiscoveryAlgorithm
 {
-	private final static boolean DEBUG = false;
-
 	static void debug (String msg)
 	{
-		if (DEBUG)
+		if (Main.configs.debug)
 		{
 			System.out.println (msg);
 		}
@@ -78,7 +77,6 @@ class BranchDiscoveryAlgorithm
 	 * @throws	GitAPIException
 	 * 			in case of git error
 	 */
-	@SuppressWarnings ("unused")
 	public static void inferBranches (RelationTree tree, RelationNode startNode) throws GitAPIException
 	{
 		// See if we can trace from the main branch and collect branches.
@@ -158,6 +156,7 @@ class BranchDiscoveryAlgorithm
 			branchMergeCaseMergePullRequest (branchSets[index], branchSets[nextIndex]);
 
 			branchMergeCaseMergeOutMergeIn (branchSets[index], branchSets[nextIndex]);
+			branchMergeCaseGrandParentSideMerge (branchSets[index], branchSets[nextIndex]);
 
 			/////////////////////////////////////////////////////////////
 			// algorithms that can have errors
@@ -179,7 +178,7 @@ class BranchDiscoveryAlgorithm
 			expandSearch(branchSets[index]);
 		}
 
-		if (DEBUG)
+		if (Main.configs.debug)
 		{
 			for (RelationNode node : tree.getNodes ())
 			{
@@ -839,6 +838,48 @@ class BranchDiscoveryAlgorithm
 				branch.merge (leftParentBranch);
 
 				debug (CommitUtils.getName (firstNode) + " MOMI");
+				checkBranches.add (branch);
+			}
+		}
+	}
+
+	/**
+	 * For this case, the first node of a branch A has two parents B (left)
+	 * and C (right).  B's first node's left parent is branch D.  D has a
+	 * child that merges to the first node of branch A.
+	 *
+	 * In this case, we merge A, B, and D.
+	 *
+	 * Case: React-f1fc4b
+	 */
+	private static void branchMergeCaseGrandParentSideMerge (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () == 0)
+				continue;
+
+			RelationNode firstNode = branch.getFirst ();
+			if (firstNode.getParents ().length != 2)
+				continue;
+
+			RelationNode rightParent = firstNode.getParents ()[1];
+			if (rightParent.getChildren ().length != 1)
+				continue;
+			RelationBranch rightParentBranch = rightParent.getRelationBranch ();
+			RelationNode rightParentFirst = rightParentBranch.getFirst ();
+			if (rightParentFirst.getParents ().length != 1)
+				continue;
+
+			RelationNode leftParent = firstNode.getParents ()[0];
+			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+			RelationNode leftParentFirst = leftParentBranch.getFirst ();
+			if (leftParentFirst.getParents ().length > 1 &&
+				leftParentFirst.getParents ()[0] == rightParentFirst.getParents ()[0])
+			{
+				branch.merge (leftParentBranch);
+
+				debug (CommitUtils.getName (firstNode) + " GPSM");
 				checkBranches.add (branch);
 			}
 		}
