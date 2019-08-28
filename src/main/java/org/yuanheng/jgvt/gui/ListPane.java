@@ -23,10 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
@@ -44,6 +41,7 @@ class ListPane extends JPanel
 	private static final long serialVersionUID = -9066552931222800698L;
 
 	private final Controller m_controller;
+	private JLabel m_rowCountLabel;
 	private JTextField m_input;
 	private JTable m_table;
 	private TableRowSorter<TableModel> m_sorter;
@@ -96,19 +94,33 @@ class ListPane extends JPanel
 	{
 		m_controller = controller;
 		FormBuilder builder = FormBuilder.create ()
-				.columns("default:grow")
-				.rows("pref, $lg, fill:min:grow");
+				.columns("right:pref, 4dlu, default:grow")
+				.rows("pref, $lg, pref, $lg, fill:min:grow");
 		builder.panel (this);
+		builder.add ("Filter:").xy (1, 1);
 		m_input = new JTextField ();
 		m_input.getDocument ().addDocumentListener (m_inputListener);
-		builder.add (m_input).xy (1, 1);
+		builder.add (m_input).xy (3, 1);
+		builder.add ("Rows:").xy (1, 3);
+		m_rowCountLabel = new JLabel ("0");
+		builder.add (m_rowCountLabel).xy (3, 3);
 		m_table = new JTable (new ListPaneModel (listInfos));
 		m_table.setDefaultRenderer (Date.class, new DateTimeRenderer (DateFormat.getDateTimeInstance ()));
 		m_sorter = new TableRowSorter<TableModel>(m_table.getModel());
 		m_sorter.setRowFilter (m_filter);
 		m_table.setRowSorter (m_sorter);
-		builder.add (new JScrollPane (m_table)).xy (1, 3);
+		builder.add (new JScrollPane (m_table)).xyw (1, 5, 3);
 		m_table.addMouseListener (m_doubleClickListener);
+
+		RowCountListener rowCountListener = new RowCountListener (m_table, m_rowCountLabel);
+		m_table.addPropertyChangeListener (rowCountListener);
+		m_sorter.addRowSorterListener (rowCountListener);
+
+		TableColumnManager tcm = new TableColumnManager(m_table);
+		for (int i = ListPaneModel.COL_AUTHOR; i <= ListPaneModel.COL_COMMITTER_TIME; ++i)
+		{
+			tcm.hideColumn (i);
+		}
 	}
 
 	private void updateFilter ()

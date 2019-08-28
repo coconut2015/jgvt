@@ -31,9 +31,15 @@ public class SearchPaneModel extends AbstractTableModel
 
 	public final static int COL_COMMIT = 0;
 	public final static int COL_TIME = 1;
-	public final static int COL_DESCRIPTION = 2;
+	public final static int COL_MESSAGE = 2;
+	public final static int COL_AUTHOR = 3;
+	public final static int COL_AUTHOR_EMAIL = 4;
+	public final static int COL_AUTHOR_TIME = 5;
+	public final static int COL_COMMITTER = 6;
+	public final static int COL_COMMITTER_EMAIL = 7;
+	public final static int COL_COMMITTER_TIME = 8;
 
-	public static String[] COLUMN_NAMES = { "Commit", "Time", "Description" };
+	public static String[] COLUMN_NAMES = { "Commit", "Time", "Message", "Author", "Author Email", "Author Time", "Committer", "Committer Email", "Committer Time" };
 
 	private final List<RelationNode> m_nodes;
 
@@ -51,7 +57,7 @@ public class SearchPaneModel extends AbstractTableModel
 	@Override
 	public int getColumnCount ()
 	{
-		return 3;
+		return 9;
 	}
 
 	@Override
@@ -63,7 +69,9 @@ public class SearchPaneModel extends AbstractTableModel
 	@Override
 	public Class<?> getColumnClass (int column)
 	{
-		if (column == COL_TIME)
+		if (column == COL_TIME ||
+			column == COL_AUTHOR_TIME ||
+			column == COL_COMMITTER_TIME)
 			return Date.class;
 		return String.class;
 	}
@@ -78,8 +86,20 @@ public class SearchPaneModel extends AbstractTableModel
 				return node.getCommit ().getName ();
 			case COL_TIME:
 				return node.getCommit ().getCommitterIdent ().getWhen ();
-			case COL_DESCRIPTION:
+			case COL_MESSAGE:
 				return node.getCommit ().getShortMessage ();
+			case COL_AUTHOR:
+				return node.getCommit ().getAuthorIdent ().getName ();
+			case COL_AUTHOR_EMAIL:
+				return node.getCommit ().getAuthorIdent ().getEmailAddress ();
+			case COL_AUTHOR_TIME:
+				return node.getCommit ().getAuthorIdent ().getWhen ();
+			case COL_COMMITTER:
+				return node.getCommit ().getCommitterIdent ().getName ();
+			case COL_COMMITTER_EMAIL:
+				return node.getCommit ().getCommitterIdent ().getEmailAddress ();
+			case COL_COMMITTER_TIME:
+				return node.getCommit ().getCommitterIdent ().getWhen ();
 		}
 		return null;
 	}

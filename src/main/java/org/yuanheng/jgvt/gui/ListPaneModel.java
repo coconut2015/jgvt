@@ -30,9 +30,15 @@ public class ListPaneModel extends AbstractTableModel
 	public final static int COL_COMMIT = 0;
 	public final static int COL_NAME = 1;
 	public final static int COL_TIME = 2;
-	public final static int COL_DESCRIPTION = 3;
+	public final static int COL_MESSAGE = 3;
+	public final static int COL_AUTHOR = 4;
+	public final static int COL_AUTHOR_EMAIL = 5;
+	public final static int COL_AUTHOR_TIME = 6;
+	public final static int COL_COMMITTER = 7;
+	public final static int COL_COMMITTER_EMAIL = 8;
+	public final static int COL_COMMITTER_TIME = 9;
 
-	public static String[] COLUMN_NAMES = { "Commit", "Name", "Time", "Description" };
+	public static String[] COLUMN_NAMES = { "Commit", "Name", "Time", "Message", "Author", "Author Email", "Author Time", "Committer", "Committer Email", "Committer Time" };
 
 	private final List<ListInfo> m_listInfo;
 
@@ -50,7 +56,7 @@ public class ListPaneModel extends AbstractTableModel
 	@Override
 	public int getColumnCount ()
 	{
-		return 4;
+		return 10;
 	}
 
 	@Override
@@ -87,11 +93,47 @@ public class ListPaneModel extends AbstractTableModel
 					return null;
 				return info.node.getCommit ().getCommitterIdent ().getWhen ();
 			}
-			case COL_DESCRIPTION:
+			case COL_MESSAGE:
 			{
 				if (info.node == null)
 					return null;
 				return info.node.getCommit ().getShortMessage ();
+			}
+			case COL_AUTHOR:
+			{
+				if (info.node == null)
+					return null;
+				return info.node.getCommit ().getAuthorIdent ().getName ();
+			}
+			case COL_AUTHOR_EMAIL:
+			{
+				if (info.node == null)
+					return null;
+				return info.node.getCommit ().getAuthorIdent ().getEmailAddress ();
+			}
+			case COL_AUTHOR_TIME:
+			{
+				if (info.node == null)
+					return null;
+				return info.node.getCommit ().getAuthorIdent ().getWhen ();
+			}
+			case COL_COMMITTER:
+			{
+				if (info.node == null)
+					return null;
+				return info.node.getCommit ().getCommitterIdent ().getName ();
+			}
+			case COL_COMMITTER_EMAIL:
+			{
+				if (info.node == null)
+					return null;
+				return info.node.getCommit ().getCommitterIdent ().getEmailAddress ();
+			}
+			case COL_COMMITTER_TIME:
+			{
+				if (info.node == null)
+					return null;
+				return info.node.getCommit ().getCommitterIdent ().getWhen ();
 			}
 		}
 		return null;
