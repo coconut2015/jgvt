@@ -478,7 +478,7 @@ public class GUI
 
 		{
 			putValue (Action.MNEMONIC_KEY, (int)'r');
-			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_SLASH, InputEvent.CTRL_MASK));
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_0, InputEvent.CTRL_MASK));
 		}
 
 		@Override

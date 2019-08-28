@@ -59,4 +59,10 @@ public class LayoutInfo
 	{
 		m_y = y;
 	}
+
+	@Override
+	public String toString ()
+	{
+		return "(" + m_visited + "," + m_x + "," + m_y + ")";
+	}
 }

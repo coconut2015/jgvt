@@ -184,6 +184,11 @@ public class RelationBranch implements Comparable<RelationBranch>
 		return m_layoutInfo;
 	}
 
+	public int getId ()
+	{
+		return m_id;
+	}
+
 	@Override
 	public String toString ()
 	{
