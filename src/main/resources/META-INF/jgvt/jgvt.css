@@ -6,11 +6,11 @@ body
 	font-size: 12pt;
 	color : #333333;
 }
-table
+table.info
 {
 	border-collapse: collapse;
 	border-spacing: 0px;
-	border: 1px solid black;
+	border: 1px solid gray;
 	padding: 0px;
 }
 .subject
@@ -39,5 +39,63 @@ table
 	color: white;
 	font-weight: bold;
 	background-color: #538fbe;
+}
+table.diff
+{
+	border-collapse: collapse;
+	border-spacing: 0px;
+	border: 1px solid gray;
+	padding: 0px;
+}
+.linehunk
+{
+	text-align: right;
+	background-color: #dbedff;
+}
+.hunk
+{
+	font-family: Mono, Monospace;
+	color: #5d6267;
+	background-color: #f1f8ff;
+}
+.linecontext
+{
+	text-align: right;
+	color: #bec0c1;
+	background-color: #ffffff;
+}
+.context
+{
+	font-family: Mono, Monospace;
+	white-space: pre;
+	background-color: #ffffff;
+}
+.lineremoved
+{
+	text-align: right;
+	color: #bec0c1;
+	background-color: #ffdce0;
+}
+.removed
+{
+	font-family: Mono, Monospace;
+	white-space: pre;
+	background-color: #ffeef0;
+}
+.lineadded
+{
+	text-align: right;
+	color: #bec0c1;
+	background-color: #cdffd8;
+}
+.added
+{
+	font-family: Mono, Monospace;
+	white-space: pre;
+	background-color: #e6ffed;
+}
+pre
+{
+	margin: 0;
 }
 --></style>

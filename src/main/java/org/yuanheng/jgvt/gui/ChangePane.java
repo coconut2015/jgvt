@@ -51,7 +51,7 @@ class ChangePane extends JPanel
 		{
 			if (e.getValueIsAdjusting ())
 				return;
-			String html = m_changeTree.getSelectedNodeHtml ();
+			String html = m_changeTree.getSelectedNodeHtml (m_controller);
 			if (html != null)
 			{
 				m_msgPane.setText (html);
@@ -62,7 +62,8 @@ class ChangePane extends JPanel
 
 	private final ComponentListener m_resizeListener = new ComponentAdapter ()
 	{
-	    public void componentResized(ComponentEvent e)
+	    @Override
+		public void componentResized(ComponentEvent e)
 	    {
     		((JSplitPane)e.getSource ()).setDividerLocation (0.5);
     		((JSplitPane)e.getSource ()).removeComponentListener (this);

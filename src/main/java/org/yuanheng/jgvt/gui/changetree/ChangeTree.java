@@ -31,6 +31,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellRenderer;
 
 import org.yuanheng.jgvt.ChangeInfo;
+import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.gui.treetable.JTreeTable;
 import org.yuanheng.jgvt.gui.treetable.TreeTableModel;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -194,12 +195,12 @@ public class ChangeTree extends JTreeTable
 		doLayout ();
 	}
 
-	public String getSelectedNodeHtml ()
+	public String getSelectedNodeHtml (Controller controller)
 	{
 		int row = getSelectedRow ();
 		if (row < 0)
 			return null;
 		ChangeTreeNode cn = (ChangeTreeNode)getModel ().getValueAt (row, 0);
-		return cn.getHtml ();
+		return cn.getHtml (controller);
 	}
 }

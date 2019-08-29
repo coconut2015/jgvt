@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt.gui.changetree;
 
 import org.yuanheng.jgvt.CommitUtils;
+import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.relation.RelationNode;
 
 /**
@@ -49,7 +50,7 @@ public class ChangeTreeCommit extends ChangeTreeNode
 	}
 
 	@Override
-	String computeHtml ()
+	String computeHtml (Controller controller)
 	{
 		RelationNode node = m_node;
 		if (node != null)

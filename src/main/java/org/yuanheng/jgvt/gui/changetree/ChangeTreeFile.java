@@ -21,6 +21,7 @@ import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.yuanheng.jgvt.ChangeInfo;
 import org.yuanheng.jgvt.CommitUtils;
+import org.yuanheng.jgvt.Controller;
 
 /**
  * @author	Heng Yuan
@@ -101,7 +102,7 @@ class ChangeTreeFile extends ChangeTreeNode
 	}
 
 	@Override
-	String computeHtml ()
+	String computeHtml (Controller controller)
 	{
 		TreeNode node = getParent ();
 		while (node.getParent () != null)
@@ -113,12 +114,12 @@ class ChangeTreeFile extends ChangeTreeNode
 			RevCommit c2 = null;
 			if (c1.getParentCount () > 0)
 				c2 = c1.getParent (0);
-			return CommitUtils.getComment (c1, c2, m_info);
+			return CommitUtils.getComment (c1, c2, m_info, controller.getGitRepo ());
 		}
 		else if (node instanceof ChangeTreeDiff)
 		{
 			ChangeTreeDiff diff = (ChangeTreeDiff) node;
-			return CommitUtils.getComment (diff.getNode1 ().getCommit (), diff.getNode2 ().getCommit (), m_info);
+			return CommitUtils.getComment (diff.getNode1 ().getCommit (), diff.getNode2 ().getCommit (), m_info, controller.getGitRepo ());
 		}
 		// should not reach here.
 		return getChangeType () + " " + toString ();

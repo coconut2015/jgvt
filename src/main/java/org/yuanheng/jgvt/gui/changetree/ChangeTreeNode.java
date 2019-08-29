@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
+import org.yuanheng.jgvt.Controller;
+
 /**
  * @author	Heng Yuan
  */
@@ -124,9 +126,9 @@ public abstract class ChangeTreeNode implements TreeNode
 		m_html = null;
 	}
 
-	abstract String computeHtml ();
+	abstract String computeHtml (Controller controller);
 
-	public String getHtml ()
+	public String getHtml (Controller controller)
 	{
 		String html = null;
 		if (m_html != null)
@@ -135,7 +137,7 @@ public abstract class ChangeTreeNode implements TreeNode
 		}
 		if (html == null)
 		{
-			html = computeHtml ();
+			html = computeHtml (controller);
 			if (html == null)
 				return null;
 			m_html = new WeakReference<String> (html);

@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt.gui.changetree;
 
 import org.yuanheng.jgvt.CommitUtils;
+import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.relation.RelationNode;
 
 /**
@@ -52,7 +53,7 @@ public class ChangeTreeDiff extends ChangeTreeNode
 	}
 
 	@Override
-	String computeHtml ()
+	String computeHtml (Controller controller)
 	{
 		return CommitUtils.getComment (m_n1, m_n2);
 	}

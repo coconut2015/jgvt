@@ -15,11 +15,14 @@
  */
 package org.yuanheng.jgvt;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -212,7 +215,7 @@ public class CommitUtils
 		RevCommit commit = node.getCommit ();
 		StringBuilder builder = new StringBuilder ().append ("<html>");
 		builder.append ("<head>").append (CSS);
-		builder.append ("<body><table>");
+		builder.append ("<body><table class=\"info\">");
 
 		builder.append ("<tr>");
 		builder.append (getHeader ("SHA-1"));
@@ -323,7 +326,7 @@ public class CommitUtils
 	{
 		StringBuilder builder = new StringBuilder ().append ("<html>");
 		builder.append ("<head>").append (CSS);
-		builder.append ("<body><table>");
+		builder.append ("<body><table class=\"info\">");
 		builder.append ("<tr>");
 		builder.append (getHeader ("Commit 1 SHA-1"));
 		builder.append (getValue (getCommitLink (n1.getCommit ())));
@@ -342,11 +345,11 @@ public class CommitUtils
 		return builder.toString ();
 	}
 
-	public static String getComment (RevCommit c1, RevCommit c2, ChangeInfo changeInfo)
+	public static String getComment (RevCommit c1, RevCommit c2, ChangeInfo changeInfo, GitRepo gitRepo)
 	{
 		StringBuilder builder = new StringBuilder ().append ("<html>");
 		builder.append ("<head>").append (CSS);
-		builder.append ("<body><table>");
+		builder.append ("<body><table class=\"info\">");
 		builder.append ("<tr>");
 		DiffEntry entry = changeInfo.getDiffEntry ();
 		builder.append (getHeader (entry.getChangeType ().toString ()));
@@ -372,7 +375,28 @@ public class CommitUtils
 			builder.append (getValue (getDiffToolLink (c1, c2, path)));
 			builder.append ("</tr>");
 		}
-		builder.append ("</table><body></html>");
+		builder.append ("</table>");
+		try
+		{
+			ByteArrayOutputStream bos = new ByteArrayOutputStream ();
+			bos.write (("<table class=\"diff\">").getBytes (StandardCharsets.UTF_8));
+		    DiffFormatter diffFmt = new HtmlDiffFormatter(bos);
+		    diffFmt.setRepository(gitRepo.getRepo ());
+		    try
+		    {
+		    	diffFmt.format (entry);
+		    }
+		    finally
+		    {
+		    	diffFmt.close ();
+		    }
+			bos.write (("</table>").getBytes (StandardCharsets.UTF_8));
+			builder.append (new String (bos.toByteArray (), StandardCharsets.UTF_8));
+		}
+		catch (Exception ex)
+		{
+		}
+		builder.append ("<body></html>");
 		return builder.toString ();
 	}
 }

@@ -15,6 +15,8 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
+import org.yuanheng.jgvt.Controller;
+
 /**
  * @author	Heng Yuan
  */
@@ -40,7 +42,7 @@ class ChangeTreeDirectory extends ChangeTreeNode
 	}
 
 	@Override
-	String computeHtml ()
+	String computeHtml (Controller controller)
 	{
 		return null;
 	}
