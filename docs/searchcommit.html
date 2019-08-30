@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Build &mdash; Java Git Version Tree 1.0.0 documentation</title>
+  <title>Search Commits &mdash; Java Git Version Tree 1.0.0 documentation</title>
   
 
   
@@ -36,8 +36,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="Java Git Version Tree 1.0.0 documentation" href="index.html"/>
-        <link rel="next" title="License" href="license.html"/>
-        <link rel="prev" title="Export Graph" href="export.html"/> 
+        <link rel="next" title="Compare Commits" href="compare.html"/>
+        <link rel="prev" title="Command Line" href="command.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -89,11 +89,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Java Git Version Tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command.html">Command Line</a></li>
-<li class="toctree-l1"><a class="reference internal" href="searchcommit.html">Search Commits</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Search Commits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">Compare Commits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zoom.html">Zoom</a></li>
 <li class="toctree-l1"><a class="reference internal" href="export.html">Export Graph</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Build</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/coconut2015/jgvt">GitHub Repo</a></li>
 </ul>
@@ -140,13 +140,13 @@
     
       <li><a href="TOC.html">Docs</a> &raquo;</li>
         
-      <li>Build</li>
+      <li>Search Commits</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/build.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/searchcommit.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -159,15 +159,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="build">
-<h1>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h1>
-<p><strong>jgvt</strong> requries JDK8+ and <a class="reference external" href="https://maven.apache.org/">Maven</a> to build.</p>
-<p>The following is the build command.  There are convenience launch codes that
-are disguised as tests. So it is necessary to skip the tests when building the
-package.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mvn clean package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
-</pre></div>
-</div>
+  <div class="section" id="search-commits">
+<h1>Search Commits<a class="headerlink" href="#search-commits" title="Permalink to this headline">¶</a></h1>
+<p>There are three ways to search and locate a commit.</p>
+<ul class="simple">
+<li>Searching a commit by commit metadata.  This particular search is still
+quite primitive and will be updated in the near future.</li>
+<li>Searching a commit by branch information.</li>
+<li>Searching a commit by tag.</li>
+</ul>
+<p>All the searches can take either a partial name or a RegEx to filter the
+commits.</p>
+<p>The tables can have additional columns listed by right clicking on the
+table header, and updating the selected columns.</p>
 </div>
 
 
@@ -180,10 +184,10 @@ package.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="compare.html" class="btn btn-neutral float-right" title="Compare Commits" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="export.html" class="btn btn-neutral" title="Export Graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="command.html" class="btn btn-neutral" title="Command Line" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

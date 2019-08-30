@@ -5,7 +5,7 @@ Table of Contents
 
 	index
 	command
-	search
+	searchcommit
 	compare
 	zoom
 	export
