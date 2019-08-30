@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; Java Git Version Tree 1.0.0 documentation</title>
+  <title>Build &mdash; Java Git Version Tree 1.0.0 documentation</title>
   
 
   
@@ -34,8 +34,10 @@
   
         <link rel="index" title="Index"
               href="genindex.html"/>
-        <link rel="search" title="Search" href="#"/>
-    <link rel="top" title="Java Git Version Tree 1.0.0 documentation" href="index.html"/> 
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Java Git Version Tree 1.0.0 documentation" href="index.html"/>
+        <link rel="next" title="License" href="license.html"/>
+        <link rel="prev" title="Export Graph" href="export.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -67,7 +69,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -87,11 +89,11 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Java Git Version Tree</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command.html">Command Line</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Search Commits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search Commits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">Compare Commits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zoom.html">Zoom</a></li>
 <li class="toctree-l1"><a class="reference internal" href="export.html">Export Graph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build.html">Build</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Build</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/coconut2015/jgvt">GitHub Repo</a></li>
 </ul>
@@ -138,10 +140,14 @@
     
       <li><a href="TOC.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Build</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/build.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -153,19 +159,17 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="build">
+<h1>Build<a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h1>
+<p><strong>jgvt</strong> requries JDK8+ and <a class="reference external" href="https://maven.apache.org/">Maven</a> to build.</p>
+<p>The following is the build command.  There are convenience launch codes that
+are disguised as tests. So it is necessary to skip the tests when building the
+package.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mvn clean package -Dmaven.test.skip<span class="o">=</span><span class="nb">true</span>
+</pre></div>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            <div class="articleComments">
@@ -173,6 +177,15 @@
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="license.html" class="btn btn-neutral float-right" title="License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="export.html" class="btn btn-neutral" title="Export Graph" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -211,7 +224,6 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -227,14 +239,7 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

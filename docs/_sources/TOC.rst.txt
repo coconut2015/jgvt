@@ -4,5 +4,11 @@ Table of Contents
 	:maxdepth: 3
 
 	index
+	command
+	search
+	compare
 	zoom
-	LICENSE <https://www.apache.org/licenses/LICENSE-2.0>
+	export
+	build
+	license
+	GitHub Repo <https://github.com/coconut2015/jgvt>

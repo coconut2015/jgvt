@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Search &mdash; Java Git Version Tree 1.0.0 documentation</title>
+  <title>Command Line &mdash; Java Git Version Tree 1.0.0 documentation</title>
   
 
   
@@ -34,8 +34,10 @@
   
         <link rel="index" title="Index"
               href="genindex.html"/>
-        <link rel="search" title="Search" href="#"/>
-    <link rel="top" title="Java Git Version Tree 1.0.0 documentation" href="index.html"/> 
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Java Git Version Tree 1.0.0 documentation" href="index.html"/>
+        <link rel="next" title="Search Commits" href="search.html"/>
+        <link rel="prev" title="Java Git Version Tree" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -67,7 +69,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="#" method="get">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -86,8 +88,13 @@
             
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Java Git Version Tree</a></li>
-<li class="toctree-l1"><a class="reference internal" href="command.html">Command Line</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Search Commits</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command Line</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-options">Command Line Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shell-script-launcher">Shell Script Launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#windows-batch-command">Windows Batch Command</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">Search Commits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">Compare Commits</a></li>
 <li class="toctree-l1"><a class="reference internal" href="zoom.html">Zoom</a></li>
 <li class="toctree-l1"><a class="reference internal" href="export.html">Export Graph</a></li>
@@ -138,10 +145,14 @@
     
       <li><a href="TOC.html">Docs</a> &raquo;</li>
         
-      <li>Search</li>
+      <li>Command Line</li>
     
     
       <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/command.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -153,19 +164,41 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <noscript>
-  <div id="fallback" class="admonition warning">
-    <p class="last">
-      Please activate JavaScript to enable the search
-      functionality.
-    </p>
-  </div>
-  </noscript>
+  <div class="section" id="command-line">
+<h1>Command Line<a class="headerlink" href="#command-line" title="Permalink to this headline">¶</a></h1>
+<p><strong>jgvt</strong> requries JRE8+ to run.  The typical usage is just run the jgvt
+jar in the git repo directory.</p>
+<p>In general, the default memory setting is good enough.  jgvt can compute
+and display a 10K-commit repo tree without requiring additional memory.</p>
+<div class="section" id="command-line-options">
+<h2>Command Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this headline">¶</a></h2>
+<p>The options are mostly for debugging purposes.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>usage: java -jar jgvt.jar [options] [repo directory]
+ -b,--branch   list branches
+ -d,--debug    print debug messages
+ -h,--help     print this message
+ -s &lt;arg&gt;      specify the last commit of the main branch
+ -t,--tag      list tags
+</pre></div>
+</div>
+<p>If the repo directory is not specified, the current directory is used.</p>
+</div>
+<div class="section" id="shell-script-launcher">
+<h2>Shell Script Launcher<a class="headerlink" href="#shell-script-launcher" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="nb">exec</span> java -jar jgvt-1.0.0.jar <span class="nv">$@</span> <span class="p">&amp;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows-batch-command">
+<h2>Windows Batch Command<a class="headerlink" href="#windows-batch-command" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-batch notranslate"><div class="highlight"><pre><span></span><span class="p">@</span><span class="k">echo</span> off
+<span class="k">start</span> /b javaw -jar jgvt-1.0.0.jar <span class="nv">%*</span>
+</pre></div>
+</div>
+</div>
+</div>
 
-  
-  <div id="search-results">
-  
-  </div>
 
            </div>
            <div class="articleComments">
@@ -173,6 +206,15 @@
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="search.html" class="btn btn-neutral float-right" title="Search Commits" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Java Git Version Tree" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
@@ -211,7 +253,6 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/searchtools.js"></script>
 
   
 
@@ -227,14 +268,7 @@
           SphinxRtdTheme.StickyNav.enable();
       });
   </script>
-  
-  <script type="text/javascript">
-    jQuery(function() { Search.loadIndex("searchindex.js"); });
-  </script>
-  
-  <script type="text/javascript" id="searchindexloader"></script>
    
-
 
 </body>
 </html>

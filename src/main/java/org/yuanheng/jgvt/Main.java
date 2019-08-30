@@ -80,7 +80,7 @@ public class Main
 			if (cmd.hasOption ('h'))
 			{
 				HelpFormatter formatter = new HelpFormatter ();
-				formatter.printHelp ("jgvt", options);
+				formatter.printHelp ("java -jar jgvt.jar [options] [repo directory]", options);
 				System.exit (0);
 			}
 			if (cmd.hasOption ('s'))
