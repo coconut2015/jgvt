@@ -20,8 +20,10 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.*;
 
+import org.yuanheng.jgvt.Controller;
 import org.yuanheng.jgvt.relation.RelationNode;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
 
@@ -31,6 +33,8 @@ import com.mxgraph.swing.handler.mxRubberband;
 public class GVTGraphComponent extends mxGraphComponent
 {
 	private static final long serialVersionUID = 1573837130692041836L;
+
+	private final GVTPopupMenu m_popupMenu;
 
 	private ComponentListener m_resizeListener = new ComponentAdapter ()
 	{
@@ -45,11 +49,33 @@ public class GVTGraphComponent extends mxGraphComponent
 		}
 	};
 
+	private MouseListener m_mouseListener = new MouseAdapter ()
+	{
+	    @Override
+		public void mouseClicked(MouseEvent e)
+	    {
+	    	if (e.getClickCount () == 1 &&
+	    		e.getModifiers () == MouseEvent.BUTTON3_MASK)
+	    	{
+	    		Object cell = getCellAt(e.getX (), e.getY ());
+                if (cell instanceof mxCell)
+                {
+                	if (graph.getModel ().isVertex (cell))
+                	{
+                		GVTVertex v = (GVTVertex) graph.getModel ().getValue (cell);
+        				RelationNode node = ((GVTGraph)graph).getTree ().getNode (v);
+        				m_popupMenu.show (node, e.getX (), e.getY ());
+                	}
+                }
+	    	}
+	    }
+	};
+
 	/**
 	 * @param	graph
 	 * 			jgvt graph
 	 */
-	public GVTGraphComponent (GVTGraph graph)
+	public GVTGraphComponent (Controller controller, GVTGraph graph)
 	{
 		super (graph);
 		addComponentListener (m_resizeListener);
@@ -59,6 +85,10 @@ public class GVTGraphComponent extends mxGraphComponent
 		getViewport ().setOpaque (true);
 		getViewport ().setBackground (Color.WHITE);
 		setToolTips (true);
+
+		getGraphControl ().addMouseListener (m_mouseListener);
+
+		m_popupMenu = new GVTPopupMenu (controller, this);
 
 		new mxRubberband (this)
 		{

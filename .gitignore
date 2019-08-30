@@ -1,6 +1,6 @@
 /target/
+/docs_src/build
 .classpath
 .settings
 .project
 dependency-reduced-pom.xml
-

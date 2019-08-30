@@ -583,7 +583,7 @@ public class GUI
 
 		m_statusBar = new StatusBar ();
 
-		createGraphComp ();
+		createGraphComp (controller);
 		createPropertyPane ();
 
 		// disable status bar for now
@@ -693,14 +693,14 @@ public class GUI
 		m_toolBar.add (m_rememberButton);
 	}
 
-	private void createGraphComp ()
+	private void createGraphComp (Controller controller)
 	{
 		m_graph = new GVTGraph ();
 		m_graph.setStylesheet (GVTGraphFactory.GRAPH_STYLE);
 		// a bit odd to use UNDO, but that's how JGraphX's selection works.
 		m_graph.getSelectionModel ().addListener (mxEvent.UNDO, m_selectNodeListener);
 
-		m_graphComp = new GVTGraphComponent (m_graph);
+		m_graphComp = new GVTGraphComponent (controller, m_graph);
 	}
 
 	private void createPropertyPane ()

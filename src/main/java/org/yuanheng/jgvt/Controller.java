@@ -192,7 +192,11 @@ public class Controller
 
 	public boolean remember ()
 	{
-		RelationNode node = m_selectedNode;
+		return remember (m_selectedNode);
+	}
+
+	public boolean remember (RelationNode node)
+	{
 		if (node == null)
 		{
 			return false;
@@ -223,7 +227,12 @@ public class Controller
 
 	public boolean compareToRemember ()
 	{
-		if (m_selectedNode == null ||
+		return compareToRemember (m_selectedNode);
+	}
+
+	public boolean compareToRemember (RelationNode node)
+	{
+		if (node == null ||
 			m_rememberedNode == null ||
 			m_selectedNode == m_rememberedNode)
 			return false;
