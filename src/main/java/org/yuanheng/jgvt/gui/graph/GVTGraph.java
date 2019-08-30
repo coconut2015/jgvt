@@ -68,7 +68,20 @@ public class GVTGraph extends mxGraph
 	 * @param	cell
 	 * 			cell object
 	 */
+	@Override
 	public boolean isCellSelectable(Object cell)
+	{
+		return model.isVertex (cell);
+	}
+
+	/**
+	 * Overriding the method to disable edge interaction.
+	 *
+	 * @param	cell
+	 * 			cell object
+	 */
+	@Override
+	public boolean isCellMovable(Object cell)
 	{
 		return model.isVertex (cell);
 	}
