@@ -296,7 +296,7 @@ public class RelationNode implements Comparable<RelationNode>
 			}
 			if (n1.getCommit ().getCommitTime () != n2.getCommit ().getCommitTime ())
 			{
-				return n1.getCommit ().getCommitTime () - n2.getCommit ().getCommitTime ();
+				return - (n1.getCommit ().getCommitTime () - n2.getCommit ().getCommitTime ());
 			}
 			return n1.getCommit ().compareTo (n2.getCommit ());
 		}
