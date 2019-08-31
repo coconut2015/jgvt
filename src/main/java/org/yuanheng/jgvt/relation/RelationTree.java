@@ -27,15 +27,6 @@ import org.yuanheng.jgvt.GitRepo;
  */
 public class RelationTree
 {
-	final static Comparator<RelationNode> s_sortByDate = new Comparator<RelationNode> ()
-	{
-		@Override
-		public int compare (RelationNode o1, RelationNode o2)
-		{
-			return o1.getCommit ().getCommitTime () - o2.getCommit ().getCommitTime ();
-		}
-	};
-
 	private final Map<ObjectId, RelationNode> m_nodeMap;
 
 	RelationTree ()
@@ -88,7 +79,7 @@ public class RelationTree
 			RelationNode[] children = node.getChildren ();
 			if (children.length > 1)
 			{
-				Arrays.sort (children, s_sortByDate);
+				Arrays.sort (children, RelationNode.sortByDateComparator);
 			}
 		}
 	}

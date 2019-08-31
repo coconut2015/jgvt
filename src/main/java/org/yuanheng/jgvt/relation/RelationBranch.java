@@ -66,6 +66,11 @@ public class RelationBranch implements Comparable<RelationBranch>
 		node.setRelationBranch (this);
 		m_nodes.add (node);
 		m_orderedList = null;
+
+		if (node.getWeight () < getWeight ())
+		{
+			setWeight (node.getWeight ());
+		}
 	}
 
 	public void remove (RelationNode node)
@@ -165,6 +170,31 @@ public class RelationBranch implements Comparable<RelationBranch>
 	{
 		List<RelationNode> list = getOrderedList ();
 		return list.get (list.size () - 1);
+	}
+
+	public boolean isVisited ()
+	{
+		return m_layoutInfo.isVisited ();
+	}
+
+	public void visit ()
+	{
+		m_layoutInfo.visit ();
+	}
+
+	public void resetVisit ()
+	{
+		m_layoutInfo.resetVisit ();
+	}
+
+	public int getWeight ()
+	{
+		return m_layoutInfo.getWeight ();
+	}
+
+	public void setWeight (int weight)
+	{
+		m_layoutInfo.setWeight (weight);
 	}
 
 	@Override

@@ -136,7 +136,7 @@ class BranchDiscoveryAlgorithm
 				multiParentNodes.add (node);
 			}
 		}
-		Collections.sort (multiParentNodes, RelationTree.s_sortByDate);
+		Collections.sort (multiParentNodes, RelationNode.sortByDateComparator);
 		for (RelationNode node : multiParentNodes)
 		{
 			if (node.isVisited ())
@@ -146,7 +146,7 @@ class BranchDiscoveryAlgorithm
 
 		// find any remaining branches starting from leaves.
 		List <RelationNode> leaves = tree.getLeaves ();
-		Collections.sort (leaves, RelationTree.s_sortByDate);
+		Collections.sort (leaves, RelationNode.sortByDateComparator);
 		for (RelationNode node : leaves)
 		{
 			if (node.isVisited ())

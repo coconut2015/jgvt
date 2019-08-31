@@ -15,6 +15,7 @@
  */
 package org.yuanheng.jgvt.relation;
 
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.eclipse.jgit.lib.Ref;
@@ -231,7 +232,18 @@ public class RelationNode implements Comparable<RelationNode>
 	@Override
 	public int compareTo (RelationNode o)
 	{
-		return m_commit.compareTo (o.getCommit ());
+		if (this == o)
+			return 0;
+
+		if (getWeight () != o.getWeight ())
+		{
+			return getWeight () - o.getWeight ();
+		}
+		if (m_commit.getCommitTime () != o.m_commit.getCommitTime ())
+		{
+			return m_commit.getCommitTime () - o.m_commit.getCommitTime ();
+		}
+		return m_commit.compareTo (o.m_commit);
 	}
 
 	@Override
@@ -239,4 +251,35 @@ public class RelationNode implements Comparable<RelationNode>
 	{
 		return m_commit.hashCode ();
 	}
+
+	public static Comparator<RelationNode> sortByWeightComparator = new Comparator<RelationNode> ()
+	{
+		@Override
+		public int compare (RelationNode n1, RelationNode n2)
+		{
+			if (n1 == n2)
+			{
+				return 0;
+			}
+			if (n1.getWeight () != n2.getWeight ())
+			{
+				return n1.getWeight () - n2.getWeight ();
+			}
+			if (n1.getCommit ().getCommitTime () != n2.getCommit ().getCommitTime ())
+			{
+				return n1.getCommit ().getCommitTime () - n2.getCommit ().getCommitTime ();
+			}
+			return n1.getCommit ().compareTo (n2.getCommit ());
+		}
+	};
+
+	public static Comparator<RelationNode> sortByDateComparator = new Comparator<RelationNode> ()
+	{
+		@Override
+		public int compare (RelationNode o1, RelationNode o2)
+		{
+			return o1.getCommit ().getCommitTime () - o2.getCommit ().getCommitTime ();
+		}
+	};
+
 }

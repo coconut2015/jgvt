@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +41,7 @@ public class Main
 		options.addOption ("b", "branch", false, "list branches");
 		options.addOption ("d", "debug", false, "print debug messages");
 		options.addOption ("h", "help", false, "print this message");
-		options.addOption ("s", true, "specify the last commit of the main branch");
+		options.addOption ("i", "important", true, "specify an important branch name.  The option can be specified multiple times in order of importance.");
 		options.addOption ("t", "tag", false, "list tags");
 		return options;
 	}
@@ -68,25 +69,43 @@ public class Main
 		GitRepo gitRepo = null;
 		File dir = null;
 		File file = null;
-		String startCommit = null;
 		CommandLine cmd = null;
 
+		ArrayList<String> importantBranchNames = new ArrayList<String> ();
 		try
 		{
 			CommandLineParser parser = new DefaultParser();
 			Options options = createOptions ();
 			cmd = parser.parse(options, args);
 
-			if (cmd.hasOption ('h'))
+			for (Option option : cmd.getOptions ())
 			{
-				HelpFormatter formatter = new HelpFormatter ();
-				formatter.printHelp ("java -jar jgvt.jar [options] [repo directory]", options);
-				System.exit (0);
+				switch (option.getId ())
+				{
+					case 'h':
+					{
+						HelpFormatter formatter = new HelpFormatter ();
+						formatter.printHelp ("java -jar jgvt.jar [options] [repo directory]", options);
+						System.exit (0);
+						break;
+					}
+					case 'i':
+					{
+						String name = option.getValue ().trim ();
+						if (name.length () > 0)
+						{
+							importantBranchNames.add (name);
+						}
+						break;
+					}
+					case 'd':
+					{
+						configs.debug = true;
+						break;
+					}
+				}
 			}
-			if (cmd.hasOption ('s'))
-			{
-				startCommit = cmd.getOptionValue ('s');
-			}
+
 			args = cmd.getArgs ();
 
 			if (args.length > 0)
@@ -132,10 +151,6 @@ public class Main
 			System.exit (1);;
 		}
 
-		if (cmd.hasOption ('d'))
-		{
-			configs.debug = true;
-		}
 		if (cmd.hasOption ('b'))
 		{
 			listBranches (gitRepo);
@@ -152,7 +167,7 @@ public class Main
 
 		Controller controller = new Controller (gitRepo, dir, file);
 		GUI gui = new GUI (controller);
-		controller.generateTree (startCommit);
+		controller.generateTree (importantBranchNames);
 		gui.setVisible (true);
 		controller.centerTree ();
 		SwingUtilities.invokeLater (new Runnable ()

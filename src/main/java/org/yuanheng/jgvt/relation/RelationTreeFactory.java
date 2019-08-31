@@ -17,11 +17,11 @@ package org.yuanheng.jgvt.relation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.yuanheng.jgvt.GitRepo;
@@ -31,60 +31,67 @@ import org.yuanheng.jgvt.GitRepo;
  */
 public class RelationTreeFactory
 {
-	public static List<Pattern> getDefaultImportantBranchNames ()
+	public static List<String> getDefaultImportantBranchNames ()
 	{
-		ArrayList<Pattern> branches = new ArrayList<Pattern> ();
-		branches.add (Pattern.compile ("(.*/)?master"));
-		branches.add (Pattern.compile ("(.*/)?gh-pages"));
+		ArrayList<String> branches = new ArrayList<String> ();
+		branches.add ("(.*/)?master");
+		branches.add ("(.*/)?gh-pages");
 		return branches;
 	}
 
 	private final GitRepo m_gitRepo;
-	private final List<Pattern> m_importantBranchNames;
+	private final List<String> m_importantBranchNames;
 
-	public RelationTreeFactory (GitRepo gitRepo, List<Pattern> importantBranchNames)
+	public RelationTreeFactory (GitRepo gitRepo, List<String> importantBranchNames)
 	{
 		m_gitRepo = gitRepo;
 		m_importantBranchNames = importantBranchNames;
 	}
 
-	private static RelationNode getImportantNode (RelationTree tree, List<Pattern> importantBranches, GitRepo gitRepo) throws GitAPIException
+	private static List<RelationNode> getImportantNodes (RelationTree tree, List<String> importantBranches, GitRepo gitRepo) throws GitAPIException
 	{
-		if (importantBranches.size () == 0)
-			return null;
+		ArrayList<RelationNode> nodes = new ArrayList<RelationNode> ();
 
-		RevCommit matchCommit = null;
+		if (importantBranches.size () == 0)
+			return nodes;
 
 		List<Ref> branches = gitRepo.getAllBranches ();
-		for (int i = 0; i < importantBranches.size () && matchCommit == null; ++i)
+		for (int i = 0; i < importantBranches.size (); ++i)
 		{
-			Pattern p = importantBranches.get (i);
+			Pattern p = Pattern.compile (importantBranches.get (i));
 			for (Ref ref : branches)
 			{
 				String name = ref.getName ();
 				{
 					if (p.matcher (name).matches ())
 					{
-						RelationNode newNode = tree.getNode (ref.getObjectId ());
-						if (newNode != null)
+						RelationNode node = tree.getNode (ref.getObjectId ());
+						if (node.getWeight () > i)
 						{
-							RevCommit newCommit = newNode.getCommit ();
-							if (matchCommit == null ||
-								matchCommit.getCommitTime () < newCommit.getCommitTime ())
+							node.setWeight (i);
+							if (node != null)
 							{
-								matchCommit = newCommit;
+								nodes.add (node);
 							}
 						}
 					}
 				}
 			}
 		}
-		if (matchCommit == null)
-			return null;
-		return tree.getNode (matchCommit);
+		Collections.sort (nodes, RelationNode.sortByWeightComparator);
+
+		// now based on the order, renumber the weight
+		int weight = 0;
+		for (RelationNode node : nodes)
+		{
+			node.setWeight (weight);
+			++weight;
+		}
+
+		return nodes;
 	}
 
-	public RelationTree createTree (String startCommit, Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
+	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
 	{
 		RelationTree tree = new RelationTree ();
 
@@ -92,32 +99,21 @@ public class RelationTreeFactory
 		// relationship.
 		tree.addNodes (commitLogs, m_gitRepo);
 
-		RelationNode startNode = null;
-		if (startCommit == null)
+		if (tree.getNodes ().size () == 0)
 		{
-			startNode = getImportantNode (tree, m_importantBranchNames, m_gitRepo);
-			if (startNode == null)
-			{
-				System.out.println ("Unable to determine the main branch.  Please specify the last commit of the main branch.");
-				System.exit (1);
-			}
+			return tree;
+		}
+
+		List<RelationNode> importantNodes = getImportantNodes (tree, m_importantBranchNames, m_gitRepo);
+		RelationNode startNode;
+		if (importantNodes.size () > 0)
+		{
+			startNode = importantNodes.get (0);
 		}
 		else
 		{
-			m_gitRepo.fetch ();
-			try
-			{
-				ObjectId id = m_gitRepo.getRepo ().resolve (startCommit);
-				startNode = tree.getNode (id);
-			}
-			catch (Exception ex)
-			{
-			}
-			if (startNode == null)
-			{
-				System.out.println ("Invalid commit name.");
-				System.exit (1);
-			}
+			// use the starting node as the dummy start node.
+			startNode = Collections.min (tree.getNodes ());
 		}
 		BranchDiscoveryAlgorithm.inferBranches (tree, startNode);
 
