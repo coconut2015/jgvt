@@ -108,11 +108,11 @@ public class RelationTree
 		return m_nodeMap.values ();
 	}
 
-	void resetVisit ()
+	public void resetVisit ()
 	{
 		for (RelationNode node : m_nodeMap.values ())
 		{
-			node.getLayoutInfo ().resetVisit ();
+			node.resetVisit ();
 		}
 	}
 

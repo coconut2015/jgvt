@@ -21,6 +21,7 @@ package org.yuanheng.jgvt.relation;
 public class LayoutInfo
 {
 	private boolean m_visited = false;
+	private int m_weight = Integer.MAX_VALUE;
 
 	private int m_x = -1;
 	private int m_y = -1;
@@ -58,6 +59,16 @@ public class LayoutInfo
 	public void setY (int y)
 	{
 		m_y = y;
+	}
+
+	public int getWeight ()
+	{
+		return m_weight;
+	}
+
+	public void setWeight (int weight)
+	{
+		m_weight = weight;
 	}
 
 	@Override

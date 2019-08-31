@@ -129,7 +129,7 @@ class BranchDiscoveryAlgorithm
 		ArrayList<RelationNode> multiParentNodes = new ArrayList<RelationNode> ();
 		for (RelationNode node : tree.getNodes ())
 		{
-			if (node.getLayoutInfo ().isVisited ())
+			if (node.isVisited ())
 				continue;
 			if (node.getParents ().length > 1)
 			{
@@ -139,7 +139,7 @@ class BranchDiscoveryAlgorithm
 		Collections.sort (multiParentNodes, RelationTree.s_sortByDate);
 		for (RelationNode node : multiParentNodes)
 		{
-			if (node.getLayoutInfo ().isVisited ())
+			if (node.isVisited ())
 				continue;
 			discoverInitialBranches (node, false);
 		}
@@ -149,7 +149,7 @@ class BranchDiscoveryAlgorithm
 		Collections.sort (leaves, RelationTree.s_sortByDate);
 		for (RelationNode node : leaves)
 		{
-			if (node.getLayoutInfo ().isVisited ())
+			if (node.isVisited ())
 				continue;
 			discoverInitialBranches (node, false);
 		}
@@ -298,16 +298,15 @@ class BranchDiscoveryAlgorithm
 		while (stack.size () > 0)
 		{
 			node = stack.remove (stack.size () - 1);
-			LayoutInfo layoutInfo = node.getLayoutInfo ();
 			RelationBranch branch = node.getRelationBranch ();
-			if (layoutInfo.isVisited ())
+			if (node.isVisited ())
 				continue;
 
 			if (branch == null)
 			{
 				branch = new RelationBranch (node);
 			}
-			layoutInfo.visit ();
+			node.visit ();
 
 			// scan parents
 			if (node.getParents ().length == 1 &&

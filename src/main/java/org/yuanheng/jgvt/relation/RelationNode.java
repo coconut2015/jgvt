@@ -15,7 +15,6 @@
  */
 package org.yuanheng.jgvt.relation;
 
-import java.io.Serializable;
 import java.util.HashMap;
 
 import org.eclipse.jgit.lib.Ref;
@@ -26,12 +25,10 @@ import org.yuanheng.jgvt.Utils;
 /**
  * @author	Heng Yuan
  */
-public class RelationNode implements Serializable, Comparable<RelationNode>
+public class RelationNode implements Comparable<RelationNode>
 {
 	private final static RelationNode[] s_emptyArray = new RelationNode[0];
 	private final static Ref[] s_emptyRefArray = new Ref[0];
-
-	private static final long serialVersionUID = 3470339333207629584L;
 
 	public static int HASH_LENGTH = 6;
 
@@ -204,6 +201,31 @@ public class RelationNode implements Serializable, Comparable<RelationNode>
 			m_parents[0] = m_parents[1];
 			m_parents[1] = tmp;
 		}
+	}
+
+	public boolean isVisited ()
+	{
+		return m_layoutInfo.isVisited ();
+	}
+
+	public void visit ()
+	{
+		m_layoutInfo.visit ();
+	}
+
+	public void resetVisit ()
+	{
+		m_layoutInfo.resetVisit ();
+	}
+
+	public int getWeight ()
+	{
+		return m_layoutInfo.getWeight ();
+	}
+
+	public void setWeight (int weight)
+	{
+		m_layoutInfo.setWeight (weight);
 	}
 
 	@Override
