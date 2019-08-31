@@ -23,13 +23,13 @@ import org.yuanheng.jgvt.relation.RelationNode;
 /**
  * @author	Heng Yuan
  */
-class GVTCenterMenuItem extends JMenuItem
+class GVTPopupMenuItem extends JMenuItem
 {
 	private static final long serialVersionUID = 1432886736834191255L;
 
 	private final RelationNode m_node;
 
-	public GVTCenterMenuItem (RelationNode node)
+	public GVTPopupMenuItem (RelationNode node)
 	{
 		m_node = node;
 		setText (CommitUtils.getName (node));

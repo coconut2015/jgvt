@@ -147,6 +147,11 @@ public class GUI
 	{
 		private static final long serialVersionUID = 3415698093054735622L;
 
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'r');
+			putValue (Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke (KeyEvent.VK_F5, 0));
+		}
+
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{

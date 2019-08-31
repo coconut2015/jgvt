@@ -28,10 +28,16 @@ import org.yuanheng.jgvt.GitRepo;
 public class RelationTree
 {
 	private final Map<ObjectId, RelationNode> m_nodeMap;
+	private RelationNode m_startNode;
 
 	public RelationTree ()
 	{
 		m_nodeMap = new HashMap<ObjectId, RelationNode> ();
+	}
+
+	public int size ()
+	{
+		return m_nodeMap.size ();
 	}
 
 	public void clear ()
@@ -150,5 +156,15 @@ public class RelationTree
 			branchSet.add (node.getRelationBranch ());
 		}
 		return branchSet;
+	}
+
+	public RelationNode getStartNode ()
+	{
+		return m_startNode;
+	}
+
+	public void setStartNode (RelationNode startNode)
+	{
+		m_startNode = startNode;
 	}
 }

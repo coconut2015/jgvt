@@ -115,10 +115,11 @@ public class RelationTreeFactory
 			// use the starting node as the dummy start node.
 			startNode = Collections.min (tree.getNodes ());
 		}
-		BranchDiscoveryAlgorithm.inferBranches (tree, startNode);
+		tree.setStartNode (startNode);
+		BranchDiscoveryAlgorithm.inferBranches (tree);
 
 		// Third pass to layout the branches
-		BranchLayoutAlgorithm.layoutBranches (tree, startNode);
+		BranchLayoutAlgorithm.layoutBranches (tree);
 
 		return tree;
 	}

@@ -32,9 +32,7 @@ import org.yuanheng.jgvt.gui.GUI;
 import org.yuanheng.jgvt.gui.ListInfo;
 import org.yuanheng.jgvt.gui.graph.GVTGraph;
 import org.yuanheng.jgvt.gui.graph.GVTGraphFactory;
-import org.yuanheng.jgvt.relation.RelationNode;
-import org.yuanheng.jgvt.relation.RelationTree;
-import org.yuanheng.jgvt.relation.RelationTreeFactory;
+import org.yuanheng.jgvt.relation.*;
 
 /**
  * This class handle all commands.
@@ -212,6 +210,22 @@ public class Controller
 			m_selectedNode = null;
 			centerTree ();
 		}
+	}
+
+	public void joinBranch (RelationNode node, RelationNode parentNode)
+	{
+		if (node.getParents ().length == 2 &&
+			node.getParents ()[1] == parentNode)
+		{
+			node.swapParentOrder ();
+		}
+		node.getRelationBranch ().merge (parentNode.getRelationBranch ());
+		BranchDiscoveryAlgorithm.mergeBranches (m_tree);
+		BranchLayoutAlgorithm.layoutBranches (m_tree);
+
+		GVTGraph graph = m_gui.getGraph ();
+		GVTGraphFactory factory = new GVTGraphFactory (graph);
+		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
 	}
 
 	public void select (RelationNode node, boolean center)

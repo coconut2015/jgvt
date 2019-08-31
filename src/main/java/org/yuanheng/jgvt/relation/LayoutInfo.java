@@ -31,6 +31,13 @@ public class LayoutInfo
 		m_visited = true;
 	}
 
+	public void reset ()
+	{
+		m_visited = false;
+		m_x = -1;
+		m_y = -1;
+	}
+
 	public boolean isVisited ()
 	{
 		return m_visited;

@@ -15,21 +15,33 @@
  */
 package org.yuanheng.jgvt.relation;
 
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
-
 /**
  * @author	Heng Yuan
  */
-class BranchLayoutAlgorithm
+public class BranchLayoutAlgorithm
 {
-	public static void layoutBranches (RelationTree tree, RelationNode startNode) throws GitAPIException, IOException
+	public static void layoutBranches (RelationTree tree)
 	{
+		if (tree.size () == 0)
+		{
+			return;
+		}
+
+		for (RelationNode node : tree.getNodes ())
+		{
+			node.reset ();
+		}
+		RelationNode startNode = tree.getStartNode ();
 		Set<RelationBranch> branchSet = tree.getBranchSet ();
+		for (RelationBranch branch : branchSet)
+		{
+			branch.reset ();
+		}
+
 		LayoutMatrix matrix = new LayoutMatrix ();
 		LinkedList<LayoutState> states = new LinkedList<LayoutState> ();
 		{
@@ -38,7 +50,7 @@ class BranchLayoutAlgorithm
 			state.setX (0);
 			state.setY (0);
 			states.add (state);
-			mainBranch.getLayoutInfo ().visit ();
+			mainBranch.visit ();
 			matrix.take (0, 0, state.size () - 1);
 			branchSet.remove (mainBranch);
 		}
@@ -78,8 +90,7 @@ class BranchLayoutAlgorithm
 					}
 					++index;
 					RelationBranch childBranch = child.getRelationBranch ();
-					LayoutInfo childLayoutInfo = childBranch.getLayoutInfo ();
-					if (childLayoutInfo.isVisited ())
+					if (childBranch.isVisited ())
 					{
 						if (child.getParents ()[0] == node)
 						{
@@ -94,7 +105,7 @@ class BranchLayoutAlgorithm
 						continue;
 					}
 					branchSet.remove (childBranch);
-					childLayoutInfo.visit ();
+					childBranch.visit ();
 					if (child.getParents ()[0] == node)
 					{
 						child.setRelation (node, RelationType.BRANCH);
@@ -129,7 +140,7 @@ ExitAnchorBranch:
 					{
 						if (child.getLayoutInfo ().getY () >= 0)
 						{
-							branch.getLayoutInfo ().visit ();
+							branch.visit ();
 
 							toRemove = branch;
 							LayoutState state = new LayoutState (branch);

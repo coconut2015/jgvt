@@ -17,7 +17,6 @@ package org.yuanheng.jgvt.relation;
 
 import java.util.*;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.yuanheng.jgvt.CommitUtils;
 import org.yuanheng.jgvt.Main;
 
@@ -31,7 +30,7 @@ import org.yuanheng.jgvt.Main;
  *
  * @author	Heng Yuan
  */
-class BranchDiscoveryAlgorithm
+public class BranchDiscoveryAlgorithm
 {
 	static void debug (String msg)
 	{
@@ -117,13 +116,14 @@ class BranchDiscoveryAlgorithm
 	 * 			relation tree
 	 * @param	startNode
 	 * 			the main branch start node.
-	 * @throws	GitAPIException
-	 * 			in case of git error
 	 */
-	public static void inferBranches (RelationTree tree, RelationNode startNode) throws GitAPIException
+	public static void inferBranches (RelationTree tree)
 	{
+		if (tree.size () == 0)
+			return;
+
 		// See if we can trace from the main branch and collect branches.
-		discoverInitialBranches (startNode, true);
+		discoverInitialBranches (tree.getStartNode (), true);
 
 		// Now find remaining nodes with multiple parents.
 		ArrayList<RelationNode> multiParentNodes = new ArrayList<RelationNode> ();
@@ -154,6 +154,92 @@ class BranchDiscoveryAlgorithm
 			discoverInitialBranches (node, false);
 		}
 
+		mergeBranches (tree);
+	}
+
+	/**
+	 * Discover the initial branches by having the the start (i.e. last node)
+	 * of the main branch.  Once the main branch is set, we can discover
+	 * side branches.
+	 *
+	 * @param	startNode
+	 * 			the last node of the main branch
+	 */
+	private static void discoverInitialBranches (RelationNode startNode, boolean reachRoot)
+	{
+		ArrayList<RelationNode> stack = new ArrayList<RelationNode> ();
+
+		// initiate the tree with the main branch on the left.
+		RelationNode node = startNode;
+		RelationBranch mainBranch = new RelationBranch (startNode);
+		for (;;)
+		{
+			stack.add (node);
+			RelationNode[] parents = node.getParents ();
+			if (parents.length > 0)
+			{
+				if (parents[0].getRelationBranch () != null)
+				{
+					break;
+				}
+				if (!reachRoot &&
+					(parents.length > 1 ||
+					 parents[0].getChildren ().length > 1))
+				{
+					break;
+				}
+
+				// set this child as the parent's first
+				parents[0].setNthChild (node, 0);
+				node = parents[0];
+				mainBranch.add (node);
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		// now walk the tree
+		while (stack.size () > 0)
+		{
+			node = stack.remove (stack.size () - 1);
+			RelationBranch branch = node.getRelationBranch ();
+			if (node.isVisited ())
+				continue;
+
+			if (branch == null)
+			{
+				branch = new RelationBranch (node);
+			}
+			node.visit ();
+
+			// scan parents
+			if (node.getParents ().length == 1 &&
+				node.getParents ()[0].getChildren ().length == 1 &&
+				node.getParents ()[0].getRelationBranch () == null)
+			{
+				branch.add (node.getParents ()[0]);
+				stack.add (node.getParents ()[0]);
+			}
+			else
+			{
+				for (RelationNode parent : node.getParents ())
+				{
+					RelationBranch parentBranch = parent.getRelationBranch ();
+					if (parentBranch != null)
+					{
+						continue;
+					}
+					new RelationBranch (parent);
+					stack.add (parent);
+				}
+			}
+		}
+	}
+
+	public static void mergeBranches (RelationTree tree)
+	{
 		@SuppressWarnings ("unchecked")
 		HashSet<RelationBranch>[] branchSets = (HashSet<RelationBranch>[]) new HashSet<?>[2];
 		branchSets[0] = tree.getBranchSet ();
@@ -249,87 +335,6 @@ class BranchDiscoveryAlgorithm
 			}
 		}
 		tree.resetVisit ();
-	}
-
-	/**
-	 * Discover the initial branches by having the the start (i.e. last node)
-	 * of the main branch.  Once the main branch is set, we can discover
-	 * side branches.
-	 *
-	 * @param	startNode
-	 * 			the last node of the main branch
-	 */
-	private static void discoverInitialBranches (RelationNode startNode, boolean reachRoot)
-	{
-		ArrayList<RelationNode> stack = new ArrayList<RelationNode> ();
-
-		// initiate the tree with the main branch on the left.
-		RelationNode node = startNode;
-		RelationBranch mainBranch = new RelationBranch (startNode);
-		for (;;)
-		{
-			stack.add (node);
-			RelationNode[] parents = node.getParents ();
-			if (parents.length > 0)
-			{
-				if (parents[0].getRelationBranch () != null)
-				{
-					break;
-				}
-				if (!reachRoot &&
-					(parents.length > 1 ||
-					 parents[0].getChildren ().length > 1))
-				{
-					break;
-				}
-
-				// set this child as the parent's first
-				parents[0].setNthChild (node, 0);
-				node = parents[0];
-				mainBranch.add (node);
-			}
-			else
-			{
-				break;
-			}
-		}
-
-		// now walk the tree
-		while (stack.size () > 0)
-		{
-			node = stack.remove (stack.size () - 1);
-			RelationBranch branch = node.getRelationBranch ();
-			if (node.isVisited ())
-				continue;
-
-			if (branch == null)
-			{
-				branch = new RelationBranch (node);
-			}
-			node.visit ();
-
-			// scan parents
-			if (node.getParents ().length == 1 &&
-				node.getParents ()[0].getChildren ().length == 1 &&
-				node.getParents ()[0].getRelationBranch () == null)
-			{
-				branch.add (node.getParents ()[0]);
-				stack.add (node.getParents ()[0]);
-			}
-			else
-			{
-				for (RelationNode parent : node.getParents ())
-				{
-					RelationBranch parentBranch = parent.getRelationBranch ();
-					if (parentBranch != null)
-					{
-						continue;
-					}
-					new RelationBranch (parent);
-					stack.add (parent);
-				}
-			}
-		}
 	}
 
 	/**

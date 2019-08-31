@@ -172,6 +172,11 @@ public class RelationBranch implements Comparable<RelationBranch>
 		return list.get (list.size () - 1);
 	}
 
+	public void reset ()
+	{
+		m_layoutInfo.reset ();
+	}
+
 	public boolean isVisited ()
 	{
 		return m_layoutInfo.isVisited ();

@@ -36,6 +36,7 @@ class GVTPopupMenu extends JPopupMenu
 
 	private final JMenu m_parentMenu;
 	private final JMenu m_childMenu;
+	private final JMenu m_joinMenu;
 
 	private RelationNode m_node;
 
@@ -66,8 +67,28 @@ class GVTPopupMenu extends JPopupMenu
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
-			GVTCenterMenuItem item = (GVTCenterMenuItem) e.getSource ();
+			GVTPopupMenuItem item = (GVTPopupMenuItem) e.getSource ();
 			m_controller.select (item.getNode (), true);
+		}
+	};
+
+	private ActionListener m_joinBranchListener = new ActionListener ()
+	{
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			final RelationNode node = m_node;
+			GVTPopupMenuItem item = (GVTPopupMenuItem) e.getSource ();
+			m_controller.joinBranch (node, item.getNode ());
+			SwingUtilities.invokeLater (new Runnable ()
+			{
+				@Override
+				public void run ()
+				{
+					m_controller.select (node, true);
+				}
+			});
+
 		}
 	};
 
@@ -78,12 +99,14 @@ class GVTPopupMenu extends JPopupMenu
 
 		m_parentMenu = new JMenu ("Parents");
 		m_childMenu = new JMenu ("Children");
+		m_joinMenu = new JMenu ("Join branch");
 
 		add (new JMenuItem (m_rememberAction));
 		add (new JMenuItem (m_compareRememberAction));
 		addSeparator ();
 		add (m_parentMenu);
 		add (m_childMenu);
+		add (m_joinMenu);
 	}
 
 	public void show (RelationNode node, int x, int y)
@@ -97,16 +120,33 @@ class GVTPopupMenu extends JPopupMenu
 		m_parentMenu.removeAll ();
 		for (RelationNode parent : node.getParents ())
 		{
-			GVTCenterMenuItem item = new GVTCenterMenuItem (parent);
+			GVTPopupMenuItem item = new GVTPopupMenuItem (parent);
 			item.addActionListener (m_centerNodeListener);
 			m_parentMenu.add (item);
 		}
 		m_childMenu.removeAll ();
 		for (RelationNode child : node.getChildren ())
 		{
-			GVTCenterMenuItem item = new GVTCenterMenuItem (child);
+			GVTPopupMenuItem item = new GVTPopupMenuItem (child);
 			item.addActionListener (m_centerNodeListener);
 			m_childMenu.add (item);
+		}
+
+		m_joinMenu.removeAll ();
+		RelationNode[] joinNodes = node.canJoinParentBranch ();
+		if (joinNodes != null)
+		{
+			m_joinMenu.setEnabled (true);
+			for (RelationNode parent : joinNodes)
+			{
+				GVTPopupMenuItem item = new GVTPopupMenuItem (parent);
+				item.addActionListener (m_joinBranchListener);
+				m_joinMenu.add (item);
+			}
+		}
+		else
+		{
+			m_joinMenu.setEnabled (false);
 		}
 
 		show (m_graphComp.getGraphControl (), x, y);

@@ -204,6 +204,11 @@ public class RelationNode implements Comparable<RelationNode>
 		}
 	}
 
+	public void reset ()
+	{
+		m_layoutInfo.reset ();
+	}
+
 	public boolean isVisited ()
 	{
 		return m_layoutInfo.isVisited ();
@@ -229,20 +234,43 @@ public class RelationNode implements Comparable<RelationNode>
 		m_layoutInfo.setWeight (weight);
 	}
 
+	public RelationNode[] canJoinParentBranch ()
+	{
+		if (getRelationBranch () == null ||
+			getParents ().length == 0 ||
+			this != getRelationBranch ().getFirst ())
+		{
+			return null;
+		}
+
+		RelationNode n1 = null;
+		RelationNode n2 = null;
+		int count = 0;
+		for (RelationNode parent : getParents ())
+		{
+			if (parent == parent.getRelationBranch ().getLast ())
+			{
+				if (count == 0)
+					n1 = parent;
+				else
+					n2 = parent;
+				++count;
+			}
+		}
+		switch (count)
+		{
+			case 1:
+				return new RelationNode[] { n1 };
+			case 2:
+				return new RelationNode[] { n1, n2 };
+			default:
+				return null;
+		}
+	}
+
 	@Override
 	public int compareTo (RelationNode o)
 	{
-		if (this == o)
-			return 0;
-
-		if (getWeight () != o.getWeight ())
-		{
-			return getWeight () - o.getWeight ();
-		}
-		if (m_commit.getCommitTime () != o.m_commit.getCommitTime ())
-		{
-			return m_commit.getCommitTime () - o.m_commit.getCommitTime ();
-		}
 		return m_commit.compareTo (o.m_commit);
 	}
 
@@ -281,5 +309,4 @@ public class RelationNode implements Comparable<RelationNode>
 			return o1.getCommit ().getCommitTime () - o2.getCommit ().getCommitTime ();
 		}
 	};
-
 }
