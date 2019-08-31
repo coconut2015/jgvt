@@ -91,7 +91,7 @@ public class RelationTreeFactory
 		return nodes;
 	}
 
-	public RelationTree createTree (Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
+	public RelationTree generateTree (Iterable<RevCommit> commitLogs) throws GitAPIException, IOException
 	{
 		RelationTree tree = new RelationTree ();
 

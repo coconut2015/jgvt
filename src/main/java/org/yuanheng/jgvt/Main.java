@@ -66,6 +66,9 @@ public class Main
 
 	public static void main (String[] args) throws Exception
 	{
+		// disable JGraphX drag-n-drop error logging
+		Logger.getGlobal ().setLevel (Level.OFF);;
+
 		GitRepo gitRepo = null;
 		File dir = null;
 		File file = null;
@@ -162,12 +165,11 @@ public class Main
 			System.exit (0);
 		}
 
-		// disable JGraphX drag-n-drop error logging
-		Logger.getGlobal ().setLevel (Level.OFF);;
-
-		Controller controller = new Controller (gitRepo, dir, file);
+		Controller controller = new Controller ();
 		GUI gui = new GUI (controller);
-		controller.generateTree (importantBranchNames);
+		controller.setRepo (dir);
+		controller.setImportantBranchNames (importantBranchNames);
+		controller.generateTree ();
 		gui.setVisible (true);
 		controller.centerTree ();
 		SwingUtilities.invokeLater (new Runnable ()

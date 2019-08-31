@@ -29,9 +29,14 @@ public class RelationTree
 {
 	private final Map<ObjectId, RelationNode> m_nodeMap;
 
-	RelationTree ()
+	public RelationTree ()
 	{
 		m_nodeMap = new HashMap<ObjectId, RelationNode> ();
+	}
+
+	public void clear ()
+	{
+		m_nodeMap.clear ();
 	}
 
 	private RelationNode getNode (RevCommit commit, GitRepo gitRepo) throws GitAPIException

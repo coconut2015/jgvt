@@ -42,8 +42,18 @@ public class RegexRowFilter extends TableRowFilter
     	}
     	else
     	{
-			Pattern regex = Pattern.compile (p, m_flag);
-			m_matcher = regex.matcher("");
+    		try
+    		{
+    			Pattern regex = Pattern.compile (p, m_flag);
+    			if (regex != null)
+    			{
+    				m_matcher = regex.matcher("");
+    			}
+    		}
+    		catch (Exception ex)
+    		{
+    			m_matcher = null;
+    		}
     	}
     }
 

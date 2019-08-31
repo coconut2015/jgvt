@@ -143,6 +143,17 @@ public class GUI
 		}
 	};
 
+	private Action m_refreshAction = new AbstractAction ("Refresh")
+	{
+		private static final long serialVersionUID = 3415698093054735622L;
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			m_controller.refresh ();
+		}
+	};
+
 	private Action m_rememberAction = new AbstractAction ("Remember selected")
 	{
 		private static final long serialVersionUID = 3415698093054735622L;
@@ -643,6 +654,11 @@ public class GUI
 		menu.add (new JMenuItem (m_exportAction2));
 		menu.addSeparator ();
 		menu.add (new JMenuItem (m_exitAction));
+		m_menuBar.add (menu);
+
+		menu = new JMenu ("Graph");
+		menu.setMnemonic ('G');
+		menu.add (new JMenuItem (m_refreshAction));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Search");

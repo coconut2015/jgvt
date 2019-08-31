@@ -18,7 +18,6 @@ package org.yuanheng.jgvt.gui.graph;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.yuanheng.jgvt.relation.LayoutInfo;
 import org.yuanheng.jgvt.relation.RelationNode;
 import org.yuanheng.jgvt.relation.RelationTree;
@@ -133,7 +132,7 @@ public class GVTGraphFactory
 		return mxUtils.getLabelPaintBounds (str, GRAPH_STYLE.getDefaultVertexStyle (), false, new mxPoint (), null, 1.0, false);
 	}
 
-	public void updateGraphModel (RelationTree relTree, int toolTipFlag) throws GitAPIException
+	public void updateGraphModel (RelationTree relTree, int toolTipFlag)
 	{
 		GVTTree tree = new GVTTree ();
 		m_graph.setTree (tree);

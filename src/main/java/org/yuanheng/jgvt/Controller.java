@@ -74,6 +74,7 @@ public class Controller
 	private final Pref m_prefs;
 	private RelationNode m_selectedNode;
 	private RelationNode m_rememberedNode;
+	private final ArrayList<String> m_importantBranchNames;
 
 	private final HyperlinkListener m_commitUrlHandler = new HyperlinkListener ()
 	{
@@ -94,12 +95,44 @@ public class Controller
 		}
 	};
 
-	public Controller (GitRepo gitRepo, File dir, File file)
+	public Controller ()
 	{
-		m_gitRepo = gitRepo;
-		m_dir = dir;
-		m_file = file;
 		m_prefs = new Pref ();
+		m_importantBranchNames = new ArrayList<String> ();
+		m_importantBranchNames.addAll (RelationTreeFactory.getDefaultImportantBranchNames ());
+		m_tree = new RelationTree ();
+	}
+
+	public boolean setRepo (File dir)
+	{
+		try
+		{
+			m_gitRepo = new GitRepo (dir);
+			m_dir = m_gitRepo.getRoot ();
+			m_file = null;
+
+			m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
+			m_gui.setBranch (m_gitRepo.getBranch ());
+			if (m_file == null)
+				m_gui.setFile ("");
+			else
+				m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
+			return true;
+		}
+		catch (Exception ex)
+		{
+			return false;
+		}
+	}
+
+	public void setImportantBranchNames (List<String> importantBranchNames)
+	{
+		m_importantBranchNames.clear ();
+		m_importantBranchNames.addAll (importantBranchNames);
+		if (m_importantBranchNames.size () == 0)
+		{
+			m_importantBranchNames.addAll (RelationTreeFactory.getDefaultImportantBranchNames ());
+		}
 	}
 
 	public void setGUI (GUI gui)
@@ -122,29 +155,24 @@ public class Controller
 		return m_tree;
 	}
 
-	public void generateTree (List<String> importantBranchNames) throws Exception
+	public boolean generateTree ()
 	{
-		m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
-		m_gui.setBranch (m_gitRepo.getBranch ());
-		if (m_file == null)
-			m_gui.setFile ("");
-		else
-			m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
-
-		if (importantBranchNames.size () == 0)
+		try
 		{
-			importantBranchNames.addAll (RelationTreeFactory.getDefaultImportantBranchNames ());
+			RelationTreeFactory treeFactory = new RelationTreeFactory (m_gitRepo, m_importantBranchNames);
+			m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file));
 		}
-
+		catch (Exception ex)
+		{
+			return false;
+		}
 		GVTGraph graph = m_gui.getGraph ();
-		RelationTreeFactory nodeFactory = new RelationTreeFactory (m_gitRepo, importantBranchNames);
-		m_tree = nodeFactory.createTree (m_gitRepo.getCommitLogs (m_file));
-
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
+		return true;
  	}
 
-	public void centerTree () throws Exception
+	public void centerTree ()
 	{
 		ObjectId head = m_gitRepo.getHead ();
 		if (head != null)
@@ -160,6 +188,31 @@ public class Controller
 			});
 		}
  	}
+
+	public void refresh ()
+	{
+		String id = null;
+		if (m_selectedNode != null)
+		{
+			id = m_selectedNode.getCommit ().getName ();
+		}
+		generateTree ();
+		RelationNode node = null;
+		if (id != null)
+		{
+			node = m_tree.getNode (ObjectId.fromString (id));
+		}
+		if (node != null)
+		{
+			m_selectedNode = node;
+			select (m_selectedNode, true);
+		}
+		else
+		{
+			m_selectedNode = null;
+			centerTree ();
+		}
+	}
 
 	public void select (RelationNode node, boolean center)
 	{
