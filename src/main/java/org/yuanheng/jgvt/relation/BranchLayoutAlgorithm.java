@@ -33,13 +33,13 @@ public class BranchLayoutAlgorithm
 
 		for (RelationNode node : tree.getNodes ())
 		{
-			node.reset ();
+			node.resetLayout ();
 		}
 		RelationNode startNode = tree.getStartNode ();
 		Set<RelationBranch> branchSet = tree.getBranchSet ();
 		for (RelationBranch branch : branchSet)
 		{
-			branch.reset ();
+			branch.resetLayout ();
 		}
 
 		LayoutMatrix matrix = new LayoutMatrix ();

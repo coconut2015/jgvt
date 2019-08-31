@@ -204,9 +204,10 @@ public class RelationNode implements Comparable<RelationNode>
 		}
 	}
 
-	public void reset ()
+	public void resetLayout ()
 	{
 		m_layoutInfo.reset ();
+		m_relationMap.clear ();
 	}
 
 	public boolean isVisited ()

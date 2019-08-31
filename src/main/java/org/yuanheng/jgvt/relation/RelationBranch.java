@@ -172,7 +172,7 @@ public class RelationBranch implements Comparable<RelationBranch>
 		return list.get (list.size () - 1);
 	}
 
-	public void reset ()
+	public void resetLayout ()
 	{
 		m_layoutInfo.reset ();
 	}
