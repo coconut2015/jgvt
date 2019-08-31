@@ -80,7 +80,7 @@ public class RelationBranch implements Comparable<RelationBranch>
 		m_orderedList = null;
 	}
 
-	public void merge (RelationBranch otherBranch)
+	private void merge (RelationBranch otherBranch)
 	{
 		ArrayList<RelationNode> nodes = new ArrayList<RelationNode> ();
 		nodes.addAll (otherBranch.m_nodes);
@@ -89,6 +89,28 @@ public class RelationBranch implements Comparable<RelationBranch>
 			add (node);
 		}
 		m_orderedList = null;
+	}
+
+	public void mergeParent (RelationBranch parentBranch)
+	{
+		RelationNode firstNode = getFirst ();
+		if (firstNode.getParents ().length == 2 &&
+			firstNode.getParents ()[1] == parentBranch.getLast ())
+		{
+			firstNode.swapParentOrder ();
+		}
+		merge (parentBranch);
+	}
+
+	public void mergeChild (RelationBranch childBranch)
+	{
+		RelationNode firstNode = childBranch.getFirst ();
+		if (firstNode.getParents ().length == 2 &&
+			firstNode.getParents ()[1] == getLast ())
+		{
+			firstNode.swapParentOrder ();
+		}
+		merge (childBranch);
 	}
 
 	public List<RelationNode> getOrderedList ()

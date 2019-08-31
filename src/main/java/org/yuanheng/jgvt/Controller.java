@@ -212,12 +212,7 @@ public class Controller
 
 	public void joinBranch (RelationNode node, RelationNode parentNode)
 	{
-		if (node.getParents ().length == 2 &&
-			node.getParents ()[1] == parentNode)
-		{
-			node.swapParentOrder ();
-		}
-		node.getRelationBranch ().merge (parentNode.getRelationBranch ());
+		node.getRelationBranch ().mergeParent (parentNode.getRelationBranch ());
 		BranchDiscoveryAlgorithm.mergeBranches (m_tree);
 		BranchLayoutAlgorithm.layoutBranches (m_tree);
 
