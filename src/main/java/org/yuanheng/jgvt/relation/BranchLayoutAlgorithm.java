@@ -116,12 +116,15 @@ public class BranchLayoutAlgorithm
 					}
 					LayoutState childState = new LayoutState (childBranch);
 					int checkX = x + 1;
-					int y2 = y + childState.size () - 1;
-					while (matrix.isTaken (checkX, y, y2))
+					int y1 = y - childBranch.indexOf (child);
+					if (y1 < 0)
+						y1 = 0;
+					int y2 = y1 + childState.size () - 1;
+					while (matrix.isTaken (checkX, y1, y2))
 						++checkX;
-					matrix.take (checkX, y, y2);
+					matrix.take (checkX, y1, y2);
 					childState.setX (checkX);
-					childState.setY (y);
+					childState.setY (y1);
 					states.add (childState);
 				}
 			}
