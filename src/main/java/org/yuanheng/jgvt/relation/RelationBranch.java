@@ -172,6 +172,11 @@ public class RelationBranch implements Comparable<RelationBranch>
 		return list.get (list.size () - 1);
 	}
 
+	public int indexOf (RelationNode child)
+	{
+		return getOrderedList ().indexOf (child);
+	}
+
 	public void resetLayout ()
 	{
 		m_layoutInfo.reset ();

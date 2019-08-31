@@ -33,7 +33,8 @@ import org.yuanheng.jgvt.gui.GUI;
  */
 public class Main
 {
-	public static Configs configs = new Configs ();
+	public final static Configs configs = new Configs ();
+	public final static Pref pref = new Pref ();
 
 	private static Options createOptions ()
 	{

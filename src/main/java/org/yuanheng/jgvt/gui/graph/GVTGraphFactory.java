@@ -18,6 +18,7 @@ package org.yuanheng.jgvt.gui.graph;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.relation.LayoutInfo;
 import org.yuanheng.jgvt.relation.RelationNode;
 import org.yuanheng.jgvt.relation.RelationTree;
@@ -37,17 +38,6 @@ import com.mxgraph.view.mxStylesheet;
  */
 public class GVTGraphFactory
 {
-	public static double START_X = 100.0;
-	public static double START_Y = 50.0;
-	/**
-	 * The distance to the immediate child in the same branch.
-	 */
-	public static double CHILD_SPACING = 50.0;
-	/**
-	 * The distance between two adjacent branches.
-	 */
-	public static double BRANCH_SPACING = 140.0;
-
 	public final static String MERGE_EDGE_STYLE = "mergeEdgeStyle";
 	public final static String MERGE_EDGE_SHAPE = "mergeEdgeShape";
 	public final static String STYLE_VERTEX_SHAPE = "GVTVertex";
@@ -56,11 +46,11 @@ public class GVTGraphFactory
 	public final static String BRANCH_STYLE = "branchEdge";
 	public final static String MERGE_STYLE = "mergeEdge";
 
-	public static String STYLE_TAG_FONTCOLOR = "tagFontColor";
-	public static String STYLE_REGULAR_FILLCOLOR = "regularFillColor";
-	public static String STYLE_SELECTED_FILLCOLOR = "selectedFillColor";
+	public final static String STYLE_TAG_FONTCOLOR = "tagFontColor";
+	public final static String STYLE_REGULAR_FILLCOLOR = "regularFillColor";
+	public final static String STYLE_SELECTED_FILLCOLOR = "selectedFillColor";
 
-	public static mxStylesheet GRAPH_STYLE;
+	public final static mxStylesheet GRAPH_STYLE;
 
 	static
 	{
@@ -150,8 +140,8 @@ public class GVTGraphFactory
 		{
 			GVTVertex v = tree.createVertex (node, toolTipFlag);
 			LayoutInfo layoutInfo = node.getLayoutInfo ();
-			double x = layoutInfo.getX () * BRANCH_SPACING + START_X;
-			double y = layoutInfo.getY () * CHILD_SPACING + START_Y;
+			double x = layoutInfo.getX () * Main.pref.getBranchSpacing () + Main.pref.getStartX ();
+			double y = layoutInfo.getY () * Main.pref.getChildSpacing () + Main.pref.getStartY ();
 
 			Object vertex = m_graph.insertVertex (parent, null, v, x, y, vertexBound.getWidth (), vertexBound.getHeight ());
 			tree.link (v.getId (), vertex);

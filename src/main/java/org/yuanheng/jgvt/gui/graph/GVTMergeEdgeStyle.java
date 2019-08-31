@@ -17,6 +17,8 @@ package org.yuanheng.jgvt.gui.graph;
 
 import java.util.List;
 
+import org.yuanheng.jgvt.Defaults;
+
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxEdgeStyle.mxEdgeStyleFunction;
@@ -26,8 +28,7 @@ import com.mxgraph.view.mxEdgeStyle.mxEdgeStyleFunction;
  */
 class GVTMergeEdgeStyle implements mxEdgeStyleFunction
 {
-	public static double ANGLE = 15 * Math.PI / 180;
-
+	@Override
 	public void apply (mxCellState state, mxCellState source, mxCellState target, List<mxPoint> hints, List<mxPoint> result)
 	{
 		final double epsilon = 0.001;
@@ -47,7 +48,7 @@ class GVTMergeEdgeStyle implements mxEdgeStyleFunction
 		double midY = y1 + dy / 2;
 
 		double length = Math.sqrt (dx * dx + dy * dy);
-		double height = Math.tan (ANGLE) * length * 0.5;
+		double height = Math.tan (Defaults.DEFAULT_MERGE_ARROW_BEND_ANGLE) * length * 0.5;
 
 		mxPoint pt = new mxPoint ();
 

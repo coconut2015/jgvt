@@ -15,7 +15,6 @@
  */
 package org.yuanheng.jgvt.gui.changetree;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import javax.swing.tree.TreeCellRenderer;
 
 import org.yuanheng.jgvt.ChangeInfo;
 import org.yuanheng.jgvt.Controller;
+import org.yuanheng.jgvt.Defaults;
 import org.yuanheng.jgvt.gui.treetable.JTreeTable;
 import org.yuanheng.jgvt.gui.treetable.TreeTableModel;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -41,13 +41,6 @@ import org.yuanheng.jgvt.relation.RelationNode;
  */
 public class ChangeTree extends JTreeTable
 {
-	public static Color COLOR_ADDED = new Color (36, 159, 64);
-	public static Color COLOR_DELETED = new Color (203, 36, 49);
-	public static Color COLOR_RENAMED = new Color (36, 203, 49);
-
-	public static Color BG_COLOR_LINE_ADDED = new Color (230, 255, 237);
-	public static Color BG_COLOR_LINE_DELETED = new Color (255, 238, 240);
-
 	private static final long serialVersionUID = -4267180235096815912L;
 
 	private TableCellRenderer m_addedCellRenderer = new DefaultTableCellRenderer.UIResource ()
@@ -56,7 +49,7 @@ public class ChangeTree extends JTreeTable
 
 		{
             setHorizontalAlignment(JLabel.RIGHT);
-            setBackground (BG_COLOR_LINE_ADDED);
+            setBackground (Defaults.BG_COLOR_LINE_ADDED);
             setFont(getFont().deriveFont(Font.BOLD));
 		}
 	};
@@ -67,7 +60,7 @@ public class ChangeTree extends JTreeTable
 
 		{
             setHorizontalAlignment(JLabel.RIGHT);
-            setBackground (BG_COLOR_LINE_DELETED);
+            setBackground (Defaults.BG_COLOR_LINE_DELETED);
             setFont(getFont().deriveFont(Font.BOLD));
 		}
 	};
@@ -88,13 +81,13 @@ public class ChangeTree extends JTreeTable
 				{
 					case ADD:
 					case COPY:
-						comp.setForeground (COLOR_ADDED);
+						comp.setForeground (Defaults.COLOR_ADDED);
 						break;
 					case RENAME:
-						comp.setForeground (COLOR_RENAMED);
+						comp.setForeground (Defaults.COLOR_RENAMED);
 						break;
 					case DELETE:
-						comp.setForeground (COLOR_DELETED);
+						comp.setForeground (Defaults.COLOR_DELETED);
 						break;
 					default:
 						break;

@@ -17,6 +17,7 @@ package org.yuanheng.jgvt.gui.graph;
 
 import java.util.HashMap;
 
+import org.yuanheng.jgvt.CommitUtils;
 import org.yuanheng.jgvt.relation.RelationNode;
 
 /**
@@ -47,7 +48,7 @@ public class GVTTree
 		m_nodeMap.put (id, node);
 		m_reverseMap.put (node, id);
 
-		v.setName (node.toString ());
+		v.setName (CommitUtils.getName (node));
 		v.setToolTip (node.getTooltip (toolTipFlag));
 
 		return v;

@@ -31,10 +31,7 @@ public class RelationNode implements Comparable<RelationNode>
 	private final static RelationNode[] s_emptyArray = new RelationNode[0];
 	private final static Ref[] s_emptyRefArray = new Ref[0];
 
-	public static int HASH_LENGTH = 6;
-
 	private final RevCommit m_commit;
-	private final String m_hash;
 	private Ref[] m_tags = s_emptyRefArray;
 	private Ref[] m_branches = s_emptyRefArray;
 	private String m_annotation;
@@ -50,20 +47,12 @@ public class RelationNode implements Comparable<RelationNode>
 	RelationNode (RevCommit commit)
 	{
 		m_commit = commit;
-
-		m_hash = commit.abbreviate (HASH_LENGTH).name ();
 		m_relationMap = new HashMap<RelationNode, RelationType> ();
 	}
 
 	public RevCommit getCommit ()
 	{
 		return m_commit;
-	}
-
-	@Override
-	public String toString ()
-	{
-		return m_hash;
 	}
 
 	public void addTag (Ref tag)

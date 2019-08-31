@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.BorderUIResource;
 
 import org.yuanheng.jgvt.Controller;
+import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.export.*;
 import org.yuanheng.jgvt.gui.graph.GVTGraph;
 import org.yuanheng.jgvt.gui.graph.GVTGraphComponent;
@@ -839,7 +840,7 @@ public class GUI
 	{
 		if (m_exportFileChooser == null)
 		{
-			JFileChooser chooser = new JFileChooser (m_controller.getPrefs ().getDefaultDirectory ());
+			JFileChooser chooser = new JFileChooser (Main.pref.getExportDirectory ());
 			chooser.setAcceptAllFileFilterUsed (false);
 
 			chooser.addChoosableFileFilter (new DotFileFilter ());

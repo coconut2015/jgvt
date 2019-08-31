@@ -16,6 +16,8 @@
 package org.yuanheng.jgvt;
 
 /**
+ * This class holds instance configurations.
+ *
  * @author	Heng Yuan
  */
 public class Configs

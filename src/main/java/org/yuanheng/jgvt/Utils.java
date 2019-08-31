@@ -27,6 +27,11 @@ import java.nio.file.Paths;
  */
 public class Utils
 {
+	public static String getUserDirectory ()
+	{
+		return System.getProperty ("user.home");
+	}
+
 	public static String getString (InputStream is) throws IOException
 	{
 		Reader reader = new InputStreamReader (is);

@@ -46,8 +46,6 @@ public class CommitUtils
 	public final static int TOOLTIP_ALL = 0xFFFFFFFF;
 	private static String CSS;
 
-	public static int DEFAULT_ABBREV_LEN = 6;
-
 	static
 	{
 		try
@@ -62,7 +60,7 @@ public class CommitUtils
 
 	public static String getName (ObjectId id)
 	{
-		return id.abbreviate (DEFAULT_ABBREV_LEN).name ();
+		return id.abbreviate (Main.pref.getAbbrevLength ()).name ();
 	}
 
 	public static String getName (RelationNode node)

@@ -69,7 +69,6 @@ public class Controller
 	private File m_dir;
 	private File m_file;
 	private RelationTree m_tree;
-	private final Pref m_prefs;
 	private RelationNode m_selectedNode;
 	private RelationNode m_rememberedNode;
 	private final ArrayList<String> m_importantBranchNames;
@@ -95,7 +94,6 @@ public class Controller
 
 	public Controller ()
 	{
-		m_prefs = new Pref ();
 		m_importantBranchNames = new ArrayList<String> ();
 		m_importantBranchNames.addAll (RelationTreeFactory.getDefaultImportantBranchNames ());
 		m_tree = new RelationTree ();
@@ -250,11 +248,6 @@ public class Controller
 	public void setCurrentDirectory (File dir)
 	{
 		m_dir = dir;
-	}
-
-	public Pref getPrefs ()
-	{
-		return m_prefs;
 	}
 
 	public GitRepo getGitRepo ()
