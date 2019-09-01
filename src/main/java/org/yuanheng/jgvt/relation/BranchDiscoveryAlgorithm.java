@@ -58,6 +58,20 @@ public class BranchDiscoveryAlgorithm
 		return node.getParents ().length == 2 && node.getCommit ().getFullMessage ().startsWith ("Merge pull request");
 	}
 
+	/**
+	 * Check if a child branch is a side branch of parent.
+	 *
+	 * Note that in some cases, it may be further necessary to call
+	 * {@link #isInBranchMiddle(RelationNode)} to further check if
+	 * the childbranch's parent node is in the middle of the parent
+	 * branch.
+	 *
+	 * @param	parent
+	 * 			parent branch
+	 * @param	child
+	 * 			child branch
+	 * @return	true if the child is a side branch of the parent.
+	 */
 	private static boolean isSideBranch (RelationBranch parent, RelationBranch child)
 	{
 		RelationNode firstNode = child.getFirst ();
@@ -65,6 +79,14 @@ public class BranchDiscoveryAlgorithm
 			   (firstNode.getParents ()[0].getRelationBranch () == parent);
 	}
 
+	/**
+	 * Check if a node is in the middle of its branch (i.e. not first and
+	 * not last).
+	 *
+	 * @param	node
+	 * 			node to check
+	 * @return	true if the node is in the middle of its branch.
+	 */
 	private static boolean isInBranchMiddle (RelationNode node)
 	{
 		RelationBranch branch = node.getRelationBranch ();
@@ -77,6 +99,7 @@ public class BranchDiscoveryAlgorithm
 		branchMergeCaseSingleChild (branches, checkBranches);
 		branchMergeCaseSideMergeSingleChild (branches, checkBranches);
 		branchMergeCaseSideBranchMergeChild (branches, checkBranches);
+		branchMergeCaseParentSideBranchParent (branches, checkBranches);
 
 		// perform slightly more complicated merging
 		branchMergeCaseTwoChildren (branches, checkBranches);
@@ -403,6 +426,9 @@ public class BranchDiscoveryAlgorithm
 	 * Branch C is a side branch of B, and B has only 1 child that is A.
 	 *
 	 * Then we merge A and B.
+	 *
+	 * Case: React-6a0976 SBMC left
+	 * Case: React-8d3465 SBMC right
 	 */
 	private static void branchMergeCaseSideBranchMergeChild (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
@@ -426,9 +452,7 @@ public class BranchDiscoveryAlgorithm
 				{
 					if (isSideBranch (leftParentBranch, rightParentBranch))
 					{
-						RelationNode midNode = rightParentBranch.getFirst ().getParents ()[0];
-						if (midNode != leftParentBranch.getFirst () &&
-							midNode != leftParentBranch.getLast ())
+						if (isInBranchMiddle (rightParentBranch.getFirst ().getParents ()[0]))
 						{
 							branch.mergeParent (leftParentBranch);
 
@@ -438,9 +462,7 @@ public class BranchDiscoveryAlgorithm
 					}
 					else if (isSideBranch (rightParentBranch, leftParentBranch))
 					{
-						RelationNode midNode = leftParentBranch.getFirst ().getParents ()[0];
-						if (midNode != rightParentBranch.getFirst () &&
-							midNode != rightParentBranch.getLast ())
+						if (isInBranchMiddle (leftParentBranch.getFirst ().getParents ()[0]))
 						{
 							branch.mergeParent (rightParentBranch);
 
@@ -493,6 +515,46 @@ public class BranchDiscoveryAlgorithm
 				branch.mergeChild (rightChildBranch);
 
 				debug (CommitUtils.getName (lastNode) + " TCOMP right");
+				checkBranches.add (branch);
+			}
+		}
+	}
+
+	/**
+	 * For this case, the first node of branch A has two parent nodes B and C.
+	 * B already has a child in its branch, but C only has a single child in A.
+	 *
+	 */
+	private static void branchMergeCaseParentSideBranchParent (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
+	{
+		for (RelationBranch branch : branches)
+		{
+			if (branch.size () == 0)
+				continue;
+
+			RelationNode firstNode = branch.getFirst ();
+			if (firstNode.getParents ().length != 2)
+				continue;
+
+			RelationNode leftParent = firstNode.getParents ()[0];
+			RelationNode rightParent = firstNode.getParents ()[1];
+			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+			RelationBranch rightParentBranch = rightParent.getRelationBranch ();
+
+			if (leftParent.getChildren ().length == 1 &&
+				rightParent != rightParentBranch.getLast ())
+			{
+				branch.mergeParent (leftParentBranch);
+
+				debug (CommitUtils.getName (firstNode) + " PSBP left");
+				checkBranches.add (branch);
+			}
+			else if (rightParent.getParents ().length == 1 &&
+					 leftParent != leftParentBranch.getLast ())
+			{
+				branch.mergeParent (rightParentBranch);
+
+				debug (CommitUtils.getName (firstNode) + " PSBP right");
 				checkBranches.add (branch);
 			}
 		}
