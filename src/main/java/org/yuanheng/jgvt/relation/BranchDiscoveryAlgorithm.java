@@ -62,7 +62,7 @@ public class BranchDiscoveryAlgorithm
 	 * Check if a child branch is a side branch of parent.
 	 *
 	 * Note that in some cases, it may be further necessary to call
-	 * {@link #isInBranchMiddle(RelationNode)} to further check if
+	 * {@link #isMiddleInBranch(RelationNode)} to further check if
 	 * the childbranch's parent node is in the middle of the parent
 	 * branch.
 	 *
@@ -79,18 +79,47 @@ public class BranchDiscoveryAlgorithm
 			   (firstNode.getParents ()[0].getRelationBranch () == parent);
 	}
 
-	/**
-	 * Check if a node is in the middle of its branch (i.e. not first and
-	 * not last).
-	 *
-	 * @param	node
-	 * 			node to check
-	 * @return	true if the node is in the middle of its branch.
-	 */
-	private static boolean isInBranchMiddle (RelationNode node)
+	private static boolean isFirstInBranch (RelationNode node)
+	{
+		return node == node.getRelationBranch ().getFirst ();
+	}
+
+	private static boolean isLastInBranch (RelationNode node)
+	{
+		return node == node.getRelationBranch ().getLast ();
+	}
+
+	private static boolean isMiddleInBranch (RelationNode node)
 	{
 		RelationBranch branch = node.getRelationBranch ();
 		return node != branch.getFirst () && node != branch.getLast ();
+	}
+
+	/**
+	 * Check if a node has 1 and only 1 joinable child.
+	 *
+	 * @param	node
+	 * 			node to check
+	 * @return	child node if it is only joinable child.
+	 * 			null otherwise.
+	 */
+	private static RelationNode hasSingleJoinChild (RelationNode node)
+	{
+		if (!isLastInBranch (node))
+			return null;
+
+		RelationNode toJoin = null;
+		for (RelationNode child : node.getChildren ())
+		{
+			if (isFirstInBranch (child))
+			{
+				if (toJoin == null)
+					toJoin = child;
+				else
+					return null;
+			}
+		}
+		return toJoin;
 	}
 
 	private static void safeSearches (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
@@ -400,8 +429,8 @@ public class BranchDiscoveryAlgorithm
 				RelationNode leftParent = firstNode.getParents ()[0];
 				RelationNode rightParent = firstNode.getParents ()[1];
 				if (leftParent.getChildren ().length == 1 &&
-					leftParent == leftParent.getRelationBranch ().getLast () &&
-					rightParent != rightParent.getRelationBranch ().getLast ())
+					isLastInBranch (leftParent) &&
+					!isLastInBranch (rightParent))
 				{
 					branch.mergeParent (leftParent.getRelationBranch ());
 
@@ -409,8 +438,8 @@ public class BranchDiscoveryAlgorithm
 					checkBranches.add (branch);
 				}
 				else if (rightParent.getChildren ().length == 1 &&
-						 rightParent == rightParent.getRelationBranch ().getLast () &&
-						 leftParent != leftParent.getRelationBranch ().getLast ())
+						 isLastInBranch (rightParent) &&
+						 !isLastInBranch (leftParent))
 				{
 					branch.mergeParent (rightParent.getRelationBranch ());
 
@@ -446,13 +475,13 @@ public class BranchDiscoveryAlgorithm
 				RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
 				if (leftParent.getChildren ().length == 1 &&
-					leftParent == leftParent.getRelationBranch ().getLast () &&
+					isLastInBranch (leftParent) &&
 					rightParent.getChildren ().length == 1 &&
-					rightParent == rightParent.getRelationBranch ().getLast ())
+					isLastInBranch (rightParent))
 				{
 					if (isSideBranch (leftParentBranch, rightParentBranch))
 					{
-						if (isInBranchMiddle (rightParentBranch.getFirst ().getParents ()[0]))
+						if (isMiddleInBranch (rightParentBranch.getFirst ().getParents ()[0]))
 						{
 							branch.mergeParent (leftParentBranch);
 
@@ -462,7 +491,7 @@ public class BranchDiscoveryAlgorithm
 					}
 					else if (isSideBranch (rightParentBranch, leftParentBranch))
 					{
-						if (isInBranchMiddle (leftParentBranch.getFirst ().getParents ()[0]))
+						if (isMiddleInBranch (leftParentBranch.getFirst ().getParents ()[0]))
 						{
 							branch.mergeParent (rightParentBranch);
 
@@ -500,8 +529,8 @@ public class BranchDiscoveryAlgorithm
 			RelationBranch rightChildBranch = rightChild.getRelationBranch ();
 
 			if (leftChild.getParents ().length == 1 &&
-				leftChild == leftChildBranch.getFirst () &&
-				rightChild != rightChildBranch.getFirst ())
+				isFirstInBranch (leftChild) &&
+				!isFirstInBranch (rightChild))
 			{
 				branch.mergeChild (leftChildBranch);
 
@@ -509,8 +538,8 @@ public class BranchDiscoveryAlgorithm
 				checkBranches.add (branch);
 			}
 			else if (rightChild.getParents ().length == 1 &&
-					 rightChild == rightChildBranch.getFirst () &&
-					 leftChild != leftChildBranch.getFirst ())
+					 isFirstInBranch (rightChild) &&
+					 !isFirstInBranch (leftChild))
 			{
 				branch.mergeChild (rightChildBranch);
 
@@ -524,6 +553,8 @@ public class BranchDiscoveryAlgorithm
 	 * For this case, the first node of branch A has two parent nodes B and C.
 	 * B already has a child in its branch, but C only has a single child in A.
 	 *
+	 * Case 1: React-33d439 PSBP left (left parent has only 1 child)
+	 * Case 2: React-0c8934 PSBP left (left parent has only 1 joinable child)
 	 */
 	private static void branchMergeCaseParentSideBranchParent (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
@@ -541,21 +572,27 @@ public class BranchDiscoveryAlgorithm
 			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
 			RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
-			if (leftParent.getChildren ().length == 1 &&
-				rightParent != rightParentBranch.getLast ())
+			if (!isLastInBranch (rightParent))
 			{
-				branch.mergeParent (leftParentBranch);
+				if (leftParent.getChildren ().length == 1 ||
+					hasSingleJoinChild (leftParent) == firstNode)
+				{
+					branch.mergeParent (leftParentBranch);
 
-				debug (CommitUtils.getName (firstNode) + " PSBP left");
-				checkBranches.add (branch);
+					debug (CommitUtils.getName (firstNode) + " PSBP left");
+					checkBranches.add (branch);
+				}
 			}
-			else if (rightParent.getParents ().length == 1 &&
-					 leftParent != leftParentBranch.getLast ())
+			else if (!isLastInBranch (leftParent))
 			{
-				branch.mergeParent (rightParentBranch);
+				if (rightParent.getChildren ().length == 1 ||
+					hasSingleJoinChild (rightParent) == firstNode)
+				{
+					branch.mergeParent (rightParentBranch);
 
-				debug (CommitUtils.getName (firstNode) + " PSBP right");
-				checkBranches.add (branch);
+					debug (CommitUtils.getName (firstNode) + " PSBP right");
+					checkBranches.add (branch);
+				}
 			}
 		}
 	}
@@ -585,13 +622,13 @@ public class BranchDiscoveryAlgorithm
 			RelationBranch leftChildBranch = leftChild.getRelationBranch ();
 			RelationBranch rightChildBranch = rightChild.getRelationBranch ();
 
-			if (leftChild == leftChildBranch.getFirst () &&
-				rightChild == rightChildBranch.getFirst ())
+			if (isFirstInBranch (leftChild) &&
+				isFirstInBranch (rightChild))
 			{
 				if (rightChild.getParents ().length == 1 &&
 					leftChild.getParents ().length == 2 &&
 					leftChild.getParents ()[1] == lastNode &&
-					leftChild.getParents ()[0] == leftChild.getParents ()[0].getRelationBranch ().getLast ())
+					isLastInBranch (leftChild.getParents ()[0]))
 				{
 					branch.mergeChild (rightChildBranch);
 
@@ -601,7 +638,7 @@ public class BranchDiscoveryAlgorithm
 				else if (leftChild.getParents ().length == 1 &&
 						 rightChild.getParents ().length == 2 &&
 						 rightChild.getParents ()[1] == lastNode &&
-						 rightChild.getParents ()[0] == rightChild.getParents ()[0].getRelationBranch ().getLast ())
+						 isLastInBranch (rightChild.getParents ()[0]))
 				{
 					branch.mergeChild (leftChildBranch);
 
@@ -638,12 +675,12 @@ public class BranchDiscoveryAlgorithm
 
 				RelationNode leftNode = lastNode.getChildren ()[0];
 				// make sure the left child is the first node of the child branch
-				if (leftNode != leftChildBranch.getFirst ())
+				if (!isFirstInBranch (leftNode))
 					continue;
 
 				RelationNode rightNode = lastNode.getChildren ()[1];
 				// make sure the right child is the first node of the child branch
-				if (rightNode != rightChildBranch.getFirst ())
+				if (!isFirstInBranch(rightNode))
 					continue;
 
 				// now check if leftBranch merges to rightBranch or
@@ -674,12 +711,14 @@ public class BranchDiscoveryAlgorithm
 	}
 
 	/**
-	 * This is similar to branchMergeCaseTwoChildren, but with more than 2 children.
-	 * Separate them to optimize the cases a little.
+	 * When we have multiple children (greater than 2).  We check if 50%
+	 * (not counting the child branch to be merged) of child branches
+	 * merge to a particular branch.  That popular child branch is merged
+	 * with parent.
 	 */
 	private static void branchMergeCaseMultipleChildren (Set<RelationBranch> branches, Set<RelationBranch> checkBranches)
 	{
-		HashSet<RelationBranch> childBranchSet = new HashSet<RelationBranch> ();
+		HashMap<RelationBranch, Integer> childBranchMap = new HashMap<RelationBranch, Integer> ();
 		for (RelationBranch branch : branches)
 		{
 			if (branch.size () == 0)
@@ -689,72 +728,50 @@ public class BranchDiscoveryAlgorithm
 
 			if (lastNode.getChildren ().length > 2)
 			{
-				childBranchSet.clear ();
+				childBranchMap.clear ();
 				for (RelationNode child : lastNode.getChildren ())
 				{
-					RelationBranch childBranch = child.getRelationBranch ();
-					if (child != childBranch.getFirst ())
+					// Only consider all first in branch cases.
+					// Otherwise, sometimes things can get screwed up.
+					if (!isFirstInBranch (child))
 						break;
-					childBranchSet.add (child.getRelationBranch ());
+					childBranchMap.put (child.getRelationBranch (), 0);
 				}
-				if (childBranchSet.size () != lastNode.getChildren ().length)
+				if (childBranchMap.size () != lastNode.getChildren ().length)
 				{
-					childBranchSet.clear ();
+					childBranchMap.clear ();
 					continue;
 				}
-				boolean mergeToEachOther = true;
-				RelationBranch toMergeChildBranch = null;
-				for (RelationBranch childBranch : childBranchSet)
+				int halfCount = lastNode.getChildren ().length / 2;
+DoneSearch:
+				for (RelationBranch childBranch : childBranchMap.keySet ())
 				{
 					RelationNode childLastNode = childBranch.getLast ();
 					if (childLastNode.getChildren ().length == 0)
 					{
 						continue;
 					}
-					if (childLastNode.getChildren ().length > 1)
+					if (childLastNode.getChildren ().length == 1)
 					{
-						if (toMergeChildBranch == null)
+						RelationBranch toMergeChildBranch = childLastNode.getChildren ()[0].getRelationBranch ();
+						Integer value = childBranchMap.get (toMergeChildBranch);
+						if (value == null)
 						{
-							toMergeChildBranch = childBranch;
+							continue;
 						}
-						else if (toMergeChildBranch != childBranch)
+						int count = value + 1;
+						if (count >= halfCount)
 						{
-							mergeToEachOther = false;
+							// found it.
+							branch.mergeChild (toMergeChildBranch);
+							debug (CommitUtils.getName (lastNode) + " MC");
+							checkBranches.add (branch);
+							break DoneSearch;
 						}
-						continue;
-					}
-					RelationBranch mergeToBranch = childLastNode.getChildren ()[0].getRelationBranch ();
-					if (!childBranchSet.contains (mergeToBranch))
-					{
-						if (toMergeChildBranch == null)
-						{
-							toMergeChildBranch = childBranch;
-						}
-						else if (toMergeChildBranch != childBranch)
-						{
-							mergeToEachOther = false;
-							break;
-						}
-						continue;
-					}
-					if (toMergeChildBranch == null)
-					{
-						toMergeChildBranch = mergeToBranch;
-					}
-					else if (toMergeChildBranch != mergeToBranch)
-					{
-						mergeToEachOther = false;
-						break;
+						childBranchMap.put (toMergeChildBranch, count);
 					}
 				}
-				if (!mergeToEachOther || toMergeChildBranch == null)
-				{
-					childBranchSet.clear ();
-					continue;
-				}
-				branch.mergeChild (toMergeChildBranch);
-				debug (CommitUtils.getName (lastNode) + " MC");
-				checkBranches.add (branch);
+				childBranchMap.clear ();
 			}
 		}
 	}
@@ -792,10 +809,10 @@ public class BranchDiscoveryAlgorithm
 				// now check if leftBranch merges to rightBranch or
 				// vice versa
 				RelationNode leftLast = leftChildBranch.getLast ();
-				if (leftNode == leftChildBranch.getFirst () &&
+				if (isFirstInBranch (leftNode) &&
 					leftLast.getChildren ().length == 1 &&
 					leftLast.getChildren ()[0].getRelationBranch () == rightChildBranch &&
-					rightNode != rightChildBranch.getFirst ())
+					!isFirstInBranch (rightNode))
 				{
 					branch.mergeChild (leftChildBranch);
 
@@ -805,10 +822,10 @@ public class BranchDiscoveryAlgorithm
 				}
 
 				RelationNode rightLast = rightChildBranch.getLast ();
-				if (rightNode == rightChildBranch.getFirst () &&
+				if (isFirstInBranch (rightNode) &&
 					rightLast.getChildren ().length == 1 &&
 					rightLast.getChildren ()[0].getRelationBranch () == leftChildBranch &&
-					leftNode != leftChildBranch.getFirst ())
+					!isFirstInBranch (leftNode))
 				{
 					branch.mergeChild (rightChildBranch);
 
@@ -846,30 +863,25 @@ public class BranchDiscoveryAlgorithm
 				RelationNode rightParent = firstNode.getParents ()[1];
 				RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
-				if (branch == leftParentBranch ||
-					branch == rightParentBranch ||
-					leftParentBranch == rightParentBranch)
-					continue;
-
-				if (rightParent == rightParentBranch.getLast ())
+				if (isLastInBranch (rightParent))
 				{
 					if (isSideBranch (leftParentBranch, rightParentBranch) &&
-						lastNode.getChildren ()[0].getRelationBranch () == leftParentBranch)
+						isMergeTo (branch, leftParentBranch))
 					{
 						branch.mergeParent (rightParentBranch);
 
-						debug (CommitUtils.getName (firstNode) + " MP swap");
+						debug (CommitUtils.getName (firstNode) + " MP right");
 						checkBranches.add (branch);
 					}
 				}
-				else if (leftParent == leftParentBranch.getLast ())
+				else if (isLastInBranch (leftParent))
 				{
 					if (isSideBranch(rightParentBranch, leftParentBranch) &&
-						lastNode.getChildren ()[0].getRelationBranch () == rightParentBranch)
+						isMergeTo (branch, rightParentBranch))
 					{
 						branch.mergeParent (leftParentBranch);
 
-						debug (CommitUtils.getName (firstNode) + " MP");
+						debug (CommitUtils.getName (firstNode) + " MP left");
 						checkBranches.add (branch);
 					}
 				}
@@ -894,13 +906,14 @@ public class BranchDiscoveryAlgorithm
 			if (firstNode.getParents ().length == 2)
 			{
 				RelationNode leftParent = firstNode.getParents ()[0];
-				RelationBranch leftParentBranch = leftParent.getRelationBranch ();
 				RelationNode rightParent = firstNode.getParents ()[1];
-				RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
-				if (leftParent == leftParentBranch.getLast () &&
-					rightParent == rightParentBranch.getLast ())
+				if (isLastInBranch (leftParent) &&
+					isLastInBranch (rightParent))
 				{
+					RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+					RelationBranch rightParentBranch = rightParent.getRelationBranch ();
+
 					if (isSideBranch (rightParentBranch, leftParentBranch))
 					{
 						branch.mergeParent (rightParentBranch);
@@ -948,7 +961,7 @@ public class BranchDiscoveryAlgorithm
 				leftParentBranch == rightParentBranch)
 				continue;
 
-			if (leftParent != leftParentBranch.getLast ())
+			if (!isLastInBranch (leftParent))
 				continue;
 
 			boolean hasMergeToRight = false;
@@ -1011,6 +1024,19 @@ public class BranchDiscoveryAlgorithm
 			}
 		}
 	}
+
+	private static boolean isMergeTo (RelationBranch branchFrom, RelationBranch branchTo)
+	{
+		RelationNode lastNode = branchFrom.getLast ();
+		return lastNode.getChildren ().length == 1 &&
+			   lastNode.getChildren ()[0].getRelationBranch () == branchTo;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//
+	// Unsafe algorithms
+	//
+	////////////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * For this case, branch A and branch B shares a common parent C
