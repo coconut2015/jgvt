@@ -23,6 +23,11 @@ import java.awt.Color;
 public class Defaults
 {
 	/**
+	 * The jgvt subdirectory in .git/
+	 */
+	public final static String GIT_DIR_JGVT_DIR = "jgvt";
+
+	/**
 	 * The number of characters to show for a hash.
 	 */
 	public final static int DEFAULT_ABBREV_LEN = 6;

@@ -34,7 +34,7 @@ import org.yuanheng.jgvt.gui.GUI;
 public class Main
 {
 	public final static Configs configs = new Configs ();
-	public final static Pref pref = new Pref ();
+	public static Preference pref = Preference.getPreference (null);
 
 	private static Options createOptions ()
 	{
@@ -165,6 +165,8 @@ public class Main
 			listTags (gitRepo);
 			System.exit (0);
 		}
+
+		pref = Preference.getPreference (gitRepo.getRoot ());
 
 		Controller controller = new Controller ();
 		GUI gui = new GUI (controller);
