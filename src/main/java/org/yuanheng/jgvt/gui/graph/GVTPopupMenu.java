@@ -80,15 +80,7 @@ class GVTPopupMenu extends JPopupMenu
 			final RelationNode node = m_node;
 			GVTPopupMenuItem item = (GVTPopupMenuItem) e.getSource ();
 			m_controller.joinBranch (node, item.getNode ());
-			SwingUtilities.invokeLater (new Runnable ()
-			{
-				@Override
-				public void run ()
-				{
-					m_controller.select (node, true);
-				}
-			});
-
+			SwingUtilities.invokeLater (() -> { m_controller.select (node, true); });
 		}
 	};
 

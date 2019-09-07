@@ -28,6 +28,13 @@ import java.util.Properties;
  */
 public class Preference
 {
+	public enum SaveType
+	{
+		UserHome,
+		GitDir,
+		Repo
+	}
+
 	private final static String FILE_PREFERENCE = ".jgvtconfig";
 
 	private final static String KEY_EXPORT_DIRECTORY = "exportDirectory";
@@ -71,12 +78,12 @@ public class Preference
 		return value;
 	}
 
-	public static Preference getPreference (File gitRoot)
+	public static Preference getPreference (GitRepo gitRepo)
 	{
-		return new Preference (gitRoot);
+		return new Preference (gitRepo);
 	}
 
-	private final File m_gitRoot;
+	private final GitRepo m_gitRepo;
 	private Properties m_settings;
 	private String m_exportDirectory;
 	private int m_abbrevLength;
@@ -85,9 +92,17 @@ public class Preference
 	private double m_startX = Defaults.START_X;
 	private double m_startY = Defaults.START_Y;
 
-	private Preference (File gitRoot)
+	private Preference (GitRepo gitRepo)
 	{
-		m_gitRoot = gitRoot;
+		m_gitRepo = gitRepo;
+		File gitRoot = null;
+		File gitDir = null;
+
+		if (gitRepo != null)
+		{
+			gitRoot = gitRepo.getRoot ();
+			gitDir = gitRepo.getGitDir ();
+		}
 
 		Properties userProperties = new Properties ();
 		Properties inGitProperties = userProperties;
@@ -119,21 +134,22 @@ public class Preference
 				{
 				}
 			}
-			File jgvtDir = new File (gitRoot, Defaults.GIT_DIR_JGVT_DIR);
-			File gitDirJgvtDirConfig = new File (jgvtDir, FILE_PREFERENCE);
-			if (gitDirJgvtDirConfig.isFile ())
-			{
-				try (FileReader reader = new FileReader (gitDirJgvtDirConfig))
-				{
-					gitDirProperties = new Properties (inGitProperties);
-					inGitProperties.load (reader);
-				}
-				catch (Exception ex)
-				{
-				}
-			}
-			gitDirProperties = inGitProperties;
 		}
+
+		File jgvtDir = new File (gitDir, Defaults.GIT_DIR_JGVT_DIR);
+		File gitDirJgvtDirConfig = new File (jgvtDir, FILE_PREFERENCE);
+		if (gitDirJgvtDirConfig.isFile ())
+		{
+			try (FileReader reader = new FileReader (gitDirJgvtDirConfig))
+			{
+				gitDirProperties = new Properties (inGitProperties);
+				inGitProperties.load (reader);
+			}
+			catch (Exception ex)
+			{
+			}
+		}
+		gitDirProperties = inGitProperties;
 		m_settings = gitDirProperties;
 
 		loadProperties ();
@@ -148,38 +164,71 @@ public class Preference
 		}
 
 		m_abbrevLength = getInt (m_settings, KEY_ABBREV_LEN, 1, 48, Defaults.DEFAULT_ABBREV_LEN);
-		m_branchSpacing = getDouble (m_settings, KEY_BRANCH_SPACING, 10, 1000, Defaults.BRANCH_SPACING);
-		m_childSpacing = getDouble (m_settings, KEY_CHILD_SPACING, 10, 1000, Defaults.CHILD_SPACING);
-		m_startX = getDouble (m_settings, KEY_START_X, 10, 1000, Defaults.START_X);
-		m_startY = getDouble (m_settings, KEY_START_Y, 10, 1000, Defaults.START_Y);
+		m_branchSpacing = getDouble (m_settings, KEY_BRANCH_SPACING,  Defaults.MIN_BRANCH_SPACING,  Defaults.MAX_BRANCH_SPACING, Defaults.BRANCH_SPACING);
+		m_childSpacing = getDouble (m_settings, KEY_CHILD_SPACING, Defaults.MIN_CHILD_SPACING, Defaults.MAX_CHILD_SPACING, Defaults.CHILD_SPACING);
+		m_startX = getDouble (m_settings, KEY_START_X, Defaults.MIN_START_X, Defaults.MAX_START_X, Defaults.START_X);
+		m_startY = getDouble (m_settings, KEY_START_Y, Defaults.MIN_START_Y, Defaults.MAX_START_Y, Defaults.START_Y);
 	}
 
-	public boolean save ()
+	public boolean save (SaveType saveType)
 	{
-		try
+		File dir = null;
+		switch (saveType)
 		{
-			if (m_gitRoot == null ||
-				!m_gitRoot.isDirectory ())
-				return false;
-			File jgvtConfigDir = new File (m_gitRoot, Defaults.GIT_DIR_JGVT_DIR);
-			if (!jgvtConfigDir.isDirectory ())
+			case UserHome:
 			{
-				if (!jgvtConfigDir.mkdir ())
+				dir = new File (Utils.getUserDirectory ());
+				if (!dir.isDirectory ())
+				{
 					return false;
+				}
+				break;
 			}
-			return save (new File (jgvtConfigDir, FILE_PREFERENCE));
+			case GitDir:
+			{
+				File gitDir = m_gitRepo.getGitDir ();
+				if (gitDir == null ||
+					!gitDir.isDirectory ())
+					return false;
+				dir = new File (gitDir, Defaults.GIT_DIR_JGVT_DIR);
+				if (!dir.isDirectory ())
+				{
+					try
+					{
+						if (!dir.mkdir ())
+						{
+							return false;
+						}
+					}
+					catch (Exception ex)
+					{
+						return false;
+					}
+				}
+				break;
+			}
+			case Repo:
+			{
+				File gitDir = m_gitRepo.getGitDir ();
+				if (gitDir == null ||
+					!gitDir.isDirectory ())
+					return false;
+				dir = gitDir;
+			}
+			default:
+			{
+				return false;
+			}
 		}
-		catch (Exception ex)
-		{
-			return false;
-		}
+		return save (dir);
 	}
 
-	public boolean save (File file)
+	public boolean save (File dir)
 	{
 		storeProperties ();
 		try
 		{
+			File file = new File (dir, FILE_PREFERENCE);
 			m_settings.store (new FileWriter (file), "jgvt configuration");
 			return true;
 		}
@@ -214,9 +263,11 @@ public class Preference
 		return m_abbrevLength;
 	}
 
-	public void setAbbrevLength (int abbrevLength)
+	public boolean setAbbrevLength (int abbrevLength)
 	{
+		boolean changed = (m_abbrevLength != abbrevLength);
 		m_abbrevLength = abbrevLength;
+		return changed;
 	}
 
 	public double getBranchSpacing ()
@@ -224,9 +275,11 @@ public class Preference
 		return m_branchSpacing;
 	}
 
-	public void setBranchSpacing (double branchSpacing)
+	public boolean setBranchSpacing (double branchSpacing)
 	{
+		boolean changed = (m_branchSpacing != branchSpacing);
 		m_branchSpacing = branchSpacing;
+		return changed;
 	}
 
 	public double getChildSpacing ()
@@ -234,9 +287,11 @@ public class Preference
 		return m_childSpacing;
 	}
 
-	public void setChildSpacing (double childSpacing)
+	public boolean setChildSpacing (double childSpacing)
 	{
+		boolean changed = (m_childSpacing != childSpacing);
 		m_childSpacing = childSpacing;
+		return changed;
 	}
 
 	public double getStartX ()
@@ -244,9 +299,11 @@ public class Preference
 		return m_startX;
 	}
 
-	public void setStartX (double startX)
+	public boolean setStartX (double startX)
 	{
+		boolean changed = (m_startX != startX);
 		m_startX = startX;
+		return changed;
 	}
 
 	public double getStartY ()
@@ -254,8 +311,10 @@ public class Preference
 		return m_startY;
 	}
 
-	public void setStartY (double startY)
+	public boolean setStartY (double startY)
 	{
+		boolean changed = (m_startY != startY);
 		m_startY = startY;
+		return changed;
 	}
 }

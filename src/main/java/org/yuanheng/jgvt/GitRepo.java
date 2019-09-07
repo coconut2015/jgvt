@@ -237,6 +237,11 @@ public class GitRepo implements AutoCloseable
         return getChanges (t1, t2);
 	}
 
+	public File getGitDir ()
+	{
+		return m_repo.getDirectory ();
+	}
+
 	@Override
 	public void close () throws Exception
 	{

@@ -31,22 +31,34 @@ public class Defaults
 	 * The number of characters to show for a hash.
 	 */
 	public final static int DEFAULT_ABBREV_LEN = 6;
+
 	/**
 	 * The distance between two adjacent branches.
 	 */
 	public final static double BRANCH_SPACING = 140.0;
+	public final static double MAX_BRANCH_SPACING = 1000.0;
+	public final static double MIN_BRANCH_SPACING = 10.0;
+
 	/**
 	 * The distance to the immediate child in the same branch.
 	 */
 	public final static double CHILD_SPACING = 50.0;
+	public final static double MAX_CHILD_SPACING = 1000.0;
+	public final static double MIN_CHILD_SPACING = 10.0;
+
 	/**
 	 * The top left node X position;
 	 */
 	public final static double START_X = 100.0;
+	public final static double MAX_START_X = 1000.0;
+	public final static double MIN_START_X = 0;
+
 	/**
 	 * The top left node Y position;
 	 */
 	public final static double START_Y = 50.0;
+	public final static double MAX_START_Y = 1000.0;
+	public final static double MIN_START_Y = 0;
 
 	/**
 	 * Change tree's added font color

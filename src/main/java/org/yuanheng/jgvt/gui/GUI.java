@@ -114,6 +114,19 @@ public class GUI
 		}
 	};
 
+	private Action m_preferenceAction = new AbstractAction ("Preferences")
+	{
+		private static final long serialVersionUID = -1756402293339927940L;
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			JDialog dialog = new PreferenceDialog (m_controller, m_frame);
+			dialog.setLocationRelativeTo (m_frame);
+			dialog.setVisible (true);
+		}
+	};
+
 	private Action m_exportAction = new AbstractAction ()
 	{
 		private static final long serialVersionUID = -3891179358209369117L;
@@ -658,6 +671,8 @@ public class GUI
 		menu = new JMenu ("File");
 		menu.setMnemonic ('F');
 		menu.add (new JMenuItem (m_exportAction2));
+		menu.addSeparator ();
+		menu.add (new JMenuItem (m_preferenceAction));
 		menu.addSeparator ();
 		menu.add (new JMenuItem (m_exitAction));
 		m_menuBar.add (menu);

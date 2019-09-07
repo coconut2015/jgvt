@@ -166,7 +166,7 @@ public class Main
 			System.exit (0);
 		}
 
-		pref = Preference.getPreference (gitRepo.getRoot ());
+		pref = Preference.getPreference (gitRepo);
 
 		Controller controller = new Controller ();
 		GUI gui = new GUI (controller);
@@ -175,14 +175,7 @@ public class Main
 		controller.generateTree ();
 		gui.setVisible (true);
 		controller.centerTree ();
-		SwingUtilities.invokeLater (new Runnable ()
-		{
-			@Override
-			public void run ()
-			{
-				gui.getGraphComponent ().requestFocus ();
-			}
-		});
+		SwingUtilities.invokeLater (() -> { gui.getGraphComponent ().requestFocus (); });
 
 		gui.waitForClose ();
 		System.exit (0);

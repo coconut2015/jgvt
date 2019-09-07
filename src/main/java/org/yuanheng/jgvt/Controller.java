@@ -174,14 +174,7 @@ public class Controller
 		if (head != null)
 		{
 			final RelationNode node = m_tree.getNode (head);
-			SwingUtilities.invokeLater (new Runnable ()
-			{
-				@Override
-				public void run ()
-				{
-					select (node, true);
-				}
-			});
+			SwingUtilities.invokeLater (() -> { select (node, true); });
 		}
  	}
 
