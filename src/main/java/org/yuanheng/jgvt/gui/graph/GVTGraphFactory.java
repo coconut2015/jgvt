@@ -127,7 +127,7 @@ public class GVTGraphFactory
 		GVTTree tree = new GVTTree ();
 		m_graph.setTree (tree);
 
-		mxRectangle vertexBound = computeBounds (6);
+		mxRectangle vertexBound = computeBounds (Main.pref.getAbbrevLength ());
 
 		mxGraphModel model = (mxGraphModel) m_graph.getModel ();
 		model.beginUpdate ();

@@ -229,7 +229,10 @@ public class Preference
 		try
 		{
 			File file = new File (dir, FILE_PREFERENCE);
-			m_settings.store (new FileWriter (file), "jgvt configuration");
+			try (FileWriter writer = new FileWriter (file))
+			{
+				m_settings.store (writer, "jgvt configuration");
+			}
 			return true;
 		}
 		catch (IOException ex)
