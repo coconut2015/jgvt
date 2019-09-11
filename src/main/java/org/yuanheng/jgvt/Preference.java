@@ -35,8 +35,6 @@ public class Preference
 		Repo
 	}
 
-	private final static String FILE_PREFERENCE = ".jgvtconfig";
-
 	private final static String KEY_EXPORT_DIRECTORY = "exportDirectory";
 	private final static String KEY_ABBREV_LEN = "abbrevLength";
 	private final static String KEY_BRANCH_SPACING = "branchSpacing";
@@ -108,7 +106,7 @@ public class Preference
 		Properties inGitProperties = userProperties;
 		Properties gitDirProperties = inGitProperties;
 
-		File userConfig = new File (new File (Utils.getUserDirectory ()), FILE_PREFERENCE);
+		File userConfig = new File (new File (Utils.getUserDirectory ()), Defaults.FILE_PREFERENCE);
 		if (userConfig.isFile ())
 		{
 			try (FileReader reader = new FileReader (userConfig))
@@ -122,7 +120,7 @@ public class Preference
 
 		if (gitRoot != null && gitRoot.isDirectory ())
 		{
-			File inGitConfig = new File (gitRoot, FILE_PREFERENCE);
+			File inGitConfig = new File (gitRoot, Defaults.FILE_PREFERENCE);
 			if (inGitConfig.isFile ())
 			{
 				try (FileReader reader = new FileReader (inGitConfig))
@@ -137,7 +135,7 @@ public class Preference
 		}
 
 		File jgvtDir = new File (gitDir, Defaults.GIT_DIR_JGVT_DIR);
-		File gitDirJgvtDirConfig = new File (jgvtDir, FILE_PREFERENCE);
+		File gitDirJgvtDirConfig = new File (jgvtDir, Defaults.FILE_PREFERENCE);
 		if (gitDirJgvtDirConfig.isFile ())
 		{
 			try (FileReader reader = new FileReader (gitDirJgvtDirConfig))
@@ -228,7 +226,7 @@ public class Preference
 		storeProperties ();
 		try
 		{
-			File file = new File (dir, FILE_PREFERENCE);
+			File file = new File (dir, Defaults.FILE_PREFERENCE);
 			try (FileWriter writer = new FileWriter (file))
 			{
 				m_settings.store (writer, "jgvt configuration");

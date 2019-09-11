@@ -159,14 +159,16 @@ public class BranchDiscoveryAlgorithm
 	 * 			relation tree
 	 * @param	startNode
 	 * 			the main branch start node.
+	 * @param	editList
+	 * 			a list of nodes which should be part of the parent branch.
 	 */
-	public static void inferBranches (RelationTree tree)
+	public static void inferBranches (RelationTree tree, RelationEditList editList)
 	{
 		if (tree.size () == 0)
 			return;
 
 		// See if we can trace from the main branch and collect branches.
-		discoverInitialBranches (tree.getStartNode (), true);
+		discoverInitialBranches (tree.getStartNode (), true, editList);
 
 		// Now find remaining nodes with multiple parents.
 		ArrayList<RelationNode> multiParentNodes = new ArrayList<RelationNode> ();
@@ -184,7 +186,7 @@ public class BranchDiscoveryAlgorithm
 		{
 			if (node.isVisited ())
 				continue;
-			discoverInitialBranches (node, false);
+			discoverInitialBranches (node, false, editList);
 		}
 
 		// find any remaining branches starting from leaves.
@@ -194,7 +196,7 @@ public class BranchDiscoveryAlgorithm
 		{
 			if (node.isVisited ())
 				continue;
-			discoverInitialBranches (node, false);
+			discoverInitialBranches (node, false, editList);
 		}
 
 		mergeBranches (tree);
@@ -207,8 +209,12 @@ public class BranchDiscoveryAlgorithm
 	 *
 	 * @param	startNode
 	 * 			the last node of the main branch
+	 * @param	reachRoot
+	 * 			should reaching root via parent 0 be the goal of the initial search
+	 * @param	editList
+	 * 			a list of nodes which should be part of the parent branch.
 	 */
-	private static void discoverInitialBranches (RelationNode startNode, boolean reachRoot)
+	private static void discoverInitialBranches (RelationNode startNode, boolean reachRoot, RelationEditList editList)
 	{
 		ArrayList<RelationNode> stack = new ArrayList<RelationNode> ();
 
@@ -221,21 +227,47 @@ public class BranchDiscoveryAlgorithm
 			RelationNode[] parents = node.getParents ();
 			if (parents.length > 0)
 			{
-				if (parents[0].getRelationBranch () != null)
+				int joinParent = editList.getJoinParent (node.getCommit ());
+				if (joinParent >= 0)
 				{
-					break;
-				}
-				if (!reachRoot &&
-					(parents.length > 1 ||
-					 parents[0].getChildren ().length > 1))
-				{
-					break;
-				}
+					if (joinParent == 1)
+					{
+						node.swapParentOrder ();
+					}
 
-				// set this child as the parent's first
-				parents[0].setNthChild (node, 0);
-				node = parents[0];
-				mainBranch.add (node);
+					RelationNode parentNode = parents[joinParent];
+					parentNode.setNthChild (node, 0);
+					if (parentNode.getRelationBranch () != null)
+					{
+						mainBranch.mergeParent (parentNode.getRelationBranch ());
+						break;
+					}
+					else
+					{
+						node = parentNode;
+						mainBranch.add (parentNode);
+						continue;
+					}
+				}
+				else
+				{
+					RelationNode parentNode = parents[0];
+					if (parentNode.getRelationBranch () != null)
+					{
+						break;
+					}
+					if (!reachRoot &&
+						(parents.length > 1 ||
+						 parentNode.getChildren ().length > 1))
+					{
+						break;
+					}
+
+					// set this child as the parent's first
+					parentNode.setNthChild (node, 0);
+					node = parentNode;
+					mainBranch.add (node);
+				}
 			}
 			else
 			{
@@ -257,25 +289,49 @@ public class BranchDiscoveryAlgorithm
 			}
 			node.visit ();
 
-			// scan parents
-			if (node.getParents ().length == 1 &&
-				node.getParents ()[0].getChildren ().length == 1 &&
-				node.getParents ()[0].getRelationBranch () == null)
+			int joinParent = editList.getJoinParent (node.getCommit ());
+			if (joinParent >= 0 &&
+				node.getParents ().length > joinParent)
 			{
-				branch.add (node.getParents ()[0]);
-				stack.add (node.getParents ()[0]);
+				if (joinParent == 1)
+				{
+					node.swapParentOrder ();
+				}
+				RelationNode parentNode = node.getParents ()[joinParent];
+				parentNode.setNthChild (node, 0);
+
+				if (parentNode.getRelationBranch () != null)
+				{
+					branch.mergeParent (parentNode.getRelationBranch ());
+				}
+				else
+				{
+					branch.add (parentNode);
+					stack.add (parentNode);
+				}
 			}
 			else
 			{
-				for (RelationNode parent : node.getParents ())
+				// scan parents
+				if (node.getParents ().length == 1 &&
+					node.getParents ()[0].getChildren ().length == 1 &&
+					node.getParents ()[0].getRelationBranch () == null)
 				{
-					RelationBranch parentBranch = parent.getRelationBranch ();
-					if (parentBranch != null)
+					branch.add (node.getParents ()[0]);
+					stack.add (node.getParents ()[0]);
+				}
+				else
+				{
+					for (RelationNode parent : node.getParents ())
 					{
-						continue;
+						RelationBranch parentBranch = parent.getRelationBranch ();
+						if (parentBranch != null)
+						{
+							continue;
+						}
+						new RelationBranch (parent);
+						stack.add (parent);
 					}
-					new RelationBranch (parent);
-					stack.add (parent);
 				}
 			}
 		}

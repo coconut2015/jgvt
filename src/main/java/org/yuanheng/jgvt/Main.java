@@ -27,6 +27,7 @@ import org.apache.commons.cli.*;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.yuanheng.jgvt.gui.GUI;
+import org.yuanheng.jgvt.relation.RelationEditList;
 
 /**
  * @author	Heng Yuan
@@ -35,6 +36,7 @@ public class Main
 {
 	public final static Configs configs = new Configs ();
 	public static Preference pref = Preference.getPreference (null);
+	public static RelationEditList editList = new RelationEditList ();
 
 	private static Options createOptions ()
 	{
@@ -167,12 +169,11 @@ public class Main
 		}
 
 		pref = Preference.getPreference (gitRepo);
+		editList = RelationEditList.read (gitRepo);
 
 		Controller controller = new Controller ();
 		GUI gui = new GUI (controller);
-		controller.setRepo (dir);
-		controller.setImportantBranchNames (importantBranchNames);
-		controller.generateTree ();
+		controller.setRepo (gitRepo, importantBranchNames);
 		gui.setVisible (true);
 		controller.centerTree ();
 		SwingUtilities.invokeLater (() -> { gui.getGraphComponent ().requestFocus (); });

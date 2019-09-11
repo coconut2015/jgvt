@@ -99,11 +99,11 @@ public class Controller
 		m_tree = new RelationTree ();
 	}
 
-	public boolean setRepo (File dir)
+	public boolean setRepo (GitRepo gitRepo, List<String> importantBranchNames)
 	{
 		try
 		{
-			m_gitRepo = new GitRepo (dir);
+			m_gitRepo = gitRepo;
 			m_dir = m_gitRepo.getRoot ();
 			m_file = null;
 
@@ -113,6 +113,9 @@ public class Controller
 				m_gui.setFile ("");
 			else
 				m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
+
+			setImportantBranchNames (importantBranchNames);
+			generateTree ();
 			return true;
 		}
 		catch (Exception ex)
@@ -156,7 +159,8 @@ public class Controller
 		try
 		{
 			RelationTreeFactory treeFactory = new RelationTreeFactory (m_gitRepo, m_importantBranchNames);
-			m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file));
+			m_gitRepo.fetch (true);
+			m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file), Main.editList);
 		}
 		catch (Exception ex)
 		{
@@ -205,6 +209,14 @@ public class Controller
 
 	public void joinBranch (RelationNode node, RelationNode parentNode)
 	{
+		int index = 0;
+		if (node.getParents ().length == 2 &&
+			node.getParents ()[1] == parentNode)
+		{
+			index = 1;
+		}
+		Main.editList.add (node.getCommit (), index);
+
 		node.getRelationBranch ().mergeParent (parentNode.getRelationBranch ());
 		BranchDiscoveryAlgorithm.mergeBranches (m_tree);
 		BranchLayoutAlgorithm.layoutBranches (m_tree);

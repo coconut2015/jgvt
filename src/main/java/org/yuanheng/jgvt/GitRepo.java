@@ -100,7 +100,12 @@ public class GitRepo implements AutoCloseable
 
 	public void fetch ()
 	{
-		if (!m_fetched)
+		fetch (false);
+	}
+
+	public void fetch (boolean force)
+	{
+		if (!m_fetched || force)
 		{
 			try
 			{

@@ -31,7 +31,7 @@ import com.jgoodies.forms.factories.Paddings;
  */
 class SearchDialog extends JDialog
 {
-	private static final long serialVersionUID = -6734047153939444788L;
+	private static final long serialVersionUID = 8102886513932458834L;
 
 	public SearchDialog (JFrame parent, String title, Controller controller)
 	{

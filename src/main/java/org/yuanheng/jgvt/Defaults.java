@@ -26,6 +26,14 @@ public class Defaults
 	 * The jgvt subdirectory in .git/
 	 */
 	public final static String GIT_DIR_JGVT_DIR = "jgvt";
+	/**
+	 * The jgvt preference file
+	 */
+	public final static String FILE_PREFERENCE = ".jgvtconfig";
+	/**
+	 * The jgvt edit list file
+	 */
+	public final static String JGVT_EDITLIST = ".jgvt";
 
 	/**
 	 * The number of characters to show for a hash.

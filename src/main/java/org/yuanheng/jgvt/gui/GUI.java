@@ -64,6 +64,7 @@ public class GUI
 	private boolean m_splitPaneSetup;
 	private JFileChooser m_exportFileChooser;
 	private RememberButton m_rememberButton;
+	private JDialog m_editListDialog;
 
 	private String m_branch;
 	private String m_file;
@@ -170,6 +171,26 @@ public class GUI
 		public void actionPerformed (ActionEvent e)
 		{
 			m_controller.refresh ();
+		}
+	};
+
+	private Action m_editListAction = new AbstractAction ("Show edit list")
+	{
+		private static final long serialVersionUID = -2363655691891537720L;
+
+		{
+			putValue (Action.MNEMONIC_KEY, (int)'s');
+		}
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			if (m_editListDialog == null)
+			{
+				m_editListDialog = new EditListDialog (m_frame, m_controller);
+				m_editListDialog.setLocationRelativeTo (m_frame);
+			}
+			m_editListDialog.setVisible (true);
 		}
 	};
 
@@ -680,6 +701,8 @@ public class GUI
 		menu = new JMenu ("Graph");
 		menu.setMnemonic ('G');
 		menu.add (new JMenuItem (m_refreshAction));
+		menu.addSeparator ();
+		menu.add (new JMenuItem (m_editListAction));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Search");

@@ -22,11 +22,13 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 /**
  * @author	Heng Yuan
  */
-class RowCountListener implements RowSorterListener, PropertyChangeListener
+class RowCountListener implements RowSorterListener, PropertyChangeListener, TableModelListener
 {
 	private final JTable m_table;
 	private final JLabel m_label;
@@ -44,6 +46,12 @@ class RowCountListener implements RowSorterListener, PropertyChangeListener
 
 	@Override
 	public void sorterChanged (RowSorterEvent e)
+	{
+		updateCount ();
+	}
+
+	@Override
+	public void tableChanged (TableModelEvent e)
 	{
 		updateCount ();
 	}
