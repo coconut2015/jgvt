@@ -72,6 +72,7 @@ public class Controller
 	private RelationNode m_selectedNode;
 	private RelationNode m_rememberedNode;
 	private final ArrayList<String> m_importantBranchNames;
+	private BranchLog m_branchLog;
 
 	private final HyperlinkListener m_commitUrlHandler = new HyperlinkListener ()
 	{
@@ -97,6 +98,7 @@ public class Controller
 		m_importantBranchNames = new ArrayList<String> ();
 		m_importantBranchNames.addAll (RelationTreeFactory.getDefaultImportantBranchNames ());
 		m_tree = new RelationTree ();
+		m_branchLog = new BranchLog ();
 	}
 
 	public boolean setRepo (GitRepo gitRepo, List<String> importantBranchNames)
@@ -160,7 +162,8 @@ public class Controller
 		{
 			RelationTreeFactory treeFactory = new RelationTreeFactory (m_gitRepo, m_importantBranchNames);
 			m_gitRepo.fetch (true);
-			m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file), Main.editList);
+			m_branchLog.clear ();
+			m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file), Main.editList, m_branchLog);
 		}
 		catch (Exception ex)
 		{
@@ -218,7 +221,7 @@ public class Controller
 		Main.editList.add (node.getCommit (), index);
 
 		node.getRelationBranch ().mergeParent (parentNode.getRelationBranch ());
-		BranchDiscoveryAlgorithm.mergeBranches (m_tree);
+		BranchDiscoveryAlgorithm.mergeBranches (m_tree, m_branchLog);
 		BranchLayoutAlgorithm.layoutBranches (m_tree);
 
 		GVTGraph graph = m_gui.getGraph ();
@@ -372,5 +375,10 @@ public class Controller
 	public List<ListInfo> getTagList () throws GitAPIException
 	{
 		return getListInfo (m_gitRepo.getTags ());
+	}
+
+	public BranchLog getBranchLog ()
+	{
+		return m_branchLog;
 	}
 }

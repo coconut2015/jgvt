@@ -64,7 +64,12 @@ public class GUI
 	private boolean m_splitPaneSetup;
 	private JFileChooser m_exportFileChooser;
 	private RememberButton m_rememberButton;
+	private JDialog m_searchDialog;
+	private JDialog m_preferenceDialog;
 	private JDialog m_editListDialog;
+	private JDialog m_listBranchDialog;
+	private JDialog m_listTagDialog;
+	private JDialog m_branchLogDialog;
 
 	private String m_branch;
 	private String m_file;
@@ -122,9 +127,12 @@ public class GUI
 		@Override
 		public void actionPerformed (ActionEvent e)
 		{
-			JDialog dialog = new PreferenceDialog (m_controller, m_frame);
-			dialog.setLocationRelativeTo (m_frame);
-			dialog.setVisible (true);
+			if (m_preferenceDialog == null)
+			{
+				m_preferenceDialog = new PreferenceDialog (m_controller, m_frame);
+			}
+			m_preferenceDialog.setLocationRelativeTo (m_frame);
+			m_preferenceDialog.setVisible (true);
 		}
 	};
 
@@ -191,6 +199,22 @@ public class GUI
 				m_editListDialog.setLocationRelativeTo (m_frame);
 			}
 			m_editListDialog.setVisible (true);
+		}
+	};
+
+	private Action m_branchLogAction = new AbstractAction ("Show branch discovery log")
+	{
+		private static final long serialVersionUID = 2439092079745308557L;
+
+		@Override
+		public void actionPerformed (ActionEvent e)
+		{
+			if (m_branchLogDialog == null)
+			{
+				m_branchLogDialog = new BranchLogDialog (m_frame, m_controller);
+				m_branchLogDialog.setLocationRelativeTo (m_frame);
+			}
+			m_branchLogDialog.setVisible (true);
 		}
 	};
 
@@ -282,9 +306,12 @@ public class GUI
 		{
 			try
 			{
-				SearchDialog dialog = new SearchDialog (m_frame, "Commits", m_controller);
-				dialog.setLocationRelativeTo (m_frame);
-				dialog.setVisible (true);
+				if (m_searchDialog == null)
+				{
+					m_searchDialog = new SearchDialog (m_frame, "Commits", m_controller);
+				}
+				m_searchDialog.setLocationRelativeTo (m_frame);
+				m_searchDialog.setVisible (true);
 			}
 			catch (Exception ex)
 			{
@@ -330,9 +357,12 @@ public class GUI
 		{
 			try
 			{
-				ListDialog dialog = new ListDialog (m_frame, "Branches", m_controller, m_controller.getBranchList ());
-				dialog.setLocationRelativeTo (m_frame);
-				dialog.setVisible (true);
+				if (m_listBranchDialog == null)
+				{
+					m_listBranchDialog = new ListDialog (m_frame, "Branches", m_controller, m_controller.getBranchList ());
+				}
+				m_listBranchDialog.setLocationRelativeTo (m_frame);
+				m_listBranchDialog.setVisible (true);
 			}
 			catch (Exception ex)
 			{
@@ -378,9 +408,12 @@ public class GUI
 		{
 			try
 			{
-				ListDialog dialog = new ListDialog (m_frame, "Tags", m_controller, m_controller.getTagList ());
-				dialog.setLocationRelativeTo (m_frame);
-				dialog.setVisible (true);
+				if (m_listTagDialog == null)
+				{
+					m_listTagDialog = new ListDialog (m_frame, "Tags", m_controller, m_controller.getTagList ());
+				}
+				m_listTagDialog.setLocationRelativeTo (m_frame);
+				m_listTagDialog.setVisible (true);
 			}
 			catch (Exception ex)
 			{
@@ -703,6 +736,7 @@ public class GUI
 		menu.add (new JMenuItem (m_refreshAction));
 		menu.addSeparator ();
 		menu.add (new JMenuItem (m_editListAction));
+		menu.add (new JMenuItem (m_branchLogAction));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Search");

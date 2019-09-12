@@ -91,7 +91,7 @@ public class RelationTreeFactory
 		return nodes;
 	}
 
-	public RelationTree generateTree (Iterable<RevCommit> commitLogs, RelationEditList editList) throws GitAPIException, IOException
+	public RelationTree generateTree (Iterable<RevCommit> commitLogs, RelationEditList editList, BranchLog log) throws GitAPIException, IOException
 	{
 		RelationTree tree = new RelationTree ();
 
@@ -116,7 +116,7 @@ public class RelationTreeFactory
 			startNode = Collections.min (tree.getNodes ());
 		}
 		tree.setStartNode (startNode);
-		BranchDiscoveryAlgorithm.inferBranches (tree, editList);
+		BranchDiscoveryAlgorithm.inferBranches (tree, editList, log);
 
 		// Third pass to layout the branches
 		BranchLayoutAlgorithm.layoutBranches (tree);
