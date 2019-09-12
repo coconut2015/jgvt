@@ -960,4 +960,9 @@ public class GUI
 		dialog.setLocationRelativeTo (m_frame);
 		dialog.setVisible (true);
 	}
+
+	public JFrame getFrame ()
+	{
+		return m_frame;
+	}
 }

@@ -22,6 +22,10 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.swing.JOptionPane;
+
+import org.yuanheng.jgvt.gui.GUI;
+
 /**
  * @author	Heng Yuan
  */
@@ -82,6 +86,40 @@ public class Utils
 			catch (Exception ex)
 			{
 			}
+		}
+	}
+
+	public static void exec (GUI gui, final String cmd, String[] envp, File dir)
+	{
+		System.out.println (cmd);
+		try
+		{
+			final Process process = Runtime.getRuntime ().exec (cmd, null, dir);
+			new Thread (() ->
+			{
+				boolean hasError = false;
+				try
+				{
+					int status = process.waitFor ();
+					if (status != 0)
+					{
+						hasError = true;
+					}
+				}
+				catch (Exception ex)
+				{
+					hasError = true;
+					ex.printStackTrace ();
+				}
+				if (hasError)
+				{
+					JOptionPane.showMessageDialog (gui.getFrame (), "Error executing: " + cmd, "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}).start ();
+		}
+		catch (Exception ex)
+		{
+			JOptionPane.showMessageDialog (gui.getFrame (), "Unable to execute " + cmd, "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

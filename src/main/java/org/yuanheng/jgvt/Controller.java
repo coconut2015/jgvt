@@ -346,8 +346,7 @@ public class Controller
 					String encodedCommits = url.getPath ().substring (1);
 					String commits = URLDecoder.decode (encodedCommits, "UTF-8");
 					String cmd = "git difftool " + commits;
-					System.out.println (cmd);
-					Runtime.getRuntime ().exec (cmd, null, m_gitRepo.getRoot ());
+					Utils.exec (m_gui, cmd, null, m_gitRepo.getRoot ());
 				}
 			}
 		}
