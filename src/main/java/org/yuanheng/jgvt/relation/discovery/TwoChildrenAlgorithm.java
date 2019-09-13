@@ -45,11 +45,6 @@ class TwoChildrenAlgorithm implements DiscoveryAlgorithm
 				RelationBranch leftChildBranch = lastNode.getChildren ()[0].getRelationBranch ();
 				RelationBranch rightChildBranch = lastNode.getChildren ()[1].getRelationBranch ();
 
-				if (branch == leftChildBranch ||
-					branch == rightChildBranch ||
-					leftChildBranch == rightChildBranch)
-					continue;
-
 				RelationNode leftNode = lastNode.getChildren ()[0];
 				// make sure the left child is the first node of the child branch
 				if (!DiscoveryUtils.isFirstInBranch (leftNode))

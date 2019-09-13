@@ -30,7 +30,6 @@ public class DiscoveryAlgorithmManager
 	{
 		s_instance.add (0, new SingleChildAlgorithm ());
 		s_instance.add (0, new SideMergeSingleChildAlgorithm ());
-		s_instance.add (0, new SideBranchMergeChildAlgorithm ());	// TODO: not as safe as I original thought
 		s_instance.add (0, new ParentSideBranchParentAlgorithm ());
 		s_instance.add (0, new TwoChildrenAlgorithm ());
 		s_instance.add (0, new MultipleChildrenAlgorithm ());
@@ -41,9 +40,10 @@ public class DiscoveryAlgorithmManager
 		s_instance.add (0, new GrandParentSideMergeAlgorithm ());
 		s_instance.add (0, new TwoChildrenOneMergeParentAlgorithm ());
 		s_instance.add (0, new ParallelParentsAlgorithm ());
-
+		s_instance.add (0, new TrustParent0Algorithm ());
 
 		s_instance.add (1, new DiamondMergeLeftParentAlgorithm ());
+		s_instance.add (1, new SideBranchMergeChildAlgorithm ());
 		s_instance.add (1, new SwapParentsLongerChainAlgorithm ());
 		s_instance.add (1, new DiamondSwapParentsTwoLongChainAlgorithm ());
 	}
