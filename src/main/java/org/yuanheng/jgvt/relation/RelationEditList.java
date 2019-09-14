@@ -131,7 +131,7 @@ public class RelationEditList
 		{
 			return -1;
 		}
-		return entryId;
+		return m_list.get (entryId).mergeParent;
 	}
 
 	public void add (ObjectId id, int mergeParent)
