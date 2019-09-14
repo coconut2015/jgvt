@@ -92,6 +92,10 @@ public class RelationNode implements Comparable<RelationNode>
 	public void addParent (RelationNode parent)
 	{
 		m_parents = Utils.arrayAdd (RelationNode.class, m_parents, parent);
+		if (m_parents.length > 2)
+		{
+			throw new RuntimeException ("Commit " + m_commit.getName () + " has too many parents");
+		}
 		parent.addChild (this);
 	}
 

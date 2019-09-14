@@ -173,7 +173,15 @@ public class Main
 
 		Controller controller = new Controller ();
 		GUI gui = new GUI (controller);
-		controller.setRepo (gitRepo, importantBranchNames);
+		try
+		{
+			controller.setRepo (gitRepo, importantBranchNames);
+		}
+		catch (Exception ex)
+		{
+			System.out.println (ex.getMessage ());
+			System.exit (1);
+		}
 		gui.setVisible (true);
 		controller.centerTree ();
 		SwingUtilities.invokeLater (() -> { gui.getGraphComponent ().requestFocus (); });

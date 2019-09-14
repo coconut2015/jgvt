@@ -16,6 +16,7 @@
 package org.yuanheng.jgvt;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -101,29 +102,21 @@ public class Controller
 		m_branchLog = new BranchLog ();
 	}
 
-	public boolean setRepo (GitRepo gitRepo, List<String> importantBranchNames)
+	public void setRepo (GitRepo gitRepo, List<String> importantBranchNames) throws Exception
 	{
-		try
-		{
-			m_gitRepo = gitRepo;
-			m_dir = m_gitRepo.getRoot ();
-			m_file = null;
+		m_gitRepo = gitRepo;
+		m_dir = m_gitRepo.getRoot ();
+		m_file = null;
 
-			m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
-			m_gui.setBranch (m_gitRepo.getBranch ());
-			if (m_file == null)
-				m_gui.setFile ("");
-			else
-				m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
+		m_gui.setRoot (m_gitRepo.getRoot ().getAbsolutePath ());
+		m_gui.setBranch (m_gitRepo.getBranch ());
+		if (m_file == null)
+			m_gui.setFile ("");
+		else
+			m_gui.setFile (Utils.getRelativePath (m_file, m_gitRepo.getRoot ()).toString ());
 
-			setImportantBranchNames (importantBranchNames);
-			generateTree ();
-			return true;
-		}
-		catch (Exception ex)
-		{
-			return false;
-		}
+		setImportantBranchNames (importantBranchNames);
+		generateTree ();
 	}
 
 	public void setImportantBranchNames (List<String> importantBranchNames)
@@ -156,23 +149,16 @@ public class Controller
 		return m_tree;
 	}
 
-	public boolean generateTree ()
+	public void generateTree () throws GitAPIException, IOException
 	{
-		try
-		{
-			RelationTreeFactory treeFactory = new RelationTreeFactory (m_gitRepo, m_importantBranchNames);
-			m_gitRepo.fetch (true);
-			m_branchLog.clear ();
-			m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file), Main.editList, m_branchLog);
-		}
-		catch (Exception ex)
-		{
-			return false;
-		}
+		RelationTreeFactory treeFactory = new RelationTreeFactory (m_gitRepo, m_importantBranchNames);
+		m_gitRepo.fetch (true);
+		m_branchLog.clear ();
+		m_tree = treeFactory.generateTree (m_gitRepo.getCommitLogs (m_file), Main.editList, m_branchLog);
+
 		GVTGraph graph = m_gui.getGraph ();
 		GVTGraphFactory factory = new GVTGraphFactory (graph);
 		factory.updateGraphModel (m_tree, graph.getToolTipFlag ());
-		return true;
  	}
 
 	public void centerTree ()
@@ -192,21 +178,28 @@ public class Controller
 		{
 			id = m_selectedNode.getCommit ().getName ();
 		}
-		generateTree ();
-		RelationNode node = null;
-		if (id != null)
+		try
 		{
-			node = m_tree.getNode (ObjectId.fromString (id));
+			generateTree ();
+			RelationNode node = null;
+			if (id != null)
+			{
+				node = m_tree.getNode (ObjectId.fromString (id));
+			}
+			if (node != null)
+			{
+				m_selectedNode = node;
+				select (m_selectedNode, true);
+			}
+			else
+			{
+				m_selectedNode = null;
+				centerTree ();
+			}
 		}
-		if (node != null)
+		catch (Throwable t)
 		{
-			m_selectedNode = node;
-			select (m_selectedNode, true);
-		}
-		else
-		{
-			m_selectedNode = null;
-			centerTree ();
+			t.printStackTrace ();
 		}
 	}
 

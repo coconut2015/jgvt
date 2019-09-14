@@ -42,18 +42,18 @@ class TwoChildrenAlgorithm implements DiscoveryAlgorithm
 
 			if (lastNode.getChildren ().length == 2)
 			{
-				RelationBranch leftChildBranch = lastNode.getChildren ()[0].getRelationBranch ();
-				RelationBranch rightChildBranch = lastNode.getChildren ()[1].getRelationBranch ();
-
-				RelationNode leftNode = lastNode.getChildren ()[0];
+				RelationNode leftChildNode = lastNode.getChildren ()[0];
 				// make sure the left child is the first node of the child branch
-				if (!DiscoveryUtils.isFirstInBranch (leftNode))
+				if (!DiscoveryUtils.isFirstInBranch (leftChildNode))
 					continue;
 
-				RelationNode rightNode = lastNode.getChildren ()[1];
+				RelationNode rightChildNode = lastNode.getChildren ()[1];
 				// make sure the right child is the first node of the child branch
-				if (!DiscoveryUtils.isFirstInBranch(rightNode))
+				if (!DiscoveryUtils.isFirstInBranch(rightChildNode))
 					continue;
+
+				RelationBranch leftChildBranch = leftChildNode.getRelationBranch ();
+				RelationBranch rightChildBranch = rightChildNode.getRelationBranch ();
 
 				// now check if leftBranch merges to rightBranch or
 				// vice versa

@@ -99,6 +99,14 @@ public class RelationBranch implements Comparable<RelationBranch>
 		{
 			firstNode.swapParentOrder ();
 		}
+		else
+		{
+			if (firstNode.getParents ().length == 0 ||
+				firstNode.getParents ()[0] != parentBranch.getLast ())
+			{
+				throw new RuntimeException ("Incorrect merge");
+			}
+		}
 		merge (parentBranch);
 	}
 
@@ -109,6 +117,14 @@ public class RelationBranch implements Comparable<RelationBranch>
 			firstNode.getParents ()[1] == getLast ())
 		{
 			firstNode.swapParentOrder ();
+		}
+		else
+		{
+			if (firstNode.getParents ().length == 0 ||
+				firstNode.getParents ()[0] != getLast ())
+			{
+				throw new RuntimeException ("Incorrect merge");
+			}
 		}
 		merge (childBranch);
 	}

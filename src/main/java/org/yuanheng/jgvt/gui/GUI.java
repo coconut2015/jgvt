@@ -901,6 +901,9 @@ public class GUI
 
 	public void select (RelationNode node, boolean center)
 	{
+		if (node == null)
+			return;
+
 		if (center)
 		{
 			m_graphComp.center (node);
