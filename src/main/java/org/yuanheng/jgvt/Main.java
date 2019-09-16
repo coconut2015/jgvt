@@ -177,9 +177,9 @@ public class Main
 		{
 			controller.setRepo (gitRepo, importantBranchNames);
 		}
-		catch (Exception ex)
+		catch (Throwable t)
 		{
-			System.out.println (ex.getMessage ());
+			t.printStackTrace ();
 			System.exit (1);
 		}
 		gui.setVisible (true);
