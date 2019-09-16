@@ -118,7 +118,7 @@ public class BranchDiscoveryAlgorithm
 						node.swapParentOrder ();
 					}
 
-					RelationNode parentNode = parents[joinParent];
+					RelationNode parentNode = parents[0];
 					if (parentNode.getRelationBranch () != null)
 					{
 						if (DiscoveryUtils.isLastInBranch (parentNode))
@@ -188,7 +188,7 @@ public class BranchDiscoveryAlgorithm
 				{
 					node.swapParentOrder ();
 				}
-				RelationNode parentNode = node.getParents ()[joinParent];
+				RelationNode parentNode = node.getParents ()[0];
 
 				if (parentNode.getRelationBranch () != null)
 				{
