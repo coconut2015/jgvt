@@ -28,7 +28,7 @@ public class TestMain
 	public void testMain () throws Exception
 	{
 //		Main.main(new String[] {"-d", "../react/"});
-		Main.main(new String[] {"-d", "../mongodb/"});
+		Main.main(new String[] {"../mongodb/"});
 //		Main.main(new String[] {"-d", "../sqlite-jdbc/"});
 //		Main.main(new String[] {"-d", "../sqlite-jdbc/README.md"});
 //		Main.main(new String[] {"-d", "../bsonspec.org/"});

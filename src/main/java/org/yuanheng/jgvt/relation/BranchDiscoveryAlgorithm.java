@@ -119,14 +119,22 @@ public class BranchDiscoveryAlgorithm
 					}
 
 					RelationNode parentNode = parents[joinParent];
-					parentNode.setNthChild (node, 0);
 					if (parentNode.getRelationBranch () != null)
 					{
-						mainBranch.mergeParent (parentNode.getRelationBranch ());
+						if (DiscoveryUtils.isLastInBranch (parentNode))
+						{
+							parentNode.setNthChild (node, 0);
+							mainBranch.mergeParent (parentNode.getRelationBranch ());
+						}
+						else
+						{
+							System.out.println ("Unable to apply edit list: " + CommitUtils.getName (node));
+						}
 						break;
 					}
 					else
 					{
+						parentNode.setNthChild (node, 0);
 						node = parentNode;
 						mainBranch.add (parentNode);
 						continue;
@@ -181,14 +189,23 @@ public class BranchDiscoveryAlgorithm
 					node.swapParentOrder ();
 				}
 				RelationNode parentNode = node.getParents ()[joinParent];
-				parentNode.setNthChild (node, 0);
 
 				if (parentNode.getRelationBranch () != null)
 				{
-					branch.mergeParent (parentNode.getRelationBranch ());
+					if (DiscoveryUtils.isLastInBranch (parentNode))
+					{
+						parentNode.setNthChild (node, 0);
+						branch.mergeParent (parentNode.getRelationBranch ());
+					}
+					else
+					{
+						System.out.println ("Unable to apply edit list: " + CommitUtils.getName (node));
+					}
 				}
 				else
 				{
+					parentNode.setNthChild (node, 0);
+
 					branch.add (parentNode);
 					stack.add (parentNode);
 				}
