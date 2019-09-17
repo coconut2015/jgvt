@@ -89,7 +89,7 @@ public class Controller
 			}
 			catch (Exception ex)
 			{
-				ex.printStackTrace ();
+				Debug.printStackTrace (ex);
 			}
 		}
 	};
@@ -199,7 +199,7 @@ public class Controller
 		}
 		catch (Throwable t)
 		{
-			t.printStackTrace ();
+			Debug.printStackTrace (t);
 		}
 	}
 
@@ -345,7 +345,7 @@ public class Controller
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace ();
+			Debug.printStackTrace (ex);
 		}
 	}
 

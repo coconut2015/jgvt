@@ -109,7 +109,7 @@ public class Utils
 				catch (Exception ex)
 				{
 					hasError = true;
-					ex.printStackTrace ();
+					Debug.printStackTrace (ex);
 				}
 				if (hasError)
 				{

@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.BorderUIResource;
 
 import org.yuanheng.jgvt.Controller;
+import org.yuanheng.jgvt.Debug;
 import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.export.*;
 import org.yuanheng.jgvt.gui.graph.GVTGraph;
@@ -112,7 +113,7 @@ public class GUI
 				}
 				catch (Exception ex)
 				{
-					ex.printStackTrace ();
+					Debug.printStackTrace (ex);
 					String msg = ex.getMessage ();
 					JOptionPane.showMessageDialog (m_frame, msg, "Error", JOptionPane.ERROR_MESSAGE);
 				}
