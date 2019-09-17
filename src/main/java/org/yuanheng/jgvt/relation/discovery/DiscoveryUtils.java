@@ -15,7 +15,6 @@
  */
 package org.yuanheng.jgvt.relation.discovery;
 
-import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.relation.RelationBranch;
 import org.yuanheng.jgvt.relation.RelationNode;
 
@@ -24,14 +23,6 @@ import org.yuanheng.jgvt.relation.RelationNode;
  */
 public class DiscoveryUtils
 {
-	public static void debug (String msg)
-	{
-		if (Main.configs.debug)
-		{
-			System.out.println (msg);
-		}
-	}
-
 	/**
 	 * Practically any commits with "Merge pull requests" should not be
 	 * trusted with the ordering of the parent commits, since they are

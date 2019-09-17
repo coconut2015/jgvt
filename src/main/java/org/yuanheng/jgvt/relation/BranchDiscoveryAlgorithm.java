@@ -18,6 +18,7 @@ package org.yuanheng.jgvt.relation;
 import java.util.*;
 
 import org.yuanheng.jgvt.CommitUtils;
+import org.yuanheng.jgvt.Debug;
 import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.relation.discovery.DiscoveryAlgorithm;
 import org.yuanheng.jgvt.relation.discovery.DiscoveryAlgorithmManager;
@@ -128,7 +129,7 @@ public class BranchDiscoveryAlgorithm
 						}
 						else
 						{
-							System.out.println ("Unable to apply edit list: " + CommitUtils.getName (node));
+							Debug.println ("Unable to apply edit list: " + CommitUtils.getName (node));
 						}
 						break;
 					}
@@ -198,7 +199,7 @@ public class BranchDiscoveryAlgorithm
 					}
 					else
 					{
-						System.out.println ("Unable to apply edit list: " + CommitUtils.getName (node));
+						Debug.println ("Unable to apply edit list: " + CommitUtils.getName (node));
 					}
 
 					for (RelationNode parent : node.getParents ())
@@ -268,13 +269,13 @@ public class BranchDiscoveryAlgorithm
 
 		// first do only safe searches
 		int index = 0;
-		DiscoveryUtils.debug ("safe searches only");
-		DiscoveryUtils.debug ("index: " + index + ": " + branchSets[index].size ());
+		Debug.println ("safe searches only");
+		Debug.println ("index: " + index + ": " + branchSets[index].size ());
 		while (branchSets[index].size () > 0)
 		{
 			int nextIndex = 1 - index;
 			branchSets[nextIndex].clear ();
-			DiscoveryUtils.debug ("index: " + index + ": " + branchSets[index].size ());
+			Debug.println ("index: " + index + ": " + branchSets[index].size ());
 
 			branchSets[index].addAll (singleNodeBranchSets[index]);
 
@@ -309,13 +310,13 @@ public class BranchDiscoveryAlgorithm
 			if (node.getRelationBranch ().size () == 1)
 				singleNodeBranchSets[0].add (node.getRelationBranch ());
 		}
-		DiscoveryUtils.debug ("safe + unsafe searches");
-		DiscoveryUtils.debug ("index: " + index + ": " + branchSets[index].size ());
+		Debug.println ("safe + unsafe searches");
+		Debug.println ("index: " + index + ": " + branchSets[index].size ());
 		while (branchSets[index].size () > 0)
 		{
 			int nextIndex = 1 - index;
 			branchSets[nextIndex].clear ();
-			DiscoveryUtils.debug ("index: " + index + ": " + branchSets[index].size ());
+			Debug.println ("index: " + index + ": " + branchSets[index].size ());
 
 			branchSets[index].addAll (singleNodeBranchSets[index]);
 
@@ -353,7 +354,7 @@ public class BranchDiscoveryAlgorithm
 				{
 					if (node.getCommit ().getFullMessage ().startsWith ("Merge"))
 					{
-						System.out.println ("Investigate: " + CommitUtils.getName (node));
+						Debug.println ("Investigate: " + CommitUtils.getName (node));
 					}
 				}
 			}

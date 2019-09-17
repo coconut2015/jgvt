@@ -179,7 +179,8 @@ public class Main
 		}
 		catch (Throwable t)
 		{
-			t.printStackTrace ();
+			System.out.println (t.getMessage ());
+			Debug.printStackTrace (t);
 			System.exit (1);
 		}
 		gui.setVisible (true);
