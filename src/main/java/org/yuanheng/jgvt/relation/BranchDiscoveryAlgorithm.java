@@ -137,7 +137,6 @@ public class BranchDiscoveryAlgorithm
 						parentNode.setNthChild (node, 0);
 						node = parentNode;
 						mainBranch.add (parentNode);
-						continue;
 					}
 				}
 				else
@@ -200,6 +199,17 @@ public class BranchDiscoveryAlgorithm
 					else
 					{
 						System.out.println ("Unable to apply edit list: " + CommitUtils.getName (node));
+					}
+
+					for (RelationNode parent : node.getParents ())
+					{
+						RelationBranch parentBranch = parent.getRelationBranch ();
+						if (parentBranch != null)
+						{
+							continue;
+						}
+						new RelationBranch (parent);
+						stack.add (parent);
 					}
 				}
 				else
