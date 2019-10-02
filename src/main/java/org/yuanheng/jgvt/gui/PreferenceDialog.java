@@ -44,6 +44,7 @@ class PreferenceDialog extends JDialog
 	private JSpinner m_childSpacingInput;
 	private JSpinner m_startXInput;
 	private JSpinner m_startYInput;
+	private JCheckBox m_leftOnlyInput;
 	private JComboBox<String> m_saveToInput;
 
 	private Action m_restoreDefaultsAction = new AbstractAction ("Restore Defaults")
@@ -102,7 +103,7 @@ class PreferenceDialog extends JDialog
 
 		FormBuilder builder = FormBuilder.create ()
 				.columns("right:pref, 4dlu, default, 4dlu, right:pref, 4dlu, default")
-				.rows("pref, $lg, pref, $lg, pref, $lg, pref");
+				.rows("pref, $lg, pref, $lg, pref, $lg, pref, $lg, pref");
 
 		{
 			builder.add ("SHA1 Abbreviation Length:").xy (1, 1);
@@ -140,9 +141,15 @@ class PreferenceDialog extends JDialog
 		}
 
 		{
-			builder.add ("Save to:").xy (1, 7);
+			builder.add ("Trust Parent 0:").xy (1, 7);
+			m_leftOnlyInput = new JCheckBox ((Icon)null, Defaults.LEFT_ONLY);
+			builder.add (m_leftOnlyInput).xy (3, 7);
+		}
+
+		{
+			builder.add ("Save to:").xy (1, 9);
 			m_saveToInput = new JComboBox<String> (SAVE_STRINGS);
-			builder.add (m_saveToInput).xy (3, 7);
+			builder.add (m_saveToInput).xy (3, 9);
 		}
 
 		contentPane.add (builder.getPanel (), BorderLayout.CENTER);
@@ -173,6 +180,7 @@ class PreferenceDialog extends JDialog
 		m_childSpacingInput.setValue (Main.pref.getChildSpacing ());
 		m_startXInput.setValue (Main.pref.getStartX ());
 		m_startYInput.setValue (Main.pref.getStartY ());
+		m_leftOnlyInput.setSelected (Main.pref.getLeftOnly ());
 	}
 
 	private boolean save (Preference pref, int index)
@@ -205,6 +213,7 @@ class PreferenceDialog extends JDialog
 		changed |= Main.pref.setChildSpacing (((Number)m_childSpacingInput.getValue ()).doubleValue ());
 		changed |= Main.pref.setStartX (((Number)m_startXInput.getValue ()).doubleValue ());
 		changed |= Main.pref.setStartY (((Number)m_startYInput.getValue ()).doubleValue ());
+		changed |= Main.pref.setLeftOnly (m_leftOnlyInput.isSelected ());
 
 		boolean saved = save (Main.pref, m_saveToInput.getSelectedIndex ());
 		if (!saved)

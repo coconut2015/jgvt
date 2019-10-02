@@ -722,6 +722,7 @@ public class GUI
 		m_menuBar = new JMenuBar ();
 
 		JMenu menu;
+		JMenu subMenu;
 
 		menu = new JMenu ("File");
 		menu.setMnemonic ('F');
@@ -737,7 +738,6 @@ public class GUI
 		menu.add (new JMenuItem (m_refreshAction));
 		menu.addSeparator ();
 		menu.add (new JMenuItem (m_editListAction));
-		menu.add (new JMenuItem (m_branchLogAction));
 		m_menuBar.add (menu);
 
 		menu = new JMenu ("Search");
@@ -764,6 +764,9 @@ public class GUI
 
 		menu = new JMenu ("Help");
 		menu.setMnemonic ('H');
+		subMenu = new JMenu ("Debug");
+		subMenu.add (new JMenuItem (m_branchLogAction));
+		menu.add (subMenu);
 		menu.add (new JMenuItem (m_aboutAction2));
 		m_menuBar.add (menu);
 	}

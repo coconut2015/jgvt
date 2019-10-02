@@ -17,6 +17,7 @@ package org.yuanheng.jgvt.relation.discovery;
 
 import java.util.Set;
 
+import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.relation.BranchLog;
 import org.yuanheng.jgvt.relation.RelationBranch;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -52,7 +53,8 @@ class MergeParentAlgorithm implements DiscoveryAlgorithm
 				RelationNode rightParent = firstNode.getParents ()[1];
 				RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
-				if (DiscoveryUtils.isLastInBranch (rightParent))
+				if (!Main.pref.getLeftOnly () &&
+					DiscoveryUtils.isLastInBranch (rightParent))
 				{
 					if (DiscoveryUtils.isSideBranch (leftParentBranch, rightParentBranch) &&
 						DiscoveryUtils.isMergeTo (branch, leftParentBranch))

@@ -41,6 +41,28 @@ public class Preference
 	private final static String KEY_CHILD_SPACING = "childSpacing";
 	private final static String KEY_START_X = "startX";
 	private final static String KEY_START_Y = "startY";
+	private final static String KEY_LEFT_ONLY = "leftOnly";
+
+	private static boolean getBoolean (Properties properties, String key, boolean defaultValue)
+	{
+		Boolean b = defaultValue;
+		try
+		{
+			String s = properties.getProperty (key);
+			if (s != null)
+			{
+				b = Boolean.valueOf (s);
+			}
+		}
+		catch (Exception ex)
+		{
+		}
+		if (b == null)
+		{
+			b = defaultValue;
+		}
+		return b;
+	}
 
 	private static int getInt (Properties properties, String key, int min, int max, int defaultValue)
 	{
@@ -89,6 +111,7 @@ public class Preference
 	private double m_childSpacing = Defaults.CHILD_SPACING;
 	private double m_startX = Defaults.START_X;
 	private double m_startY = Defaults.START_Y;
+	private boolean m_leftOnly = Defaults.LEFT_ONLY;
 
 	private Preference (GitRepo gitRepo)
 	{
@@ -166,6 +189,7 @@ public class Preference
 		m_childSpacing = getDouble (m_settings, KEY_CHILD_SPACING, Defaults.MIN_CHILD_SPACING, Defaults.MAX_CHILD_SPACING, Defaults.CHILD_SPACING);
 		m_startX = getDouble (m_settings, KEY_START_X, Defaults.MIN_START_X, Defaults.MAX_START_X, Defaults.START_X);
 		m_startY = getDouble (m_settings, KEY_START_Y, Defaults.MIN_START_Y, Defaults.MAX_START_Y, Defaults.START_Y);
+		m_leftOnly = getBoolean (m_settings, KEY_LEFT_ONLY, Defaults.LEFT_ONLY);
 	}
 
 	public boolean save (SaveType saveType)
@@ -247,6 +271,7 @@ public class Preference
 		m_settings.setProperty (KEY_CHILD_SPACING, "" + m_childSpacing);
 		m_settings.setProperty (KEY_START_X, "" + m_startX);
 		m_settings.setProperty (KEY_START_Y, "" + m_startY);
+		m_settings.setProperty (KEY_LEFT_ONLY, "" + m_leftOnly);
 	}
 
 	public String getExportDirectory ()
@@ -316,6 +341,18 @@ public class Preference
 	{
 		boolean changed = (m_startY != startY);
 		m_startY = startY;
+		return changed;
+	}
+
+	public boolean getLeftOnly ()
+	{
+		return m_leftOnly;
+	}
+
+	public boolean setLeftOnly (boolean b)
+	{
+		boolean changed = (m_leftOnly != b);
+		m_leftOnly = b;
 		return changed;
 	}
 }

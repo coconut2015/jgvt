@@ -67,6 +67,12 @@ public class Defaults
 	public final static double START_Y = 50.0;
 	public final static double MAX_START_Y = 1000.0;
 	public final static double MIN_START_Y = 0;
+	/**
+	 * Except a few algorithms, most algorithms should only treat
+	 * parent 0 as trustworthy and thus join with left parent branch
+	 * only.
+	 */
+	public final static boolean LEFT_ONLY = true;
 
 	/**
 	 * Change tree's added font color

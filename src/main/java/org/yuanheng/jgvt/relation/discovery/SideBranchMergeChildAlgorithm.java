@@ -17,6 +17,7 @@ package org.yuanheng.jgvt.relation.discovery;
 
 import java.util.Set;
 
+import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.relation.BranchLog;
 import org.yuanheng.jgvt.relation.RelationBranch;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -65,7 +66,8 @@ class SideBranchMergeChildAlgorithm implements DiscoveryAlgorithm
 							checkBranches.add (branch);
 						}
 					}
-					else if (DiscoveryUtils.isSideBranch (rightParentBranch, leftParentBranch))
+					else if (!Main.pref.getLeftOnly () &&
+							 DiscoveryUtils.isSideBranch (rightParentBranch, leftParentBranch))
 					{
 						if (DiscoveryUtils.isMiddleInBranch (leftParentBranch.getFirst ().getParents ()[0]))
 						{

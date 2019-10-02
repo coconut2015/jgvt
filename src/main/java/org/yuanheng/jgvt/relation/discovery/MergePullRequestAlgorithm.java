@@ -17,6 +17,7 @@ package org.yuanheng.jgvt.relation.discovery;
 
 import java.util.Set;
 
+import org.yuanheng.jgvt.Main;
 import org.yuanheng.jgvt.relation.BranchLog;
 import org.yuanheng.jgvt.relation.RelationBranch;
 import org.yuanheng.jgvt.relation.RelationNode;
@@ -51,7 +52,8 @@ class MergePullRequestAlgorithm implements DiscoveryAlgorithm
 					RelationBranch leftParentBranch = leftParent.getRelationBranch ();
 					RelationBranch rightParentBranch = rightParent.getRelationBranch ();
 
-					if (DiscoveryUtils.isSideBranch (rightParentBranch, leftParentBranch))
+					if (!Main.pref.getLeftOnly () &&
+						DiscoveryUtils.isSideBranch (rightParentBranch, leftParentBranch))
 					{
 						branch.mergeParent (rightParentBranch);
 
