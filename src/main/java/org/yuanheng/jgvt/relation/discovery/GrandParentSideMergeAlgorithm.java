@@ -56,6 +56,8 @@ class GrandParentSideMergeAlgorithm implements DiscoveryAlgorithm
 
 			RelationNode leftParent = firstNode.getParents ()[0];
 			RelationBranch leftParentBranch = leftParent.getRelationBranch ();
+			if (leftParent != leftParentBranch.getLast ())
+				continue;
 			RelationNode leftParentFirst = leftParentBranch.getFirst ();
 			if (leftParentFirst.getParents ().length > 1 &&
 				leftParentFirst.getParents ()[0] == rightParentFirst.getParents ()[0])
