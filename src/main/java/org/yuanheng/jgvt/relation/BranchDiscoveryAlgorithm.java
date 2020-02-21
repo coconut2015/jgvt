@@ -101,6 +101,7 @@ public class BranchDiscoveryAlgorithm
 	private static void discoverInitialBranches (RelationNode startNode, boolean reachRoot, RelationEditList editList)
 	{
 		ArrayList<RelationNode> stack = new ArrayList<RelationNode> ();
+		editList = (RelationEditList) editList.clone ();
 
 		// initiate the tree with the main branch on the left.
 		RelationNode node = startNode;
@@ -114,6 +115,7 @@ public class BranchDiscoveryAlgorithm
 				int joinParent = editList.getJoinParent (node.getCommit ());
 				if (joinParent >= 0)
 				{
+					editList.remove (node.getCommit ());
 					if (joinParent == 1)
 					{
 						node.swapParentOrder ();
@@ -184,6 +186,7 @@ public class BranchDiscoveryAlgorithm
 			if (joinParent >= 0 &&
 				node.getParents ().length > joinParent)
 			{
+				editList.remove (node.getCommit ());
 				if (joinParent == 1)
 				{
 					node.swapParentOrder ();

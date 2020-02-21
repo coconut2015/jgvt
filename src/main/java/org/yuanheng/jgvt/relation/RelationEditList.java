@@ -27,7 +27,7 @@ import org.yuanheng.jgvt.GitRepo;
 /**
  * @author	Heng Yuan
  */
-public class RelationEditList
+public class RelationEditList implements Cloneable
 {
 	public static RelationEditList read (GitRepo gitRepo)
 	{
@@ -112,6 +112,15 @@ public class RelationEditList
 	{
 		m_search = new HashMap<ObjectId, Integer> ();
 		m_list = new ArrayList<RelationEditEntry> ();
+	}
+
+	@Override
+	public Object clone ()
+	{
+		RelationEditList newList = new RelationEditList ();
+		newList.m_search.putAll (m_search);
+		newList.m_list.addAll (m_list);
+		return newList;
 	}
 
 	public void addListener (RelationEditListener listener)
